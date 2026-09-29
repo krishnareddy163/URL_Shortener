@@ -76,7 +76,7 @@ This document describes the agentic orchestration model used to execute the full
         │  (execution phase)  │
         │  Entry: reviewed    │
         │  source             │
-        │  Exit: 98.5% line   │
+        │  Exit: 100% line    │
         │  100% branch,       │
         │  0 test failures    │
         └──────────┬──────────┘
@@ -166,7 +166,7 @@ This document describes the agentic orchestration model used to execute the full
 **Outputs:** `docs/qa-agent.md` — test results, coverage report, functional scenario results  
 **Exit gate:**
 - Zero test failures
-- JaCoCo: ≥ 98.5% line coverage, 100% branch coverage
+- JaCoCo: ≥ 100% line coverage (functional classes), 100% branch coverage
 - All functional scenarios (in `docs/scenarios.md`) pass end-to-end
 
 **Retry:** A single test failure triggers a targeted fix loop in the Development Agent (up to 3 iterations) before the QA Agent re-runs  

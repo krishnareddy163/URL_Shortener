@@ -26,7 +26,7 @@ A production-grade URL shortener service implemented in Java 25 / Spring Boot 3.
 | Orchestration design | `docs/orchestration.md` | Agent DAG, gates, governance model |
 | Three SDLC scenarios | `docs/scenarios.md` | Greenfield, brownfield, ambiguous walkthroughs |
 | Code Review Agent output | `docs/code-review-agent.md` | 7 findings, 4 fixed, 3 accepted |
-| QA Agent output | `docs/qa-agent.md` | 99 tests, coverage report, functional traceability |
+| QA Agent output | `docs/qa-agent.md` | 135 tests, coverage report, functional traceability |
 | Operations runbook | `docs/operations.md` | Config, observability, failure behavior |
 | Release notes | `docs/release-notes.md` | v1.0.0 changelog |
 
@@ -90,7 +90,7 @@ The project was built using six specialist agents coordinated by an explicit dep
 | Async click recording (queue + worker) | Redirect latency is UX-critical; analytics writes are not — decoupling the two is the right trade |
 | Token bucket rate limiter (in-memory) | Simplest correct implementation; single instance is the stated v1 constraint; Redis is the obvious v2 upgrade path |
 | AuditFilter at servlet level (not AOP) | Servlet filter captures all requests, including those rejected before Spring dispatches to a controller. AOP would miss filter-level rejections. |
-| 98.5% line / 100% branch JaCoCo floor | 100% line is impossible without excluding dead defensive code; 100% branch ensures every conditional is exercised; the floor enforces this in CI rather than relying on convention |
+| 100% line / 100% branch JaCoCo floor (functional classes) | 100% line requires excluding two platform bootstrap classes (ShortenerApplication.main() and Sha256's unreachable catch); 100% branch ensures every conditional is exercised; the floor enforces this in CI rather than relying on convention |
 
 ---
 
@@ -188,6 +188,6 @@ curl -v http://localhost:8080/<code>
 | Setup instructions | `README.md`, this document §8 |
 | Testing approach | `docs/qa-agent.md` |
 | Limitations and trade-offs | This document §5–7 |
-| 98.5%+ line / 100% branch coverage | JaCoCo floor in `pom.xml`, enforced in CI |
+| 100% line / 100% branch coverage (functional classes) | JaCoCo floor in `pom.xml`, enforced in CI |
 | Static analysis (zero violations) | SpotBugs, FindSecBugs, PMD — all passing in CI |
 | CI pipeline | `.github/workflows/ci.yml` |

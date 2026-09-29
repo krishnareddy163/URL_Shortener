@@ -157,7 +157,15 @@
               <goal>report</goal>
             </goals>
           </execution>
-          <!-- Coverage floor: 100% of branches; lines below 100% only in the documented exceptions (docs/coverage.md). -->
+          <!--
+            Coverage floor: 100% line and branch on all functional classes.
+            Excluded from the check (not from instrumentation):
+              ShortenerApplication — main() is a JVM entry point; Spring Boot tests load the context via
+                @SpringBootTest without calling main(), so the two-line method body is unreachable in tests.
+              Sha256 — the NoSuchAlgorithmException catch is a platform guarantee; every Java SE platform
+                must provide SHA-256 (JCA spec), so the handler is genuinely dead code.
+            Both classes are visible in the JaCoCo HTML report and listed in docs/coverage.md.
+          -->
           <execution>
             <id>coverage-floor</id>
             <phase>verify</phase>
@@ -165,6 +173,10 @@
               <goal>check</goal>
             </goals>
             <configuration>
+              <excludes>
+                <exclude>com/example/shortener/ShortenerApplication.class</exclude>
+                <exclude>com/example/shortener/service/Sha256.class</exclude>
+              </excludes>
               <rules>
                 <rule>
                   <element>BUNDLE</element>
@@ -172,7 +184,7 @@
                     <limit>
                       <counter>LINE</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>0.985</minimum>
+                      <minimum>1.00</minimum>
                     </limit>
                     <limit>
                       <counter>BRANCH</counter>

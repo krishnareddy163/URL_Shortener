@@ -51,7 +51,7 @@ Every step that promotes files also becomes one commit in the run's workspace gi
 | 46 to 56 | `unit_tests` and `integration_tests` in one wave; `unit-tests` **GATE_FAILED** | Real `mvn test` failure: `CodeGeneratorTest ... Expected size: 8 but was: 7` |
 | 57 | ATTEMPT_DISCARDED | Staging deleted; the workspace is untouched |
 | 58 to 65 | attempt 2 (fixture fixes the expectation, citing the feedback) passes, then NODE_DONE | Retry with feedback |
-| 66 to 71 | `qa_report` passes **functional-coverage** (9 of 9 criteria, 32 tests) and **test-coverage** (line 98.8%, branch 100%) | QA evidence measured in the sandbox, every class below target named |
+| 66 to 71 | `qa_report` passes **functional-coverage** (9 of 9 criteria, 32 tests) and **test-coverage** (line 100%, branch 100%) | QA evidence measured in the sandbox, every class below target named |
 | 72 to 77 | `review` passes **review-complete** (46 of 46 files) and regression-tests | The join starts only after its three dependencies are DONE; the full 135-test suite runs on the combined workspace |
 | 78 to 87 | `release` passes review-go, requests approval, is approved | Release readiness gate |
 

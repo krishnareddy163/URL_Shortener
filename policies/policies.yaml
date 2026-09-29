@@ -98,7 +98,7 @@ risk:
 # exceptions with the reason, and the gate fails if overall coverage drops below the minimums.
 coverage:
   target: 100
-  minimumLine: 98.5
+  minimumLine: 100
   minimumBranch: 100
   exceptions:
     com.example.shortener.ShortenerApplication: "main() only launches Spring Boot; tests start the application context through @SpringBootTest"

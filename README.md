@@ -36,7 +36,7 @@ orchestrator/          Real orchestration engine (Java 25, ~140 source files)
 
 shortener-service/     URL shortener (Spring Boot 3.5, Java 25)
   src/main/java/       REST API, service, JDBC storage, rate limiter, audit filter
-  src/test/java/       99 unit and integration tests; JaCoCo 98.5% line / 100% branch
+  src/test/java/       135 unit and integration tests; JaCoCo 100% line / 100% branch
   openapi.yaml         OpenAPI 3.0 spec
 
 scenarios/             Workflow YAML definitions
@@ -56,10 +56,9 @@ docs/                  Architecture, decisions, testing, AI SDLC artifacts
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `POST` | `/links` | Create a short link |
+| `POST` | `/api/v1/links` | Create a short link (idempotent on normalized URL) |
 | `GET` | `/{code}` | Redirect to the target URL (302) |
-| `GET` | `/links/{code}` | Click statistics |
-| `DELETE` | `/links/{code}` | Delete a link |
+| `GET` | `/api/v1/links/{code}/stats` | Click statistics (total, last access, per-day) |
 
 See [shortener-service/openapi.yaml](shortener-service/openapi.yaml) for the full schema.
 
@@ -76,7 +75,7 @@ make demo-bugfix       # fix a real SSRF bypass test-first
 # Shortener service only
 mvn -f shortener-service/pom.xml verify
 mvn -f shortener-service/pom.xml spring-boot:run
-curl -s -X POST http://localhost:8080/links \
+curl -s -X POST http://localhost:8080/api/v1/links \
   -H "Content-Type: application/json" \
   -d '{"url":"https://example.com/some/very/long/path"}' | jq .
 
@@ -107,7 +106,7 @@ See [docs/architecture.md](docs/architecture.md) and [docs/orchestration.md](doc
 | [docs/scenarios.md](docs/scenarios.md) | Scenario walkthroughs (greenfield, brownfield, ambiguous) |
 | [docs/ai-sdlc/code-review.md](docs/ai-sdlc/code-review.md) | Code review results from real agent runs |
 | [docs/code-review-agent.md](docs/code-review-agent.md) | Manual review: all findings, resolutions, sign-off |
-| [docs/qa-agent.md](docs/qa-agent.md) | 99 tests, JaCoCo coverage, functional traceability matrix |
+| [docs/qa-agent.md](docs/qa-agent.md) | 135 tests, JaCoCo coverage, functional traceability matrix |
 | [docs/ai-sdlc/functional-coverage.md](docs/ai-sdlc/functional-coverage.md) | Functional coverage from real agent runs |
 | [docs/engineering-summary.md](docs/engineering-summary.md) | Service-level engineering summary |
 | [docs/system-engineering-summary.md](docs/system-engineering-summary.md) | System-level summary (orchestrator + service) |

@@ -19,6 +19,7 @@
 
   <properties>
     <java.version>25</java.version>
+    <!-- Security overrides of Spring Boot-managed versions (patched releases; SCA via Trivy on the SBOM). -->
     <tomcat.version>10.1.60</tomcat.version>
     <jackson-bom.version>2.22.3</jackson-bom.version>
     <log4j2.version>2.26.1</log4j2.version>
@@ -69,6 +70,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
+      <!-- SBOM: Spring Boot-managed CycloneDX, written to META-INF/sbom/application.cdx.json and packaged in the jar. -->
       <plugin>
         <groupId>org.cyclonedx</groupId>
         <artifactId>cyclonedx-maven-plugin</artifactId>
@@ -92,6 +94,7 @@
           <argLine>@{argLine} -XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
         </configuration>
       </plugin>
+      <!-- SAST: SpotBugs + FindSecBugs; any finding fails verify. -->
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
@@ -117,6 +120,7 @@
           </execution>
         </executions>
       </plugin>
+      <!-- Static analysis and copy/paste detection; any violation fails verify. -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
@@ -153,13 +157,26 @@
               <goal>report</goal>
             </goals>
           </execution>
-        <execution>
+          <!--
+            Coverage floor: 100% line and branch on all functional classes.
+            Excluded from the check (not from instrumentation):
+              ShortenerApplication — main() is a JVM entry point; Spring Boot tests load the context via
+                @SpringBootTest without calling main(), so the two-line method body is unreachable in tests.
+              Sha256 — the NoSuchAlgorithmException catch is a platform guarantee; every Java SE platform
+                must provide SHA-256 (JCA spec), so the handler is genuinely dead code.
+            Both classes are visible in the JaCoCo HTML report and listed in docs/coverage.md.
+          -->
+          <execution>
             <id>coverage-floor</id>
             <phase>verify</phase>
             <goals>
               <goal>check</goal>
             </goals>
             <configuration>
+              <excludes>
+                <exclude>com/example/shortener/ShortenerApplication.class</exclude>
+                <exclude>com/example/shortener/service/Sha256.class</exclude>
+              </excludes>
               <rules>
                 <rule>
                   <element>BUNDLE</element>
@@ -167,7 +184,7 @@
                     <limit>
                       <counter>LINE</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>0.985</minimum>
+                      <minimum>1.00</minimum>
                     </limit>
                     <limit>
                       <counter>BRANCH</counter>

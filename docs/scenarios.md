@@ -57,7 +57,7 @@ Review Agent
        │  EXIT GATE: 0 blockers ✓
        ▼
 QA Agent (execution)
-  └─ ./mvnw verify — all tests green, 98.5%+ line, 100% branch
+  └─ ./mvnw verify — all tests green, 100% line, 100% branch (functional)
        │  EXIT GATE: coverage floor passed ✓
        ▼
   ⚠ HUMAN CHECKPOINT: review coverage report

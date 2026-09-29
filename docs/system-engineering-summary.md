@@ -60,7 +60,7 @@ The assignment's differentiator is **governed orchestration**, so the engine is 
 
 ## Code quality and security status
 
-CI ([.github/workflows/ci.yml](../.github/workflows/ci.yml)) runs all of the following plus the demos on every push. On the final code, both projects have: 0 compiler warnings under `-Werror`; 0 SpotBugs/FindSecBugs findings; 0 PMD/CPD violations; SonarQube 0 bugs, 0 vulnerabilities, 0 hotspots and 0 code smells (quality gate OK); JaCoCo coverage of 98.8% line and 100% branch for the shortener and 90.8% line and 78.7% branch for the orchestrator, with floors in both builds and every gap in [coverage.md](coverage.md); 0 known-vulnerable dependencies (Trivy on CycloneDX SBOMs); no secrets. The shortener also passes an OWASP ZAP API scan with 0 failures and 0 warnings. Veracode was not run (it needs a commercial account). Reproduce with `make scan`; details are in [testing.md](testing.md#code-quality-and-security-scans).
+CI ([.github/workflows/ci.yml](../.github/workflows/ci.yml)) runs all of the following plus the demos on every push. On the final code, both projects have: 0 compiler warnings under `-Werror`; 0 SpotBugs/FindSecBugs findings; 0 PMD/CPD violations; SonarQube 0 bugs, 0 vulnerabilities, 0 hotspots and 0 code smells (quality gate OK); JaCoCo coverage of 100% line and 100% branch (functional classes) for the shortener and 90.8% line and 78.7% branch for the orchestrator, with floors in both builds and every gap in [coverage.md](coverage.md); 0 known-vulnerable dependencies (Trivy on CycloneDX SBOMs); no secrets. The shortener also passes an OWASP ZAP API scan with 0 failures and 0 warnings. Veracode was not run (it needs a commercial account). Reproduce with `make scan`; details are in [testing.md](testing.md#code-quality-and-security-scans).
 
 ## Assumptions
 
@@ -79,7 +79,7 @@ CI ([.github/workflows/ci.yml](../.github/workflows/ci.yml)) runs all of the fol
 - Graph patches can add nodes and edges or remove edges, but cannot remove nodes (the specification's patch schema has no removal).
 - The wall-clock budget is checked between attempts, so a running gate is bounded by its own 120 s timeout rather than interrupted by the budget.
 - Report latencies are machine-dependent; the metric definitions are fixed by tests.
-- Test coverage is 100% of branches and 98.8% of lines for the shortener, but 90.8% of lines and 78.7% of branches for the orchestrator itself (the CLI package is lowest, at 68% of lines, because the demos exercise it end to end). A floor stops regressions and [coverage.md](coverage.md) lists every class below 100%; reaching the target for the orchestrator is open work.
+- Test coverage is 100% of lines and 100% of branches (functional classes) for the shortener, but 90.8% of lines and 78.7% of branches for the orchestrator itself (the CLI package is lowest, at 68% of lines, because the demos exercise it end to end). A floor stops regressions and [coverage.md](coverage.md) lists every class below 100%; reaching the target for the orchestrator is open work.
 
 ## Acceptance checklist (Section 14)
 
