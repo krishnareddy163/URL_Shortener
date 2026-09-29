@@ -1,232 +1,182 @@
-# Agentic SDLC — URL Shortener
+# Agentic SDLC Orchestrator
 
-A governed, event-sourced SDLC orchestration engine that coordinates AI agents across the full software development lifecycle, using a URL shortener service as its example workload.
+A runnable prototype of a governed, agentic software-engineering system. It takes a requirement through requirements, design, implementation, testing, documentation, review and release readiness. AI agents do the work under strict engine control. A **URL shortener** is the example workload the system builds and then changes.
 
-## Quick start
+> **Agents propose. The engine disposes.** Agents execute under defined autonomy boundaries; humans own oversight, approvals, and final quality.
 
-```bash
-# Build everything (shortener service + orchestrator)
-make build
+What that means in this codebase:
 
-# Run all four demo scenarios (greenfield, brownfield, ambiguous, bugfix)
-make demo-all
+- **Agents never write files.** An agent returns a `Proposal`. The engine validates every path, applies the proposal in a throwaway staging copy, runs real gates (`mvn compile`, `mvn test`, policy scanners), and promotes only what passes.
+- **The append-only event log is the only state.** Every status, attempt, approval and re-plan is an event in SQLite, and the database rejects updates and deletes. Reports, metrics and resume are all computed from it.
+- **Humans approve exact artifacts.** An approval is bound to the artifact's SHA-256. Changing an upstream answer invalidates downstream work, reverts its files and revokes its approvals.
 
-# Interactive live run (needs ANTHROPIC_API_KEY and ANTHROPIC_MODEL)
-ANTHROPIC_API_KEY=... ANTHROPIC_MODEL=claude-opus-4-5 make live
+**For evaluators:** the AI SDLC artifacts (user stories, design and diagrams, code reviews with resolutions, coverage and functional coverage reports, commit history) are indexed in [docs/ai-sdlc/](docs/ai-sdlc/README.md), and how AI assistance was used to build this is in [docs/ai-assisted-development.md](docs/ai-assisted-development.md).
 
-# Run the shortener service directly
-mvn -f shortener-service/pom.xml spring-boot:run
-```
+## What each role produces, and how it is checked
 
-## What this is
+| Role (agent) | Produces | Proved by |
+|---|---|---|
+| Requirements | User stories ("As a ..., I want ..., so that ..."), acceptance criteria, open questions | `requirements-complete` |
+| Design (architect) | Design document with Mermaid component and sequence diagrams, OpenAPI contract, schema migration | `design-diagrams`, `schema-valid` |
+| Development | Code with a uniform error envelope, sanitized logging and an audit trail of every change request; every promotion becomes a commit in the run's workspace git history | `compile`, security gates |
+| Code review | Every submitted file reviewed; findings with severity, status and resolution; GO/NO_GO | `review-complete`, `review-go` |
+| QA (tester) | Unit and integration tests; the functional coverage matrix; line and branch coverage measured against a 100% target, every class below it named | `unit-tests`, `functional-coverage`, `test-coverage`, [docs/coverage.md](docs/coverage.md) |
 
-The repository demonstrates **agentic SDLC orchestration**: six AI agents (requirements, architect, developer, tester, reviewer, docs) execute across a dependency graph with entry/exit gates, human approval checkpoints, bounded retries, rollback, policy guardrails, and audit-grade traceability. The URL shortener is both the output the agents produce and the test workload that proves the gates work.
+Every report has a **Quality evidence** section with all of the above for its run; see the [greenfield sample](docs/sample-runs/greenfield/report.md#quality-evidence).
 
-## Structure
+## How to run
 
-```
-orchestrator/          Real orchestration engine (Java 25, ~140 source files)
-  core/engine/         Scheduler, NodeRunner, retries, safe-stop, circuit breaker
-  core/gate/           18 quality gates (Maven build, coverage, review, secrets, ...)
-  core/policy/         Policy guardrails (no raw IPs, forbidden APIs, secret scan)
-  core/state/          Append-only SQLite event store; RunState is a fold over events
-  core/graph/          Workflow DAG loader and validator
-  agents/live/         Live Claude API agents (requires ANTHROPIC_API_KEY)
-  cli/                 Picocli CLI: run / approve / reject / answer / status / report
+There are two ways to run the application. Both give the same demos, tests, CLI and results.
 
-shortener-service/     URL shortener (Spring Boot 3.5, Java 25)
-  src/main/java/       REST API, service, JDBC storage, rate limiter, audit filter
-  src/test/java/       135 unit and integration tests; JaCoCo 100% line / 100% branch
-  openapi.yaml         OpenAPI 3.0 spec
+| | Option A: Docker | Option B: Local |
+|---|---|---|
+| You install | Docker only | JDK 25, Maven 3.9+, `make` and `bash` (on Windows, use WSL) |
+| First step | `docker build -t agentic-sdlc .` | `make build` |
+| Run a demo | `docker run --rm -it -v "$PWD/runs:/app/runs" agentic-sdlc demo-greenfield` | `make demo-greenfield` |
+| Run the tests | `docker run --rm agentic-sdlc test` | `make test` |
+| Use the CLI | `docker run --rm -it -v "$PWD/runs:/app/runs" agentic-sdlc <command>` | `java -jar orchestrator/target/orchestrator.jar <command>` |
+| Results | `runs/<runId>/` on your machine (through the volume mount) | `runs/<runId>/` |
 
-scenarios/             Workflow YAML definitions
-  greenfield/          Build from scratch (9-node graph, 3 human approval checkpoints)
-  brownfield/          Extend running service (impact analysis, graph patch)
-  ambiguous/           Interpret vague requirement (clarification flow, dynamic re-plan)
-  bugfix/              Test-first bug fix with rollback and release
+Run every command from the repository root. Only the first step needs internet access, to download dependencies. After that, demos and tests run offline.
 
-policies/              Policy configuration (path allowlist, dependency allowlist, ...)
-scripts/               Demo, lint, quality-scan, coverage-report, export-artifacts
-docker/                Container entrypoint
-runs/                  Sample run outputs (event logs, gate results, reports)
-docs/                  Architecture, decisions, testing, AI SDLC artifacts
-```
+### Option A: Docker
 
-## API (shortener service)
+**1. Build the image** (once, about 3 minutes):
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/api/v1/links` | Create a short link (idempotent on normalized URL) |
-| `GET` | `/{code}` | Redirect to the target URL (302) |
-| `GET` | `/api/v1/links/{code}/stats` | Click statistics (total, last access, per-day) |
-
-See [shortener-service/openapi.yaml](shortener-service/openapi.yaml) for the full schema.
-
-## Building
-
-```bash
-make build             # shortener service + orchestrator (about 4-5 min first run)
-make test              # both test suites
-make demo-greenfield   # build the shortener from scratch with mock agents
-make demo-brownfield   # add link expiry to the existing service
-make demo-ambiguous    # handle "make links more secure" (vague requirement)
-make demo-bugfix       # fix a real SSRF bypass test-first
-
-# Shortener service only
-mvn -f shortener-service/pom.xml verify
-mvn -f shortener-service/pom.xml spring-boot:run
-curl -s -X POST http://localhost:8080/api/v1/links \
-  -H "Content-Type: application/json" \
-  -d '{"url":"https://example.com/some/very/long/path"}' | jq .
-
-# Docker (full system)
+```sh
 docker build -t agentic-sdlc .
-docker run --rm -it -v "$PWD/runs:/app/runs" agentic-sdlc demo-all
 ```
 
-## Running and testing scenarios
+**2. Run a demo:**
 
-### What each scenario demonstrates
-
-| Scenario | Requirement | Key mechanics |
-|----------|-------------|---------------|
-| **greenfield** | Build the URL shortener from an empty workspace | 9-node dependency graph, 3 human approvals, parallel wave execution, a real failing unit test rolled back and retried on attempt 2 |
-| **brownfield** | Add link expiry to the running service | Starts from the existing codebase (`copy:shortener-service`), impact analysis, risk-triggered escalation, regression gate guards existing behavior |
-| **ambiguous** | "Make links more secure and add some analytics" — intentionally vague | Clarification flow pauses the run for a human answer, then a dynamic graph patch re-plans the remaining nodes around the answer |
-| **bugfix** | SSRF bypass: short links accept `http://localhost./admin` | Test-first fix (defect-reproduction gate must fail before the fix, then pass after), rollback on a bad patch, release approval |
-
-Each scenario has a `workflow.yaml` that is the complete plan as data, and a `fixtures/` tree of what each mock agent proposes on each attempt (real code and real tests that the gates compile and run).
-
-### Run a demo (mock agents, no API key)
-
-Demo scripts drive the CLI automatically — they start the run, show the pending approval, approve it, resume, and repeat until done. Output lands in `runs/<scenario>-<timestamp>/`.
-
-```bash
-make demo-greenfield    # ~3-5 min; runs real Maven gates inside each wave
-make demo-brownfield
-make demo-ambiguous
-make demo-bugfix
-make demo-all           # all four in sequence
+```sh
+docker run --rm -it -v "$PWD/runs:/app/runs" agentic-sdlc demo-greenfield   # build the URL shortener from scratch
+docker run --rm -it -v "$PWD/runs:/app/runs" agentic-sdlc demo-brownfield   # add link expiry to the existing service
+docker run --rm -it -v "$PWD/runs:/app/runs" agentic-sdlc demo-ambiguous    # "make links more secure": clarify, then re-plan
+docker run --rm -it -v "$PWD/runs:/app/runs" agentic-sdlc demo-bugfix       # fix a real SSRF bypass test-first
+docker run --rm -it -v "$PWD/runs:/app/runs" agentic-sdlc demo-all          # all four, about 3 minutes
 ```
 
-After a demo you can inspect the run:
+**3. Run the tests** (shortener suite, then the orchestrator suite with the real-build scenario tests):
 
-```bash
-# Human-readable Markdown report (timeline, metrics, gate results, decision lineage)
-cat runs/greenfield-*/report.md
-
-# Every event in order (JSON)
-cat runs/greenfield-*/events.db   # SQLite; query with: sqlite3 runs/greenfield-*/events.db "select * from events"
-
-# Gate build logs (Maven output for compile, test, coverage gates)
-ls runs/greenfield-*/gate-logs/
+```sh
+docker run --rm agentic-sdlc test
 ```
 
-### Run the scenario tests (automated, in CI)
+Run `docker run --rm agentic-sdlc help` to list every task. The `-v "$PWD/runs:/app/runs"` mount keeps runs on your machine between commands; without it, each container starts with an empty `runs/`. Workflows and policies are baked into the image, so rebuild it after editing anything under `scenarios/` or `policies/`. The container runs as an unprivileged user with UID 1000, so on Linux the files it writes belong to the first host user; if your UID differs, make `runs/` writable for UID 1000.
 
-The scenario tests are JUnit integration tests in the orchestrator module. They use the same mock agents and real gates as the demo scripts, so they actually compile and run the generated code.
+### Option B: Local
 
-```bash
-# Run all tests (shortener service + orchestrator unit tests + all scenario integration tests)
-make test
+**1. Check the prerequisites and build** (the first build downloads dependencies):
 
-# Orchestrator tests only (unit tests + scenario integration tests)
-mvn -pl orchestrator verify
-
-# One scenario test class
-mvn -pl orchestrator -Dtest=GreenfieldScenarioTest test
-mvn -pl orchestrator -Dtest=BrownfieldScenarioTest test
-mvn -pl orchestrator -Dtest=AmbiguousScenarioTest test
-mvn -pl orchestrator -Dtest=BugfixScenarioTest test
-
-# Resilience tests (budget enforcement, circuit breaker, safe-stop, rollback)
-mvn -pl orchestrator -Dtest=ResilienceScenarioTest test
+```sh
+java -version    # must report 25
+mvn -version     # 3.9 or newer
+make build       # verifies the shortener baseline, then builds orchestrator/target/orchestrator.jar
 ```
 
-The scenario tests run concurrently by default (`@Execution(ExecutionMode.CONCURRENT)`). Each test creates a fresh temporary workspace and run directory, so they can all run in parallel safely.
+**2. Run a demo:**
 
-If a scenario test fails with `SAFE_STOPPED` when `PAUSED` is expected, the test harness copies `incident.md` and all gate logs to `orchestrator/target/scenario-incidents/` for diagnosis.
-
-### Run a live scenario (real Claude model)
-
-A live run calls the Claude API for every agent call. You are the human reviewer at every approval checkpoint: the CLI prints the diff, waits for your input, and continues.
-
-```bash
-# Prerequisites: ANTHROPIC_API_KEY and ANTHROPIC_MODEL must be set
-export ANTHROPIC_API_KEY=sk-ant-...
-export ANTHROPIC_MODEL=claude-opus-4-5
-
-# Greenfield (default)
-make live
-
-# Any scenario
-make live WORKFLOW=scenarios/brownfield/workflow.yaml
-make live WORKFLOW=scenarios/bugfix/workflow.yaml
-
-# Or drive the CLI directly after building the jar
-java -jar orchestrator/target/orchestrator.jar run scenarios/greenfield/workflow.yaml \
-  --run-id my-run --mode LIVE
-java -jar orchestrator/target/orchestrator.jar pending my-run
-java -jar orchestrator/target/orchestrator.jar approve my-run design \
-  --by alice --comment "Looks good"
-java -jar orchestrator/target/orchestrator.jar resume my-run
-java -jar orchestrator/target/orchestrator.jar report my-run
+```sh
+make demo-greenfield   # build the URL shortener from scratch
+make demo-brownfield   # add link expiry to the existing service
+make demo-ambiguous    # "make links more secure": clarify, then re-plan
+make demo-bugfix       # fix a real SSRF bypass test-first
+make demo-all          # all four, about 2 minutes with a warm Maven cache
 ```
 
-### Add or modify a scenario
+**3. Run the tests and scans:**
 
-```
-scenarios/<name>/
-  workflow.yaml                        # nodes, dependencies, gates, autonomy, budgets
-  fixtures/<node>/attempt<N>/          # what the mock agent proposes on attempt N
-    proposal.json                      # { rationale, derivedFrom, data }
-    src/...  or  docs/...              # files to be promoted into the workspace
-  fixtures/<node>/attempt<N>/          # attempt N+1 for retry cases
-  README.md                            # short description and walkthrough link
+```sh
+make test        # 135 shortener tests + 160 orchestrator tests (including the scenarios with real Maven gates)
+make live-smoke  # real-model bug-fix run that must reach the API (needs ANTHROPIC_API_KEY/ANTHROPIC_MODEL)
+make coverage    # docs/coverage.md: line and branch coverage of both projects, every class below 100%
+make lint        # actionlint, zizmor, shellcheck, gitleaks (full history), Trivy Dockerfile config
+make scan        # SAST, PMD/CPD, SonarQube (if SONAR_HOST_URL/SONAR_TOKEN are set), Trivy SCA and secrets, ZAP DAST
 ```
 
-To add a new attempt (e.g. to simulate a gate failure and retry), create `fixtures/<node>/attempt2/` alongside `attempt1/`. The mock agent picks the directory that matches the current attempt counter. A missing attempt directory counts as a failed agent call, which triggers a retry or safe-stop depending on `maxRetries`.
+`make lint` and `make scan` also need Docker, for the pinned scanner images. The same checks, all four demos, and the Docker image (a Trivy scan, then the full test suite and all four demos with no network) run in GitHub Actions on every push and pull request ([.github/workflows/ci.yml](.github/workflows/ci.yml)); SonarQube runs there when the `SONAR_HOST_URL` and `SONAR_TOKEN` secrets are set. Results are listed in [docs/testing.md](docs/testing.md#code-quality-and-security-scans). `make clean` removes build output and runs.
 
-To run the scenario test for a new scenario, create a test class in `orchestrator/src/test/java/com/example/agentic/scenarios/` following the pattern in `GreenfieldScenarioTest`. Each `assertThat(run.approveAndResume(...))` call corresponds to one human approval checkpoint.
+### What the demos show and where the results are
 
-## Orchestration model
+Each demo drives a full run step by step and prints every command it issues. Every approval is made as `demo-reviewer`; the engine never approves on its own. Each run writes to `runs/<runId>/`:
 
-See [docs/architecture.md](docs/architecture.md) and [docs/orchestration.md](docs/orchestration.md) for the full design including:
-- Agent dependency DAG with entry/exit gates
-- Human approval checkpoints (APPROVE_AFTER, ESCALATE_ON_RISK autonomy levels)
-- Bounded retries (3 attempts, exponential back-off), circuit breaker, safe-stop
-- Rollback via staging directories and pre-image records
-- SQLite event sourcing — every state transition is an immutable event
-- Dynamic re-planning when upstream outputs change
+- `report.md`: summary, workflow graph, timeline, metrics, approvals, lineage, gate results, and re-plan history
+- `workspace/`: the code the agents produced
+- `events.db`: the append-only event log that everything else is computed from
+- `incident.md`: only if the run safe-stopped
 
-## SDLC Artifacts
+### Driving a run yourself with the CLI
 
-| Artifact | Description |
-|----------|-------------|
-| [docs/requirements-agent.md](docs/requirements-agent.md) | User stories, acceptance criteria, ambiguity log |
-| [docs/ai-sdlc/user-stories.md](docs/ai-sdlc/user-stories.md) | User stories exported from real agent runs |
-| [docs/architecture.md](docs/architecture.md) | System architecture with component diagram |
-| [docs/orchestration.md](docs/orchestration.md) | Orchestration DAG, gates, governance model |
-| [docs/decisions.md](docs/decisions.md) | Architecture Decision Records (12 ADRs) |
-| [docs/scenarios.md](docs/scenarios.md) | Scenario walkthroughs (greenfield, brownfield, ambiguous) |
-| [docs/ai-sdlc/code-review.md](docs/ai-sdlc/code-review.md) | Code review results from real agent runs |
-| [docs/code-review-agent.md](docs/code-review-agent.md) | Manual review: all findings, resolutions, sign-off |
-| [docs/qa-agent.md](docs/qa-agent.md) | 135 tests, JaCoCo coverage, functional traceability matrix |
-| [docs/ai-sdlc/functional-coverage.md](docs/ai-sdlc/functional-coverage.md) | Functional coverage from real agent runs |
-| [docs/engineering-summary.md](docs/engineering-summary.md) | Service-level engineering summary |
-| [docs/system-engineering-summary.md](docs/system-engineering-summary.md) | System-level summary (orchestrator + service) |
-| [docs/testing.md](docs/testing.md) | Testing approach, coverage gaps, limitations |
-| [shortener-service/docs/design.md](shortener-service/docs/design.md) | Shortener service design, diagrams, key decisions |
-| [shortener-service/docs/operations.md](shortener-service/docs/operations.md) | Operations runbook |
-| [docs/sample-runs/](docs/sample-runs/) | Reports from real orchestrator runs |
+Define an `orchestrator` alias for the option you use:
 
-## Technology choices
+```sh
+# Option A: Docker
+alias orchestrator='docker run --rm -it -v "$PWD/runs:/app/runs" agentic-sdlc'
+# Option B: Local (after make build)
+alias orchestrator='java -jar orchestrator/target/orchestrator.jar'
+```
 
-| Concern | Choice | Reason |
-|---------|--------|--------|
-| Orchestrator | Java 25, no Spring | Minimal dependencies; records and pattern matching suit the domain |
-| State | SQLite event log | Audit-grade, resumable, single file, no external process |
-| Workflow | YAML DAG | Human-readable, diffable, version-controlled |
-| Agents | Claude API (Anthropic) | Live agents; fixture-driven mock agents for deterministic tests |
-| Shortener framework | Spring Boot 3.5 | Mature, testable, well-understood for REST + JDBC |
-| Code quality | SpotBugs, PMD, JaCoCo, ArchUnit | Full static analysis and coverage enforcement in CI |
+Then the commands are identical:
+
+```sh
+orchestrator run scenarios/greenfield/workflow.yaml --run-id my-run   # exits 10: paused for a human
+orchestrator pending my-run                                           # what needs approval, with the diff
+orchestrator approve my-run design --by alice --comment "Looks right"
+orchestrator resume my-run                                            # repeat pending/approve/resume until done
+orchestrator status my-run
+orchestrator report my-run
+```
+
+## CLI
+
+`orchestrator <command>` (options: `--runs-dir`, `--policies`, `--repo-root`, `--no-color`).
+
+| Command | Purpose |
+|---|---|
+| `run <workflow.yaml> [--run-id ID] [--mode MOCK\|LIVE]` | Validate the workflow and start a run with a live `[seq] node EVENT detail` trace |
+| `status <run>` | Node table with status, attempts, artifact and pending hashes |
+| `pending <run> [--max-diff-lines N]` | Waiting approvals (summary, risk reasons, files, unified diff, hash) and open questions |
+| `approve <run> <node> --by X --comment "..." [--hash H]` | Hash-bound approval; promotes the retained staged files |
+| `reject <run> <node> --by X --comment "..."` | Discard the pending artifact; the node re-runs with the comment as feedback |
+| `answer <run> <questionId> "<text>" --by X` | Answer a clarification (changing an answer later triggers invalidation) |
+| `resume <run>` | Continue after approvals or answers, a fixed safe-stop cause, or a crash; DONE nodes are never re-run |
+| `report <run>` | Write `report.md` and print the metrics table |
+| `lineage <run> <node\|hash>` | Print the decision chain back to the requirement |
+
+Exit codes: `0` completed, `10` paused for a human, `20` safe-stopped, `2` usage or validation error.
+
+Runs use **MOCK** mode by default: agents replay checked-in fixtures, so no API key or network is needed. **LIVE mode** (`run ... --mode LIVE`) puts all seven roles on a model: `requirements`, `analyst`, `architect`, `developer`, `tester`, `docs` and `reviewer`. The analyst's JavaParser scan stays real; the model reasons over it, and the `impact-files-exist` gate checks every claimed file against the scan. Live agents only *propose*: generated files go through exactly the same path scopes, policy gates, real `mvn` builds and human approvals as fixture output. A live attempt that fails its gates is rolled back and retried with the failure as feedback. When a node's retries run out, its fixture agent (`mock-<id>`) takes over, so a run still completes. Each model call's input and output tokens and its duration are recorded in `AGENT_CALLED`, and `status`, the trace and the report's metrics show the totals. LIVE mode needs `ANTHROPIC_API_KEY` and `ANTHROPIC_MODEL`, plus an optional `ANTHROPIC_MAX_TOKENS` (default 16000). Only `run` and `resume` call agents, so only they need the key: `status`, `pending`, `approve`, `reject`, `answer`, `report` and `lineage` work on a LIVE run without it. For LIVE, use the interactive runner, where **you** are the reviewer at every checkpoint; nothing is approved automatically:
+
+```sh
+export ANTHROPIC_API_KEY=... ANTHROPIC_MODEL=...
+make live WORKFLOW=scenarios/bugfix/workflow.yaml        # local
+docker run --rm -it -e ANTHROPIC_API_KEY -e ANTHROPIC_MODEL -v "$PWD/runs:/app/runs" agentic-sdlc live scenarios/bugfix/workflow.yaml
+```
+
+**Build gates are sandboxed.** Generated code is compiled and tested in a container when Docker is available: no network, read-only root filesystem, no capabilities, user `nobody`, memory/CPU/process limits, and a read-only view of the Maven cache. The staged sources are streamed in as an archive, so a build cannot change anything on your machine. `make build` pulls the image (`maven:3.9-eclipse-temurin-25`), and each run prints a line saying where its gates run. Without Docker the gates run on the host with the timeout and a stripped environment; set `build.sandbox.mode: DOCKER` in `policies/policies.yaml` to refuse that instead. Inside this project's own Docker image, gates run directly in that container.
+
+**One writer per run.** Commands that change a run (`run`, `resume`, `approve`, `reject`, `answer`) take an exclusive OS file lock on `runs/<id>/run.lock`. A second process trying to change the same run gets a clear error. Read-only commands (`status`, `pending`, `report`, `lineage`) never wait. Different runs are independent directories and can run in parallel.
+
+## Repository map
+
+| Path | Contents |
+|---|---|
+| `orchestrator/` | The engine (`core`), agent implementations (`agents`, `agents/live`) and the Picocli CLI (`cli`) |
+| `shortener-service/` | The URL shortener: Spring Boot 3.5, H2 and Flyway. A standalone project, and byte-identical to the greenfield scenario output |
+| `scenarios/{greenfield,brownfield,ambiguous,bugfix}/` | `workflow.yaml` (the plan as data) and `fixtures/` (the agents' checked-in outputs: real code and real tests) |
+| `policies/policies.yaml` | Budgets, per-agent path scopes, dependency allowlist, scanner patterns, risk thresholds, build sandbox |
+| `Dockerfile`, `docker/entrypoint.sh` | The self-contained image and its task runner |
+| `scripts/` | `demo-*.sh`, `live-run.sh`, `bless-baseline.sh`, `quality-scan.sh` |
+| `docs/` | [architecture](docs/architecture.md), [decisions](docs/decisions.md), [testing](docs/testing.md), [engineering summary](docs/engineering-summary.md), [scenario walkthroughs](docs/scenarios/) |
+| `docs/sample-runs/*/report.md` | Committed reports from the demo runs |
+| `docs/ai-sdlc/` | The AI SDLC artifacts exported from the sample runs, with an index mapping each deliverable to its agent and gate |
+| `docs/ai-assisted-development.md` | How AI assistance was used to build the system, what it caught, what it got wrong, and where humans stayed in control |
+| `docs/coverage.md` | Line and branch coverage of both projects, every class below 100% |
+| `runs/` | Run output (git-ignored): `events.db`, `workspace/`, `artifacts/`, `report.md`, `incident.md` |
+
+## Where to look first
+
+1. [docs/sample-runs/ambiguous/report.md](docs/sample-runs/ambiguous/report.md): before/after graphs, the invalidation cascade, and a revoked approval.
+2. [docs/architecture.md](docs/architecture.md): how one node executes, and the requirement-to-code-to-test traceability table.
+3. [NodeRunner.java](orchestrator/src/main/java/com/example/agentic/core/engine/NodeRunner.java) and [RunState.java](orchestrator/src/main/java/com/example/agentic/core/state/RunState.java): the node algorithm and the event fold.
