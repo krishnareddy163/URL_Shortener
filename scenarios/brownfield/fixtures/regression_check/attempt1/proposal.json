@@ -1,0 +1,10 @@
+{
+  "rationale": "Re-runs the complete pre-existing suite against the promoted implementation to prove v1 behavior is unchanged.",
+  "derivedFrom": [
+    "implement"
+  ],
+  "data": {
+    "suite": "full",
+    "purpose": "v1 behavior preserved"
+  }
+}

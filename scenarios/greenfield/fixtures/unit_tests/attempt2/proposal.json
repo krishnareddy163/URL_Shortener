@@ -1,0 +1,15 @@
+{
+  "rationale": "The unit-tests gate showed generatesSevenCharacterCodes expecting 8 characters while the design and CodeGenerator.LENGTH specify 7. Corrected the expectation; all other tests unchanged.",
+  "derivedFrom": [
+    "implement"
+  ],
+  "data": {
+    "covers": [
+      "CodeGenerator",
+      "UrlValidator",
+      "RateLimiter",
+      "ShortenerService"
+    ],
+    "fixedFrom": "attempt1 asserted code length 8"
+  }
+}

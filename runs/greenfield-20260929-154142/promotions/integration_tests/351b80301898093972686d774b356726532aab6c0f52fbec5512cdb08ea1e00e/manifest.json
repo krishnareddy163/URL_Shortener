@@ -1,0 +1,14 @@
+{
+  "src/test/java/com/example/shortener/api/ConfiguredBaseUrlIntegrationTest.java" : {
+    "after" : "4f99a823eac0f72d03080836bbad007801e73007f62272b98532de5ca9c4acbd",
+    "before" : "absent"
+  },
+  "src/test/java/com/example/shortener/api/LinkApiIntegrationTest.java" : {
+    "after" : "2a9d33f1fa37cfb33b13d3f72614b3351ca5c2807cf868db8764d5adf2fcf2ce",
+    "before" : "absent"
+  },
+  "src/test/java/com/example/shortener/api/AuditTrailIntegrationTest.java" : {
+    "after" : "b21227b984898582506d5f49b32e792f5e320e39772183242657f988f200bfd9",
+    "before" : "absent"
+  }
+}

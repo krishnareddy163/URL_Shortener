@@ -1,0 +1,15 @@
+{
+  "rationale": "Release notes for 1.0.0 summarizing capabilities and known limitations; release readiness requires the GO review and a human sign-off.",
+  "derivedFrom": [
+    "review"
+  ],
+  "data": {
+    "version": "1.0.0",
+    "checklist": [
+      "review GO",
+      "full suite green",
+      "docs updated",
+      "known limitations stated"
+    ]
+  }
+}

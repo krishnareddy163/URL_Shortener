@@ -1,0 +1,65 @@
+# Brownfield: "Links must be able to expire" on top of the committed v1 baseline.
+#
+# Initial plan:  analysis -> design -> implement -> {regression_check, new_tests} -> docs -> review -> release
+# The analyst's graph patch inserts db_migration between design and implement at runtime.
+name: brownfield
+requirement: >-
+  Links must be able to expire. Creating a link may specify an optional expiry instant; after it passes,
+  redirects must fail with 410 Gone. Links without an expiry must behave exactly as they do today.
+workspace: copy:shortener-service
+budgets: {maxTotalAttempts: 25, maxWallClockSeconds: 900, maxAgentCalls: 60}
+nodes:
+  - id: analysis
+    agent: analyst
+    exitGates: [artifact-metadata, impact-files-exist]
+    autonomy: AUTO
+
+  - id: design
+    agent: architect
+    dependsOn: [analysis]
+    entryGates: [path-allowlist]
+    exitGates: [artifact-metadata, design-diagrams, path-allowlist, schema-valid, secret-scan]
+    autonomy: ESCALATE_ON_RISK
+
+  - id: implement
+    agent: developer
+    dependsOn: [design]
+    entryGates: [path-allowlist]
+    exitGates: [artifact-metadata, path-allowlist, secret-scan, forbidden-api, dependency-allowlist, no-raw-ip-logging, compile, regression-tests]
+    autonomy: ESCALATE_ON_RISK
+    maxRetries: 2
+
+  - id: regression_check
+    agent: tester
+    task: "Prove nothing regressed: add tests only where needed to show that links without an expiry behave exactly as before. Do not test the new expiry behavior; new_tests does."
+    dependsOn: [implement]
+    exitGates: [artifact-metadata, regression-tests]
+    autonomy: AUTO
+
+  - id: new_tests
+    agent: tester
+    task: "Write tests for the new link expiry behavior, including 410 Gone after expiry."
+    dependsOn: [implement]
+    exitGates: [artifact-metadata, path-allowlist, secret-scan, unit-tests]
+    autonomy: AUTO
+
+  - id: docs
+    agent: docs
+    task: "Document link expiry in the README and docs. Do not write release notes; the release step does."
+    dependsOn: [regression_check, new_tests]
+    exitGates: [artifact-metadata, path-allowlist, secret-scan]
+    autonomy: AUTO
+
+  - id: review
+    agent: reviewer
+    dependsOn: [docs]
+    exitGates: [artifact-metadata, review-complete, regression-tests]
+    autonomy: AUTO
+
+  - id: release
+    agent: docs
+    task: "Write the release notes for version 1.1.0 in docs/release-notes.md."
+    dependsOn: [review]
+    entryGates: [review-go]
+    exitGates: [artifact-metadata, path-allowlist, secret-scan]
+    autonomy: APPROVE_AFTER

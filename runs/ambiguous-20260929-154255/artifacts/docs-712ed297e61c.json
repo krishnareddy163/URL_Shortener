@@ -1,0 +1,10 @@
+{
+  "hash" : "712ed297e61c426e86cd65a575287be8c5ed3648c7f905b64081d27a6ccff8c8",
+  "nodeId" : "docs",
+  "derivedFrom" : [ "implement@0908780e9b7925444ad848da576d6982ccd81c5cee7e1be242574af5890b62d0" ],
+  "rationale" : "Documents blocklist configuration, matching rules, the client-visible error, and the privacy stance of analytics.",
+  "files" : [ "docs/security.md" ],
+  "data" : {
+    "audience" : [ "operators", "API clients" ]
+  }
+}

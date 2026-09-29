@@ -1,0 +1,10 @@
+{
+  "openapi.yaml" : {
+    "after" : "55ec4d8b59ce14c48e01ba4e17c4275a807e698f79be1118c28d3dce08385f73",
+    "before" : "147a0cede6b90c69594d88b755a0f43c14ccc79411267304b1e2eabd014eb266"
+  },
+  "docs/design-expiry.md" : {
+    "after" : "20258b346b04c517c5e5a2ffd41444a8801cdae541302e9de06dadfbd6784bcb",
+    "before" : "absent"
+  }
+}

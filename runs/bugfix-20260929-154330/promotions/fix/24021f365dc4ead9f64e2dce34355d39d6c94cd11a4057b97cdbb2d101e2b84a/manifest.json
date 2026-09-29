@@ -1,0 +1,6 @@
+{
+  "src/main/java/com/example/shortener/service/HostClassifier.java" : {
+    "after" : "05a0eaf15227a623a0dbd724e57abaa6470d7b424360c08255b23f14dd702142",
+    "before" : "2d5c0be2da5b492e0edc690629469a219f750b3cbca124347c0e76dde661ffe7"
+  }
+}

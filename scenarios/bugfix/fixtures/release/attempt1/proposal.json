@@ -1,0 +1,15 @@
+{
+  "rationale": "Release notes for 1.0.1 (security fix). Release readiness: reproduction test green, full regression suite green, review GO.",
+  "derivedFrom": [
+    "review",
+    "docs"
+  ],
+  "data": {
+    "version": "1.0.1",
+    "checklist": [
+      "defect reproduced before the fix",
+      "regression suite green",
+      "review GO"
+    ]
+  }
+}

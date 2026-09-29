@@ -1,0 +1,14 @@
+{
+  "rationale": "Additive, backwards-compatible design: nullable expires_at, 410 on expired redirects, 400 for past expiry, contract updated. Idempotency and statistics semantics are specified explicitly.",
+  "derivedFrom": [
+    "analysis"
+  ],
+  "data": {
+    "risks": [
+      "irreversible migration",
+      "v1 regression",
+      "clock skew"
+    ],
+    "contractVersion": "1.1.0"
+  }
+}

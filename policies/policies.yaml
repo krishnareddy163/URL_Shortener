@@ -1,0 +1,121 @@
+# Governance policy for the agentic SDLC orchestrator.
+# Every value here is enforced by code in orchestrator/src/main/java/com/example/agentic/core/{policy,gate,engine}.
+
+# Default run budgets (R6). A workflow may override any of them under `budgets:`.
+budgets:
+  maxTotalAttempts: 25        # agent calls + human rejections
+  maxWallClockSeconds: 900    # active time only; waiting for humans is excluded
+  maxAgentCalls: 60
+
+# Change control: the only paths each agent may write (PathGuard, R1). An agent missing here cannot write.
+pathScopes:
+  requirements: []
+  analyst: []
+  reviewer: []
+  mock-requirements: []
+  mock-reviewer: []
+  architect:
+    - "openapi.yaml"
+    - "docs/**"
+    - "src/main/resources/db/migration/**"
+  developer:
+    - "pom.xml"
+    - "spotbugs-exclude.xml"
+    - "src/main/**"
+  tester:
+    - "src/test/**"
+  docs:
+    - "README.md"
+    - "docs/**"
+  # LIVE mode: each live agent falls back to a fixture agent with exactly the same scope.
+  mock-analyst: []
+  mock-architect:
+    - "openapi.yaml"
+    - "docs/**"
+    - "src/main/resources/db/migration/**"
+  mock-developer:
+    - "pom.xml"
+    - "spotbugs-exclude.xml"
+    - "src/main/**"
+  mock-tester:
+    - "src/test/**"
+  mock-docs:
+    - "README.md"
+    - "docs/**"
+
+# Security: dependencies a pom.xml change may add (groupId:artifactId).
+dependencyAllowlist:
+  - "org.springframework.boot:spring-boot-starter-web"
+  - "org.springframework.boot:spring-boot-starter-validation"
+  - "org.springframework.boot:spring-boot-starter-jdbc"
+  - "org.springframework.boot:spring-boot-starter-test"
+  - "org.awaitility:awaitility"
+  - "org.flywaydb:flyway-core"
+  - "com.h2database:h2"
+
+# Security: build plugins, plugin dependencies and parent POMs a pom.xml change may add (groupId:artifactId;
+# a plugin without a groupId is org.apache.maven.plugins). Plugins run code during the compile gate, before any
+# human approval. Adding repositories, plugin repositories or build extensions is always refused.
+buildAllowlist:
+  - "org.springframework.boot:spring-boot-starter-parent"
+  - "org.springframework.boot:spring-boot-maven-plugin"
+  - "org.apache.maven.plugins:maven-compiler-plugin"
+  - "org.apache.maven.plugins:maven-surefire-plugin"
+  - "org.apache.maven.plugins:maven-pmd-plugin"
+  - "com.github.spotbugs:spotbugs-maven-plugin"
+  - "com.h3xstream.findsecbugs:findsecbugs-plugin"
+  - "org.jacoco:jacoco-maven-plugin"
+  - "org.cyclonedx:cyclonedx-maven-plugin"
+
+# Security: applied to added lines only.
+secretPatterns:
+  - "\\b(AKIA|ASIA)[0-9A-Z]{16}\\b"
+  - "-----BEGIN [A-Z ]*PRIVATE KEY-----"
+  - "(?i)password\\s*=\\s*['\"]?[^\\s'\"$;{}]+"
+  - "(?i)api[_-]?key\\s*=\\s*['\"]?[A-Za-z0-9_\\-]{8,}"
+
+# Security: applied to added lines under src/main/** only.
+forbiddenApiPatterns:
+  - "Runtime\\s*\\.\\s*getRuntime\\s*\\(\\s*\\)\\s*\\.\\s*exec\\s*\\("
+  - "\\bProcessBuilder\\b"
+  - "\\bObjectInputStream\\b"
+  - "Class\\s*\\.\\s*forName\\s*\\(\\s*[^\"\\s)]"
+  - "\\bScriptEngine(Manager)?\\b"
+
+# Compliance: a log./logger. call must not contain these tokens.
+rawIpTokens:
+  - "getRemoteAddr"
+  - "remoteAddr"
+
+# Risk rules: any hit escalates an ESCALATE_ON_RISK node to human approval.
+risk:
+  diffSizeThreshold: 200
+  migrationGlobs:
+    - "**/db/migration/**"
+
+# Quality: test coverage for the test-coverage gate (the QA agent's report). The target is 100% line and branch
+# coverage. Every class below target is named in the report; a class may miss it only when it is listed under
+# exceptions with the reason, and the gate fails if overall coverage drops below the minimums.
+coverage:
+  target: 100
+  minimumLine: 98.5
+  minimumBranch: 100
+  exceptions:
+    com.example.shortener.ShortenerApplication: "main() only launches Spring Boot; tests start the application context through @SpringBootTest"
+    com.example.shortener.service.Sha256: "the NoSuchAlgorithmException handler cannot run: every Java platform must provide SHA-256"
+
+# Build sandbox for gates that execute generated code (R10).
+build:
+  command: "mvn"
+  timeoutSeconds: 120
+  mavenOpts: "-Xmx768m -XX:+UseSerialGC -XX:TieredStopAtLevel=1"
+  passEnv: ["PATH", "JAVA_HOME", "HOME"]
+  # Container isolation for gate builds (R10). AUTO: use the container when Docker and the image are available
+  # locally, else run on the host (inside this project's own Docker image, gates are already containerized).
+  # DOCKER: always; if the sandbox is unavailable the gate fails. NONE: host only.
+  sandbox:
+    mode: AUTO
+    image: "maven:3.9-eclipse-temurin-25"
+    memory: "2g"
+    cpus: "2"
+    pidsLimit: 512

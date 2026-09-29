@@ -1,0 +1,11 @@
+{
+  "rationale": "The first attempt special-cased the reported string, and the regression test showed api.localhost. and printer.local. still pass. The root cause is that every rule sees the raw host: now the absolute-name trailing dot is removed once, empty names and empty labels are rejected, and all rules run on the canonical name.",
+  "derivedFrom": [
+    "reproduce",
+    "refactor"
+  ],
+  "data": {
+    "kind": "bugfix",
+    "rootCauseFixed": true
+  }
+}

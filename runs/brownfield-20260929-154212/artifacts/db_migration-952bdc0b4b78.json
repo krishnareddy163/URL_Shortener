@@ -1,0 +1,12 @@
+{
+  "hash" : "952bdc0b4b782dfca33d778640ed44b9a34a6aa78134359686f8cd7470e6a907",
+  "nodeId" : "db_migration",
+  "derivedFrom" : [ "design@56656fd4d0e6edf66db5015dc14ed9feac35cc683e59f3deabae02120218b355" ],
+  "rationale" : "Additive migration adding a nullable expires_at column. No backfill and no default, so every existing link keeps v1 semantics.",
+  "files" : [ "src/main/resources/db/migration/V2__add_expiry.sql" ],
+  "data" : {
+    "migration" : "V2__add_expiry.sql",
+    "reversible" : false,
+    "backfill" : "none"
+  }
+}

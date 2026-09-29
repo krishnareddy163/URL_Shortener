@@ -1,0 +1,6 @@
+{
+  "src/main/java/com/example/shortener/service/UrlValidator.java" : {
+    "after" : "9a4bf66c3d21b618573de3b8d8fe43743a01bb5b7f851fbd71173e294e161bed",
+    "before" : "0ec4407269eed365193eafbefdab8ae4e79c73a275a8f1769ab469ab290dbb59"
+  }
+}

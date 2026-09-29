@@ -1,0 +1,61 @@
+# Ambiguous: "Make links more secure and add some analytics".
+#
+# requirements -> design -> implement -+-> tests -+-> review -> release
+#                                      +-> docs  -+
+# requirements raises a blocking question (q-secure). Every downstream node selects its fixture
+# variant from the answer, so changing the answer invalidates and re-executes the whole chain.
+name: ambiguous
+requirement: Make links more secure and add some analytics.
+workspace: copy:shortener-service
+budgets: {maxTotalAttempts: 30, maxWallClockSeconds: 900, maxAgentCalls: 60}
+nodes:
+  - id: requirements
+    agent: requirements
+    exitGates: [artifact-metadata, requirements-complete]
+    autonomy: AUTO
+
+  - id: design
+    agent: architect
+    dependsOn: [requirements]
+    fixtureVariantFrom: q-secure
+    exitGates: [artifact-metadata, design-diagrams, path-allowlist, schema-valid, secret-scan]
+    autonomy: AUTO
+
+  - id: implement
+    agent: developer
+    dependsOn: [design]
+    fixtureVariantFrom: q-secure
+    entryGates: [path-allowlist]
+    exitGates: [artifact-metadata, path-allowlist, secret-scan, forbidden-api, dependency-allowlist, no-raw-ip-logging, compile]
+    autonomy: ESCALATE_ON_RISK
+
+  - id: tests
+    agent: tester
+    dependsOn: [implement]
+    fixtureVariantFrom: q-secure
+    exitGates: [artifact-metadata, path-allowlist, secret-scan, unit-tests]
+    autonomy: AUTO
+
+  - id: docs
+    agent: docs
+    task: "Document the new behavior in the README and docs. Do not write release notes; the release step does."
+    dependsOn: [implement]
+    fixtureVariantFrom: q-secure
+    exitGates: [artifact-metadata, path-allowlist, secret-scan]
+    autonomy: AUTO
+
+  - id: review
+    agent: reviewer
+    dependsOn: [tests, docs]
+    fixtureVariantFrom: q-secure
+    exitGates: [artifact-metadata, review-complete, regression-tests]
+    autonomy: AUTO
+
+  - id: release
+    agent: docs
+    task: "Write the release notes for this release in docs/release-notes.md."
+    dependsOn: [review]
+    fixtureVariantFrom: q-secure
+    entryGates: [review-go]
+    exitGates: [artifact-metadata, path-allowlist, secret-scan]
+    autonomy: APPROVE_AFTER

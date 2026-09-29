@@ -1,0 +1,10 @@
+{
+  "hash" : "cd35e2d7252014a61ab48e2bc0adc27dd12628170e87c3b3ff6b5e918af5082b",
+  "nodeId" : "docs",
+  "derivedFrom" : [ "design@1d0b735a06151f33e1ebbae3d92173a1304be618cc2506122a258d238e24bf29" ],
+  "rationale" : "Operator- and developer-facing documentation: how to run and test, configuration, observability counters and failure behavior.",
+  "files" : [ "README.md", "docs/operations.md" ],
+  "data" : {
+    "audience" : [ "developers", "operators" ]
+  }
+}

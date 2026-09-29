@@ -1,0 +1,36 @@
+{
+  "rationale": "Layered design (api/service/domain/storage) with uniqueness enforced by the database, validation at creation time, and an asynchronous bounded click pipeline. The OpenAPI contract and V1 schema make the design reviewable before code exists.",
+  "derivedFrom": [
+    "requirements"
+  ],
+  "data": {
+    "risks": [
+      {
+        "id": "R1",
+        "risk": "SSRF through redirect targets",
+        "mitigation": "literal-IP and local-name checks; DNS rebinding documented as out of scope"
+      },
+      {
+        "id": "R2",
+        "risk": "Code collisions",
+        "mitigation": "unique constraint plus bounded retry (5)"
+      },
+      {
+        "id": "R3",
+        "risk": "Analytics loss under load",
+        "mitigation": "bounded queue with drop counter; accepted trade-off"
+      },
+      {
+        "id": "R4",
+        "risk": "Abuse of link creation",
+        "mitigation": "per-client token bucket, hashed client key"
+      }
+    ],
+    "decisions": [
+      "7-char base62 codes",
+      "url_hash unique index for idempotency",
+      "UTC day buckets",
+      "error envelope with UPPER_SNAKE codes"
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "hash" : "114649da877e446bda3966405dd53fb0c98b099a83a4bd8b1788dac3ff25d84d",
+  "nodeId" : "refactor",
+  "derivedFrom" : [ "analysis@509c9fa0de12343875ce646aa7e0b0705c144385cb917deb989528a969786dae" ],
+  "rationale" : "Behavior-preserving extraction: host classification moves from UrlValidator into HostClassifier with identical logic (the defect included, on purpose), so the fix becomes a single-class change. The full existing suite runs unchanged in the regression gate to prove equivalence.",
+  "files" : [ "src/main/java/com/example/shortener/service/HostClassifier.java", "src/main/java/com/example/shortener/service/UrlValidator.java" ],
+  "data" : {
+    "moved" : [ "isNonPublicHost", "isNumericHost", "isNonPublicIpv4", "isNonPublicIpv6" ],
+    "behaviorChange" : false,
+    "kind" : "refactor"
+  }
+}

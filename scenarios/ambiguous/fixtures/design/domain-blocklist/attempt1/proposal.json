@@ -1,0 +1,10 @@
+{
+  "rationale": "Operator-controlled domain blocklist checked at creation; backwards compatible for unblocked hosts.",
+  "derivedFrom": [
+    "requirements"
+  ],
+  "data": {
+    "measure": "domain-blocklist",
+    "apiChange": "blocked hosts now 400"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "docs/operations.md" : {
+    "before" : "absent",
+    "after" : "5897d31d205fe3e8158cdb21c9fea59a582df2e89b1996f1ba45a31bc44adbcc"
+  },
+  "README.md" : {
+    "before" : "absent",
+    "after" : "91489e91dd28622c6545b46bda924990334e37648b8a6c9c36d95a15428f7be2"
+  }
+}

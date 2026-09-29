@@ -1,0 +1,10 @@
+{
+  "rationale": "Rejects the reported input localhost. by adding it to the local-name check.",
+  "derivedFrom": [
+    "reproduce",
+    "refactor"
+  ],
+  "data": {
+    "kind": "bugfix"
+  }
+}

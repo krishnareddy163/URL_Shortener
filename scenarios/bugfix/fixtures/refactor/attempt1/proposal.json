@@ -1,0 +1,16 @@
+{
+  "rationale": "Behavior-preserving extraction: host classification moves from UrlValidator into HostClassifier with identical logic (the defect included, on purpose), so the fix becomes a single-class change. The full existing suite runs unchanged in the regression gate to prove equivalence.",
+  "derivedFrom": [
+    "analysis"
+  ],
+  "data": {
+    "kind": "refactor",
+    "behaviorChange": false,
+    "moved": [
+      "isNonPublicHost",
+      "isNumericHost",
+      "isNonPublicIpv4",
+      "isNonPublicIpv6"
+    ]
+  }
+}

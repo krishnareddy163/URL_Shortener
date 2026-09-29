@@ -1,0 +1,12 @@
+{
+  "rationale": "Documents the host rules, including the absolute-name case the fix covers, for API clients and reviewers.",
+  "derivedFrom": [
+    "fix"
+  ],
+  "data": {
+    "audience": [
+      "API clients",
+      "security reviewers"
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "hash" : "983a298505b318d54f27532966f528f2e2894f8b928cd3d728ce328de86befa6",
+  "nodeId" : "review",
+  "derivedFrom" : [ "docs@795abf6e684a424cf4cc58cad4ffc29b0e7c751a8a2acb53776444e1cea4169d" ],
+  "rationale" : "Reviewed the expiry change: additive migration approved, v1 suite green, new behavior covered by tests. Full suite re-run in this gate.",
+  "files" : [ ],
+  "data" : {
+    "reviewedFiles" : [ "README.md", "docs/design-expiry.md", "openapi.yaml", "src/main/java/com/example/shortener/api/ApiExceptionHandler.java", "src/main/java/com/example/shortener/api/CreateLinkRequest.java", "src/main/java/com/example/shortener/api/LinkController.java", "src/main/java/com/example/shortener/api/LinkResponse.java", "src/main/java/com/example/shortener/domain/ShortLink.java", "src/main/java/com/example/shortener/service/ErrorCode.java", "src/main/java/com/example/shortener/service/ShortenerService.java", "src/main/java/com/example/shortener/storage/JdbcLinkRepository.java", "src/main/java/com/example/shortener/storage/LinkRepository.java", "src/main/resources/db/migration/V2__add_expiry.sql", "src/test/java/com/example/shortener/api/LinkExpiryIntegrationTest.java", "src/test/java/com/example/shortener/domain/ShortLinkExpiryTest.java" ],
+    "findings" : [ {
+      "severity" : "LOW",
+      "file" : "src/main/java/com/example/shortener/service/ShortenerService.java",
+      "message" : "Expired links remain in storage; add a cleanup job if volume grows",
+      "status" : "DEFERRED",
+      "resolution" : "Follow-up: add a cleanup job when link volume grows; expired links cost only storage and are never served."
+    } ],
+    "recommendation" : "GO"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "rationale": "Tests for blocklist matching (exact, subdomain, case, lookalikes) and end-to-end 400 for blocked hosts; v1 validator tests remain unchanged and must still pass.",
+  "derivedFrom": [
+    "implement"
+  ],
+  "data": {
+    "covers": [
+      "DomainBlocklist",
+      "blocked host 400"
+    ]
+  }
+}

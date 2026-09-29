@@ -1,0 +1,15 @@
+{
+  "rationale": "New tests for expiry: redirect before and at expiry (410), links without expiry unchanged forever, invalid expiry rejected, and idempotency with expiry. A separate H2 database keeps the new context isolated from v1 tests.",
+  "derivedFrom": [
+    "implement",
+    "design"
+  ],
+  "data": {
+    "covers": [
+      "410 LINK_EXPIRED",
+      "400 INVALID_EXPIRY",
+      "null expiry == v1",
+      "idempotency with expiry"
+    ]
+  }
+}

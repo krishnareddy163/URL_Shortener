@@ -1,0 +1,10 @@
+{
+  "hash" : "351b80301898093972686d774b356726532aab6c0f52fbec5512cdb08ea1e00e",
+  "nodeId" : "integration_tests",
+  "derivedFrom" : [ "implement@6f8e251e61b6c539191d52978c3859c7aa00d949401722dc668b8fa84f88073a", "design@1d0b735a06151f33e1ebbae3d92173a1304be618cc2506122a258d238e24bf29" ],
+  "rationale" : "MockMvc integration tests against a real H2 database covering create/redirect, 404, idempotency, alias conflicts, invalid input, rate limiting and per-day statistics with a controllable clock.",
+  "files" : [ "src/test/java/com/example/shortener/api/AuditTrailIntegrationTest.java", "src/test/java/com/example/shortener/api/ConfiguredBaseUrlIntegrationTest.java", "src/test/java/com/example/shortener/api/LinkApiIntegrationTest.java" ],
+  "data" : {
+    "covers" : [ "POST /api/v1/links", "GET /{code}", "GET /api/v1/links/{code}/stats" ]
+  }
+}

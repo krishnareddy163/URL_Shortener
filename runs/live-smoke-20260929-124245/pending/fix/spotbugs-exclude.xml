@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Reviewed SpotBugs/FindSecBugs suppressions. Each entry is scoped to specific classes and bug patterns and
+  carries its justification. Everything not listed here fails the build.
+-->
+<FindBugsFilter>
+  <!--
+    Spring singletons receive their collaborators (repository, services, JdbcTemplate) by constructor
+    injection. These are shared, container-managed objects; copying them would break dependency injection.
+    Data records (LinkStats, ShortLink, ...) are NOT excluded.
+  -->
+  <Match>
+    <Or>
+      <Class name="com.example.shortener.api.LinkController"/>
+      <Class name="com.example.shortener.service.ShortenerService"/>
+      <Class name="com.example.shortener.service.ClickRecorder"/>
+      <Class name="com.example.shortener.storage.JdbcLinkRepository"/>
+    </Or>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <!--
+    SPRING_ENDPOINT is an informational marker meaning "this is an HTTP entry point; review its inputs".
+    Reviewed: bodies are bean-validated, URLs and aliases go through UrlValidator/AliasValidator, path codes
+    are constrained by the route regex, and every error uses the sanitized envelope. DAST covers them too.
+  -->
+  <Match>
+    <Class name="com.example.shortener.api.LinkController"/>
+    <Bug pattern="SPRING_ENDPOINT"/>
+  </Match>
+</FindBugsFilter>

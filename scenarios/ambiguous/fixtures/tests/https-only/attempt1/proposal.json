@@ -1,0 +1,11 @@
+{
+  "rationale": "Updated validator tests to the HTTPS-only rule (http inputs now rejected) and added an explicit http rejection test; all other behavior still asserted.",
+  "derivedFrom": [
+    "implement"
+  ],
+  "data": {
+    "covers": [
+      "https-only scheme rule"
+    ]
+  }
+}

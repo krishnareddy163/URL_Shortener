@@ -1,0 +1,19 @@
+{
+  "rationale": "Implemented the approved design: Spring Boot web + JDBC + Flyway on H2, service rules exactly as specified, and a global error envelope. The pom.xml and the size of the change require human approval under policy.",
+  "derivedFrom": [
+    "design"
+  ],
+  "data": {
+    "components": [
+      "LinkController",
+      "ApiExceptionHandler",
+      "ShortenerService",
+      "UrlValidator",
+      "AliasValidator",
+      "CodeGenerator",
+      "RateLimiter",
+      "ClickRecorder",
+      "JdbcLinkRepository"
+    ]
+  }
+}

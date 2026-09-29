@@ -1,0 +1,11 @@
+{
+  "rationale": "Additive migration adding a nullable expires_at column. No backfill and no default, so every existing link keeps v1 semantics.",
+  "derivedFrom": [
+    "design"
+  ],
+  "data": {
+    "migration": "V2__add_expiry.sql",
+    "reversible": false,
+    "backfill": "none"
+  }
+}

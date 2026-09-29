@@ -1,0 +1,11 @@
+{
+  "rationale": "Documents the HTTPS-only policy, the error clients will see, and the privacy stance of analytics.",
+  "derivedFrom": [
+    "implement"
+  ],
+  "data": {
+    "audience": [
+      "API clients"
+    ]
+  }
+}

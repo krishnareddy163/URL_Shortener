@@ -1,0 +1,14 @@
+{
+  "rationale": "MockMvc integration tests against a real H2 database covering create/redirect, 404, idempotency, alias conflicts, invalid input, rate limiting and per-day statistics with a controllable clock.",
+  "derivedFrom": [
+    "implement",
+    "design"
+  ],
+  "data": {
+    "covers": [
+      "POST /api/v1/links",
+      "GET /{code}",
+      "GET /api/v1/links/{code}/stats"
+    ]
+  }
+}

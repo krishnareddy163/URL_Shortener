@@ -1,0 +1,10 @@
+{
+  "rationale": "Enforce HTTPS-only destinations at creation time; smallest change that meets the chosen meaning of 'secure', no schema impact.",
+  "derivedFrom": [
+    "requirements"
+  ],
+  "data": {
+    "measure": "https-only",
+    "apiChange": "http URLs now 400"
+  }
+}

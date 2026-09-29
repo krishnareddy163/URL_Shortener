@@ -1,0 +1,10 @@
+{
+  "hash" : "d7604889ea84dba176b44b02d473501b1094b1e356fd2a3740b9b3262a505bca",
+  "nodeId" : "reproduce",
+  "derivedFrom" : [ "analysis@509c9fa0de12343875ce646aa7e0b0705c144385cb917deb989528a969786dae", "refactor@114649da877e446bda3966405dd53fb0c98b099a83a4bd8b1788dac3ff25d84d" ],
+  "rationale" : "Regression test written before the fix. It must fail on the current code (the reproduces-defect gate checks that it fails, compiles, and breaks nothing else), and it also pins that public absolute names such as example.com. stay valid.",
+  "files" : [ "src/test/java/com/example/shortener/service/TrailingDotHostTest.java" ],
+  "data" : {
+    "cases" : [ "localhost.", "LOCALHOST.", "api.localhost.", "printer.local.", "nas.local.:8443", "example.com. (accepted)" ]
+  }
+}

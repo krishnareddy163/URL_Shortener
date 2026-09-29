@@ -1,0 +1,63 @@
+# Bug fix on the committed v1 baseline: a real SSRF bypass through absolute host names.
+#
+# Plan: analysis -> refactor -> reproduce -> fix -> {review, docs} -> release
+# "Make the change easy, then make the easy change": the refactor is proven behavior-preserving by the unchanged
+# suite, the reproduction test is proven to fail before any fix exists, and the fix is proven by that same test.
+name: bugfix
+requirement: >-
+  Security bug report: POST /api/v1/links accepts http://localhost./admin and http://printer.local./, so a short
+  link can redirect clients to local hosts. Fix it without changing any other behavior.
+workspace: copy:shortener-service
+budgets: {maxTotalAttempts: 20, maxWallClockSeconds: 900, maxAgentCalls: 40}
+nodes:
+  - id: analysis
+    agent: analyst
+    task: "Locate the defect's root cause and every file it involves. Change nothing."
+    exitGates: [artifact-metadata, impact-files-exist]
+    autonomy: AUTO
+
+  - id: refactor
+    agent: developer
+    task: "Behavior-preserving refactor only: restructure the code so the fix will be small and obvious. Do NOT fix the defect; it must still be present afterwards so the next step can reproduce it, and every existing test must pass unchanged."
+    dependsOn: [analysis]
+    entryGates: [path-allowlist]
+    exitGates: [artifact-metadata, path-allowlist, secret-scan, forbidden-api, compile, regression-tests]
+    autonomy: ESCALATE_ON_RISK
+
+  - id: reproduce
+    agent: tester
+    task: "Write a regression test for the reported defect. It must compile and FAIL on the current code, on an assertion, because the defect is not fixed yet."
+    dependsOn: [refactor]
+    exitGates: [artifact-metadata, path-allowlist, secret-scan, reproduces-defect]
+    autonomy: AUTO
+
+  - id: fix
+    agent: developer
+    task: "Fix the defect with the smallest change to production code, so the reproduction test passes and every other test still passes. Do not edit tests."
+    dependsOn: [reproduce]
+    entryGates: [path-allowlist]
+    exitGates: [artifact-metadata, path-allowlist, secret-scan, forbidden-api, no-raw-ip-logging, compile, regression-tests]
+    autonomy: APPROVE_AFTER
+    maxRetries: 2
+
+  - id: review
+    agent: reviewer
+    task: "Review the fix and its tests for correctness and security, and recommend GO or NO_GO."
+    dependsOn: [fix]
+    exitGates: [artifact-metadata, review-complete, regression-tests]
+    autonomy: AUTO
+
+  - id: docs
+    agent: docs
+    task: "Update the documentation for the fixed behavior. Do not write release notes; the release step does."
+    dependsOn: [fix]
+    exitGates: [artifact-metadata, path-allowlist, secret-scan]
+    autonomy: AUTO
+
+  - id: release
+    agent: docs
+    task: "Write the release notes for patch release 1.0.1 in docs/release-notes.md."
+    dependsOn: [review, docs]
+    entryGates: [review-go]
+    exitGates: [artifact-metadata, path-allowlist, secret-scan]
+    autonomy: APPROVE_AFTER

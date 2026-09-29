@@ -1,0 +1,14 @@
+{
+  "rationale": "Unit tests for code generation, URL validation, rate limiting and the create/resolve rules, using injected clocks and randomness.",
+  "derivedFrom": [
+    "implement"
+  ],
+  "data": {
+    "covers": [
+      "CodeGenerator",
+      "UrlValidator",
+      "RateLimiter",
+      "ShortenerService"
+    ]
+  }
+}

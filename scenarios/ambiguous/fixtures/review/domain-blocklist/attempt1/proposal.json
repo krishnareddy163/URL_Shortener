@@ -1,0 +1,28 @@
+{
+  "rationale": "Blocklist change is backwards compatible and tested at unit and API level; the full suite passes in this gate.",
+  "derivedFrom": [
+    "tests",
+    "docs"
+  ],
+  "data": {
+    "reviewedFiles": [
+      "docs/design-security.md",
+      "docs/security.md",
+      "src/main/java/com/example/shortener/service/DomainBlocklist.java",
+      "src/main/java/com/example/shortener/service/UrlValidator.java",
+      "src/main/resources/application.properties",
+      "src/test/java/com/example/shortener/api/BlocklistIntegrationTest.java",
+      "src/test/java/com/example/shortener/service/DomainBlocklistTest.java"
+    ],
+    "findings": [
+      {
+        "severity": "MEDIUM",
+        "file": "src/main/java/com/example/shortener/service/DomainBlocklist.java",
+        "message": "Static list only; plan a reloadable source or reputation feed",
+        "status": "ACCEPTED",
+        "resolution": "Restart-to-reload is an accepted prototype trade-off in docs/design-security.md; a reloadable source is the planned follow-up."
+      }
+    ],
+    "recommendation": "GO"
+  }
+}

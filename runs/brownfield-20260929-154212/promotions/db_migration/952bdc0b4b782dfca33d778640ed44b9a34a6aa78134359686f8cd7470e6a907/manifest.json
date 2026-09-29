@@ -1,0 +1,6 @@
+{
+  "src/main/resources/db/migration/V2__add_expiry.sql" : {
+    "before" : "absent",
+    "after" : "09fa8cbe7eda80d6f266c2e9ce9772aff5a82dcaebb4e10c58fd1720ed5dc908"
+  }
+}

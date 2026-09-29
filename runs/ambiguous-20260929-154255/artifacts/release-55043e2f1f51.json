@@ -1,0 +1,11 @@
+{
+  "hash" : "55043e2f1f5107d0fd4e0a127c00cdb55a3531101ef63108f132c02d08d83262",
+  "nodeId" : "release",
+  "derivedFrom" : [ "review@5e41ff19b1ac169f4768210ffd1787a34d18470bd7a8275acf2381ef576b228a" ],
+  "rationale" : "Release notes for the domain blocklist.",
+  "files" : [ "docs/release-notes.md" ],
+  "data" : {
+    "measure" : "domain-blocklist",
+    "version" : "1.1.0"
+  }
+}

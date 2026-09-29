@@ -1,0 +1,23 @@
+{
+  "rationale": "Security review of the fix: root cause addressed in one place, reproduction test now green, refactor proven behavior-preserving by the unchanged suite, full suite re-run in this gate.",
+  "derivedFrom": [
+    "fix"
+  ],
+  "data": {
+    "reviewedFiles": [
+      "src/main/java/com/example/shortener/service/HostClassifier.java",
+      "src/main/java/com/example/shortener/service/UrlValidator.java",
+      "src/test/java/com/example/shortener/service/TrailingDotHostTest.java"
+    ],
+    "findings": [
+      {
+        "severity": "LOW",
+        "file": "src/main/java/com/example/shortener/service/HostClassifier.java",
+        "message": "DNS rebinding remains out of scope (names are not resolved); unchanged documented limitation",
+        "status": "ACCEPTED",
+        "resolution": "Unchanged documented limitation; the fix neither widens nor narrows it."
+      }
+    ],
+    "recommendation": "GO"
+  }
+}

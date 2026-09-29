@@ -1,0 +1,83 @@
+# Greenfield: build the core URL shortener from an empty workspace.
+#
+# requirements -> design -+-> implement -+-> unit_tests --------+-> qa_report -+
+#                         |              +-> integration_tests -+              +-> review -> release
+#                         +-> docs ---------------------------------------------+
+#                         +-> security_review ----------------------------------+
+name: greenfield
+requirement: >-
+  Build a URL shortener service: create short links (with an optional custom alias), redirect by code,
+  and report click statistics. It must not become an SSRF or abuse vector, must rate-limit link creation,
+  and must never log personal data.
+workspace: empty
+budgets: {maxTotalAttempts: 25, maxWallClockSeconds: 900, maxAgentCalls: 60}
+nodes:
+  - id: requirements
+    agent: requirements
+    exitGates: [artifact-metadata, requirements-complete]
+    autonomy: AUTO
+
+  - id: design
+    agent: architect
+    dependsOn: [requirements]
+    entryGates: [path-allowlist]
+    exitGates: [artifact-metadata, design-diagrams, path-allowlist, schema-valid, secret-scan]
+    autonomy: APPROVE_AFTER
+
+  - id: implement
+    agent: developer
+    dependsOn: [design]
+    entryGates: [path-allowlist]
+    exitGates: [artifact-metadata, path-allowlist, secret-scan, forbidden-api, dependency-allowlist, no-raw-ip-logging, compile]
+    autonomy: ESCALATE_ON_RISK
+
+  - id: unit_tests
+    agent: tester
+    task: "Write unit tests for the service and validation classes."
+    dependsOn: [implement]
+    exitGates: [artifact-metadata, path-allowlist, secret-scan, unit-tests]
+    autonomy: AUTO
+    maxRetries: 2
+
+  - id: integration_tests
+    agent: tester
+    task: "Write MockMvc integration tests for the HTTP API; the unit tests already exist."
+    dependsOn: [implement]
+    exitGates: [artifact-metadata, path-allowlist, secret-scan, unit-tests]
+    autonomy: AUTO
+
+  - id: qa_report
+    agent: tester
+    task: "QA report: map every acceptance criterion to the unit and integration tests that prove it (functionalCoverage), and propose no files. The test-coverage gate measures line and branch coverage against the 100% target and names every class below it."
+    dependsOn: [unit_tests, integration_tests]
+    exitGates: [artifact-metadata, functional-coverage, test-coverage]
+    autonomy: AUTO
+
+  - id: docs
+    agent: docs
+    task: "Write the README and docs for the service. Do not write release notes; the release step does."
+    dependsOn: [design]
+    exitGates: [artifact-metadata, path-allowlist, secret-scan]
+    autonomy: AUTO
+
+  - id: security_review
+    agent: reviewer
+    task: "Security review only: SSRF, injection, secrets, personal data in logs and rate limiting."
+    dependsOn: [design]
+    exitGates: [artifact-metadata, review-complete]
+    autonomy: AUTO
+
+  - id: review
+    agent: reviewer
+    task: "General code review: correctness, design and test coverage; the security review already happened."
+    dependsOn: [qa_report, docs, security_review]
+    exitGates: [artifact-metadata, review-complete, regression-tests]
+    autonomy: AUTO
+
+  - id: release
+    agent: docs
+    task: "Write the release notes for version 1.0.0 in docs/release-notes.md."
+    dependsOn: [review]
+    entryGates: [review-go]
+    exitGates: [artifact-metadata, path-allowlist, secret-scan]
+    autonomy: APPROVE_AFTER

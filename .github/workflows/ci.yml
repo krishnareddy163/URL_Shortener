@@ -1,5 +1,6 @@
-# Continuous integration: build, test, static analysis, security scan, and Docker image build on
-# every push and pull request. Runners are pinned to ubuntu-24.04.
+# Continuous integration: the same checks as `make lint` and `make scan`, every demo, and the Docker image (scanned,
+# then tested and demoed with no network) on each push and pull request; a LIVE smoke test on pushes to main and
+# on manual dispatch. Runners are pinned to ubuntu-24.04 so an image migration is a deliberate change.
 name: ci
 
 on:
@@ -11,20 +12,40 @@ on:
 permissions:
   contents: read
 
+env:
+  SANDBOX_IMAGE: maven:3.9-eclipse-temurin-25
+
 jobs:
-  build:
-    name: Build, test, SAST, SCA, and coverage
+  lint:
+    name: Lint and static security (actionlint, zizmor, shellcheck, gitleaks, Trivy config)
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 10
+    # A newer push supersedes this job; live-smoke has its own group and is never cancelled mid-run.
     concurrency:
-      group: ci-build-${{ github.ref }}
+      group: ci-lint-${{ github.ref }}
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # gitleaks scans the whole history
+          persist-credentials: false
+      - name: Static checks
+        run: scripts/lint.sh
+
+  quality:
+    name: Build, test, SAST, SCA, secrets, DAST, demos
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    # A newer push supersedes this job; live-smoke has its own group and is never cancelled mid-run.
+    concurrency:
+      group: ci-quality-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
           distribution: temurin
           java-version: "25"
@@ -34,58 +55,141 @@ jobs:
         run: |
           java -version
           mvn -version
+          docker version --format 'docker {{.Server.Version}}'
 
-      # Strict build (-Werror), SpotBugs + FindSecBugs, PMD + CPD, all tests, JaCoCo floor,
-      # CycloneDX SBOM, Trivy SCA on the SBOM.
-      - name: mvn verify (tests + SAST + coverage)
-        run: mvn -B verify
+      - name: Pull the gate sandbox image
+        run: docker pull -q "$SANDBOX_IMAGE"
 
-      - name: Trivy SCA — scan the CycloneDX SBOM for known CVEs
-        run: |
-          docker run --rm \
-            -v "${{ github.workspace }}/target/classes/META-INF/sbom:/sbom:ro" \
-            aquasec/trivy:0.74.0 sbom --severity HIGH,CRITICAL --exit-code 1 /sbom/application.cdx.json
+      # Strict builds (-Werror), SpotBugs + FindSecBugs, PMD + CPD, all tests (build gates run in the container
+      # sandbox), JaCoCo, CycloneDX SBOMs, Trivy SCA and secret scan, OWASP ZAP API scan. SonarQube runs only when
+      # the SONAR_HOST_URL and SONAR_TOKEN secrets are configured.
+      - name: Quality and security scan
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: scripts/quality-scan.sh
 
-      - name: Upload test and coverage reports
+      # Line and branch coverage of both projects against the 100% target, naming every class below it.
+      - name: Coverage inventory
+        run: python3 scripts/coverage-report.py | tee target/quality/coverage.md
+
+      - name: Demos (all four scenarios, MOCK mode, real gates)
+        run: scripts/demo-all.sh
+
+      - name: Upload reports
         if: always()
-        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: reports
           if-no-files-found: ignore
           path: |
-            target/site/jacoco/
-            target/surefire-reports/
+            runs/*/report.md
+            runs/*/incident.md
+            target/quality/
+            orchestrator/target/site/jacoco/
+            shortener-service/target/site/jacoco/
+            orchestrator/target/surefire-reports/
+            orchestrator/target/scenario-incidents/
+            shortener-service/target/surefire-reports/
 
   docker:
-    name: Docker image build and Trivy image scan
+    name: Docker image (vulnerability scan, offline tests and demos)
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 45
+    # A newer push supersedes this job; live-smoke has its own group and is never cancelled mid-run.
     concurrency:
       group: ci-docker-${{ github.ref }}
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - name: Build Docker image
-        run: docker build -t url-shortener .
+      - name: Build the image
+        run: docker build -t agentic-sdlc .
 
-      - name: Trivy image scan (OS packages and application jars)
+      # OS packages and application jars. The image's pre-warmed Maven cache holds only build-plugin dependencies,
+      # which run offline at build time; the runtime dependencies are scanned from their SBOMs in the quality job.
+      - name: Trivy image scan
         run: >-
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock
-          aquasec/trivy:0.74.0
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.74.0
           image --quiet --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1
-          url-shortener
+          --skip-dirs /home/app/.m2 agentic-sdlc
 
-      - name: Smoke test — service starts and responds to health check
+      # Option A of the README, offline: the full test suite and every demo inside the image.
+      - name: Tests inside the image, no network
+        run: docker run --rm --network none agentic-sdlc test
+
+      - name: All four demos inside the image, no network
+        run: docker run --rm --network none agentic-sdlc demo-all
+
+  # Real-model integration on every push to main of this repository (not forks) and from the Run workflow button. The
+  # job condition excludes pull requests; those from forks could not read the secret anyway. Each run spends API
+  # credit (about 170k input tokens) and live output varies, so on a push a failure is reported on the job without
+  # failing the workflow, and a missing secret or variable skips the run; a manual run stays strict. Needs the
+  # ANTHROPIC_API_KEY secret and the ANTHROPIC_MODEL variable. Stops at the first human checkpoint.
+  live-smoke:
+    name: LIVE smoke test (real model)
+    if: >-
+      !github.event.repository.fork &&
+      (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    # Queued, never cancelled: a run in progress has already spent API credit.
+    concurrency:
+      group: live-smoke-${{ github.ref }}
+      cancel-in-progress: false
+    continue-on-error: ${{ github.event_name == 'push' }}
+    steps:
+      - name: Check the model configuration
+        id: config
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
+          EVENT: ${{ github.event_name }}
         run: |
-          docker run -d --name smoke-test -p 8080:8080 url-shortener
-          for i in $(seq 1 30); do
-            if curl -sf http://localhost:8080/api/v1/links/nonexistent/stats 2>&1 | grep -q '"LINK_NOT_FOUND"'; then
-              echo "Service is up"; break
-            fi
-            sleep 2
-          done
-          docker stop smoke-test
-          docker rm smoke-test
+          if [[ -n "$ANTHROPIC_API_KEY" && -n "$ANTHROPIC_MODEL" ]]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          elif [[ "$EVENT" == "workflow_dispatch" ]]; then
+            echo "::error::LIVE smoke needs the ANTHROPIC_API_KEY secret and the ANTHROPIC_MODEL variable."
+            exit 1
+          else
+            echo "::notice::LIVE smoke skipped: set the ANTHROPIC_API_KEY secret and the ANTHROPIC_MODEL variable to enable it."
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: steps.config.outputs.configured == 'true'
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        if: steps.config.outputs.configured == 'true'
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+
+      - name: Build (warms the Maven cache the gates use)
+        if: steps.config.outputs.configured == 'true'
+        run: |
+          docker pull -q "$SANDBOX_IMAGE"
+          mvn -q -B -f shortener-service/pom.xml verify -Dmaven.test.redirectTestOutputToFile=true
+          mvn -q -B package -DskipTests
+
+      - name: LIVE bug-fix run
+        if: steps.config.outputs.configured == 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
+        run: scripts/live-smoke.sh
+
+      - name: Upload the LIVE report
+        if: always() && steps.config.outputs.configured == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: live-smoke
+          if-no-files-found: ignore
+          path: |
+            runs/*/report.md
+            runs/*/incident.md

@@ -1,0 +1,2 @@
+# Deliberately fake AWS key: test input proving the secret-scan gate rejects credentials.
+b9b1fb9e5c77236891e8c24e593f037322e30af4:orchestrator/src/test/java/com/example/agentic/core/policy/PolicyGatesTest.java:aws-access-token:32

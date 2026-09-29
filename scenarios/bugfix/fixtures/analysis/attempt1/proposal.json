@@ -1,0 +1,37 @@
+{
+  "rationale": "The report reproduces on v1: java.net.URI keeps the trailing dot of an absolute DNS name, and the host rules compare exact strings, so localhost. and *.local. pass while resolving to the same loopback or LAN hosts. The rules are private methods inside UrlValidator mixed with parsing; extracting them first makes the fix a one-class change that the full suite can prove behavior-preserving.",
+  "derivedFrom": [
+    "requirement"
+  ],
+  "data": {
+    "impact": [
+      {
+        "file": "src/main/java/com/example/shortener/service/UrlValidator.java",
+        "reason": "isNonPublicHost compares host strings exactly; \"localhost.\" and \"*.local.\" bypass it (the defect)"
+      },
+      {
+        "file": "src/test/java/com/example/shortener/service/UrlValidatorTest.java",
+        "reason": "existing rule tests must keep passing through the refactor and the fix"
+      },
+      {
+        "file": "src/main/java/com/example/shortener/service/ShortenerService.java",
+        "reason": "sole caller of UrlValidator.normalize; behavior for valid URLs must not change"
+      },
+      {
+        "file": "openapi.yaml",
+        "reason": "contract unchanged: invalid URLs already map to 400 INVALID_URL"
+      }
+    ],
+    "defect": {
+      "input": "http://localhost./admin",
+      "expected": "400 INVALID_URL",
+      "actual": "201 Created (redirect to loopback)",
+      "rootCause": "exact string comparison on a host that may carry the absolute-name trailing dot"
+    },
+    "plan": [
+      "refactor: extract host classification without behavior change",
+      "reproduce: failing regression test",
+      "fix: canonicalize the absolute name once, then apply every rule"
+    ]
+  }
+}

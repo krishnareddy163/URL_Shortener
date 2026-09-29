@@ -1,0 +1,15 @@
+{
+  "rationale": "Added DomainBlocklist (config-driven, subdomain-aware) and wired it into UrlValidator after the v1 checks; the no-arg constructor keeps v1 callers unchanged.",
+  "derivedFrom": [
+    "design"
+  ],
+  "data": {
+    "changed": [
+      "UrlValidator",
+      "application.properties"
+    ],
+    "added": [
+      "DomainBlocklist"
+    ]
+  }
+}

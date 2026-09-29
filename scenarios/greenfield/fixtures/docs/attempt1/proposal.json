@@ -1,0 +1,12 @@
+{
+  "rationale": "Operator- and developer-facing documentation: how to run and test, configuration, observability counters and failure behavior.",
+  "derivedFrom": [
+    "design"
+  ],
+  "data": {
+    "audience": [
+      "developers",
+      "operators"
+    ]
+  }
+}

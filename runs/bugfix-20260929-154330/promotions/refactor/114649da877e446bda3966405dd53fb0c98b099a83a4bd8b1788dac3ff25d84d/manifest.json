@@ -1,0 +1,10 @@
+{
+  "src/main/java/com/example/shortener/service/HostClassifier.java" : {
+    "before" : "absent",
+    "after" : "2d5c0be2da5b492e0edc690629469a219f750b3cbca124347c0e76dde661ffe7"
+  },
+  "src/main/java/com/example/shortener/service/UrlValidator.java" : {
+    "before" : "0ec4407269eed365193eafbefdab8ae4e79c73a275a8f1769ab469ab290dbb59",
+    "after" : "b7deae565fa4c00b05c5cfc1fb4559a81c20982f85c3b1773eaab232ddd952d5"
+  }
+}

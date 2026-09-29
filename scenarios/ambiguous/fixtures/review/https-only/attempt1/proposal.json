@@ -1,0 +1,25 @@
+{
+  "rationale": "HTTPS-only change is minimal and fully tested; the full suite passes in this gate.",
+  "derivedFrom": [
+    "tests",
+    "docs"
+  ],
+  "data": {
+    "reviewedFiles": [
+      "docs/design-security.md",
+      "docs/security.md",
+      "src/main/java/com/example/shortener/service/UrlValidator.java",
+      "src/test/java/com/example/shortener/service/UrlValidatorTest.java"
+    ],
+    "findings": [
+      {
+        "severity": "LOW",
+        "file": "docs/security.md",
+        "message": "Announce the http deprecation to existing API clients",
+        "status": "DEFERRED",
+        "resolution": "The release notes announce the change; notifying API clients is part of the release rollout."
+      }
+    ],
+    "recommendation": "GO"
+  }
+}

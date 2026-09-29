@@ -1,0 +1,17 @@
+{
+  "rationale": "The regression-tests gate showed v1 redirects returning 410: the expiry check treated a null expiresAt as expired. Resolve now uses ShortLink.isExpiredAt, where a null expiry never expires, so v1 behavior is preserved.",
+  "derivedFrom": [
+    "design",
+    "db_migration"
+  ],
+  "data": {
+    "changedComponents": [
+      "ShortLink",
+      "ShortenerService",
+      "JdbcLinkRepository",
+      "LinkController",
+      "ApiExceptionHandler"
+    ],
+    "fixedFrom": "attempt1 returned 410 for links without expiry"
+  }
+}

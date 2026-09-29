@@ -1,0 +1,18 @@
+{
+  "hash" : "14d6b7b34fc06c5876cdc5f64b45bed2a7e00110982cc5daa8a774219814fba1",
+  "nodeId" : "review",
+  "derivedFrom" : [ "tests@5dedcc0fc41d56f5648cbe56affb0b9b4c2c68182a758525e031ebd16b806ec7", "docs@4f72ce3eefd00dfc544fbd7257ff45284cfa4ac8ddc4434deae5afc9d9c690c9" ],
+  "rationale" : "HTTPS-only change is minimal and fully tested; the full suite passes in this gate.",
+  "files" : [ ],
+  "data" : {
+    "findings" : [ {
+      "severity" : "LOW",
+      "file" : "docs/security.md",
+      "message" : "Announce the http deprecation to existing API clients",
+      "status" : "DEFERRED",
+      "resolution" : "The release notes announce the change; notifying API clients is part of the release rollout."
+    } ],
+    "recommendation" : "GO",
+    "reviewedFiles" : [ "docs/design-security.md", "docs/security.md", "src/main/java/com/example/shortener/service/UrlValidator.java", "src/test/java/com/example/shortener/service/UrlValidatorTest.java" ]
+  }
+}

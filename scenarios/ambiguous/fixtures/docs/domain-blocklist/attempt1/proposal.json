@@ -1,0 +1,12 @@
+{
+  "rationale": "Documents blocklist configuration, matching rules, the client-visible error, and the privacy stance of analytics.",
+  "derivedFrom": [
+    "implement"
+  ],
+  "data": {
+    "audience": [
+      "operators",
+      "API clients"
+    ]
+  }
+}

@@ -4,94 +4,144 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.5.16</version>
-    <relativePath/>
-  </parent>
-
   <groupId>com.example</groupId>
-  <artifactId>shortener-service</artifactId>
-  <version>1.0.0</version>
-  <name>shortener-service</name>
-  <description>URL shortener service: link creation, redirects, and click analytics.</description>
+  <artifactId>agentic-sdlc</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>agentic-sdlc</name>
+  <description>Agentic SDLC orchestrator (parent). The shortener workload is a standalone project.</description>
+
+  <modules>
+    <module>orchestrator</module>
+  </modules>
 
   <properties>
-    <java.version>25</java.version>
-    <tomcat.version>10.1.60</tomcat.version>
-    <jackson-bom.version>2.22.3</jackson-bom.version>
-    <log4j2.version>2.26.1</log4j2.version>
+    <maven.compiler.release>25</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <jackson.version>2.22.3</jackson.version>
+    <picocli.version>4.7.7</picocli.version>
+    <slf4j.version>2.0.20</slf4j.version>
+    <logback.version>1.5.38</logback.version>
+    <javaparser.version>3.28.2</javaparser.version>
+    <sqlite-jdbc.version>3.53.4.0</sqlite-jdbc.version>
+
+    <junit.version>5.14.4</junit.version>
+    <assertj.version>3.27.7</assertj.version>
+    <mockito.version>5.24.0</mockito.version>
+    <awaitility.version>4.3.0</awaitility.version>
+    <archunit.version>1.5.1</archunit.version>
+
+    <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
+    <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
+    <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
     <spotbugs-maven-plugin.version>4.10.4.1</spotbugs-maven-plugin.version>
     <findsecbugs.version>1.14.0</findsecbugs.version>
     <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
     <jacoco.version>0.8.15</jacoco.version>
+    <cyclonedx.version>2.9.3</cyclonedx.version>
+    <sonar-maven-plugin.version>5.8.0.7211</sonar-maven-plugin.version>
     <argLine/>
   </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-validation</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-jdbc</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.flywaydb</groupId>
-      <artifactId>flyway-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.awaitility</groupId>
-      <artifactId>awaitility</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>${jackson.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${junit.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>info.picocli</groupId>
+        <artifactId>picocli</artifactId>
+        <version>${picocli.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.github.javaparser</groupId>
+        <artifactId>javaparser-core</artifactId>
+        <version>${javaparser.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.xerial</groupId>
+        <artifactId>sqlite-jdbc</artifactId>
+        <version>${sqlite-jdbc.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>${assertj.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>${mockito.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.awaitility</groupId>
+        <artifactId>awaitility</artifactId>
+        <version>${awaitility.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.tngtech.archunit</groupId>
+        <artifactId>archunit-junit5</artifactId>
+        <version>${archunit.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+          <configuration>
+            <showWarnings>true</showWarnings>
+            <compilerArgs>
+              <arg>-Xlint:all</arg>
+              <arg>-Werror</arg>
+            </compilerArgs>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>${maven-shade-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <artifactId>sonar-maven-plugin</artifactId>
+          <version>${sonar-maven-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.cyclonedx</groupId>
-        <artifactId>cyclonedx-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <showWarnings>true</showWarnings>
-          <compilerArgs>
-            <arg>-Xlint:all</arg>
-            <arg>-Xlint:-processing</arg>
-            <arg>-Werror</arg>
-          </compilerArgs>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <argLine>@{argLine} -XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
-        </configuration>
-      </plugin>
+      <!-- SAST: SpotBugs + FindSecBugs; any finding at any rank fails the build. -->
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
@@ -100,7 +150,7 @@
           <effort>Max</effort>
           <threshold>Low</threshold>
           <failOnError>true</failOnError>
-          <excludeFilterFile>${project.basedir}/spotbugs-exclude.xml</excludeFilterFile>
+          <includeTests>false</includeTests>
           <plugins>
             <plugin>
               <groupId>com.h3xstream.findsecbugs</groupId>
@@ -117,6 +167,7 @@
           </execution>
         </executions>
       </plugin>
+      <!-- Static analysis + copy/paste detection; any violation fails the build. -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
@@ -126,6 +177,7 @@
           <printFailingErrors>true</printFailingErrors>
           <failOnViolation>true</failOnViolation>
           <linkXRef>false</linkXRef>
+          <minimumTokens>100</minimumTokens>
         </configuration>
         <executions>
           <execution>
@@ -136,6 +188,7 @@
           </execution>
         </executions>
       </plugin>
+      <!-- Coverage for SonarQube. -->
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
@@ -153,7 +206,8 @@
               <goal>report</goal>
             </goals>
           </execution>
-        <execution>
+          <!-- Coverage floor for the orchestrator: no regressions below the measured level (gaps listed in docs/coverage.md). -->
+          <execution>
             <id>coverage-floor</id>
             <phase>verify</phase>
             <goals>
@@ -167,17 +221,31 @@
                     <limit>
                       <counter>LINE</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>0.985</minimum>
+                      <minimum>0.88</minimum>
                     </limit>
                     <limit>
                       <counter>BRANCH</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>1.00</minimum>
+                      <minimum>0.75</minimum>
                     </limit>
                   </limits>
                 </rule>
               </rules>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- SBOM (CycloneDX JSON + XML) at target/bom.*. -->
+      <plugin>
+        <groupId>org.cyclonedx</groupId>
+        <artifactId>cyclonedx-maven-plugin</artifactId>
+        <version>${cyclonedx.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>makeBom</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>

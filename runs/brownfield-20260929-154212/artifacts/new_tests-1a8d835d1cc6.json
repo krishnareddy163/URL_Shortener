@@ -1,0 +1,10 @@
+{
+  "hash" : "1a8d835d1cc6aec3846f84790a7403bedb6f528a9dfcd7f298f2958fc93b91c5",
+  "nodeId" : "new_tests",
+  "derivedFrom" : [ "implement@54841b788f10e99cff2dc62cfad6dadc4b5a773a5109680993e9375634b76705", "design@56656fd4d0e6edf66db5015dc14ed9feac35cc683e59f3deabae02120218b355" ],
+  "rationale" : "New tests for expiry: redirect before and at expiry (410), links without expiry unchanged forever, invalid expiry rejected, and idempotency with expiry. A separate H2 database keeps the new context isolated from v1 tests.",
+  "files" : [ "src/test/java/com/example/shortener/api/LinkExpiryIntegrationTest.java", "src/test/java/com/example/shortener/domain/ShortLinkExpiryTest.java" ],
+  "data" : {
+    "covers" : [ "410 LINK_EXPIRED", "400 INVALID_EXPIRY", "null expiry == v1", "idempotency with expiry" ]
+  }
+}

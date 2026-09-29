@@ -1,0 +1,11 @@
+{
+  "hash" : "bee95a1ca6c8846ee6608bc84e5d2cc2526c9adc560fb274ae296e79f2e1c12d",
+  "nodeId" : "release",
+  "derivedFrom" : [ "review@14d6b7b34fc06c5876cdc5f64b45bed2a7e00110982cc5daa8a774219814fba1" ],
+  "rationale" : "Release notes for the HTTPS-only policy.",
+  "files" : [ "docs/release-notes.md" ],
+  "data" : {
+    "version" : "1.1.0",
+    "measure" : "https-only"
+  }
+}

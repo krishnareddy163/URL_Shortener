@@ -1,0 +1,11 @@
+{
+  "rationale": "UrlValidator now accepts only https; all other checks untouched.",
+  "derivedFrom": [
+    "design"
+  ],
+  "data": {
+    "changed": [
+      "UrlValidator"
+    ]
+  }
+}

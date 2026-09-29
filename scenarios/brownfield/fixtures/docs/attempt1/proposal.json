@@ -1,0 +1,13 @@
+{
+  "rationale": "README documents the optional expiresAt field with an example and links the expiry design note.",
+  "derivedFrom": [
+    "new_tests",
+    "regression_check"
+  ],
+  "data": {
+    "audience": [
+      "API clients",
+      "developers"
+    ]
+  }
+}

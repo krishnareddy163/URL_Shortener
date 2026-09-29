@@ -1,0 +1,17 @@
+{
+  "rationale": "Regression test written before the fix. It must fail on the current code (the reproduces-defect gate checks that it fails, compiles, and breaks nothing else), and it also pins that public absolute names such as example.com. stay valid.",
+  "derivedFrom": [
+    "analysis",
+    "refactor"
+  ],
+  "data": {
+    "cases": [
+      "localhost.",
+      "LOCALHOST.",
+      "api.localhost.",
+      "printer.local.",
+      "nas.local.:8443",
+      "example.com. (accepted)"
+    ]
+  }
+}

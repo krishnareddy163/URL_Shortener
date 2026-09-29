@@ -1,0 +1,16 @@
+{
+  "rationale": "Implemented expiry end to end: model, persistence, validation on create, 410 on expired redirects, and contract-aligned request/response fields.",
+  "derivedFrom": [
+    "design",
+    "db_migration"
+  ],
+  "data": {
+    "changedComponents": [
+      "ShortLink",
+      "ShortenerService",
+      "JdbcLinkRepository",
+      "LinkController",
+      "ApiExceptionHandler"
+    ]
+  }
+}

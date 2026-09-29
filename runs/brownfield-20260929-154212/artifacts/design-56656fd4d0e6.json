@@ -1,0 +1,11 @@
+{
+  "hash" : "56656fd4d0e6edf66db5015dc14ed9feac35cc683e59f3deabae02120218b355",
+  "nodeId" : "design",
+  "derivedFrom" : [ "analysis@90f6ba4a45242ef01d6dd104c6cea0294db94428dc4a7b3111091b7efa4b8dec" ],
+  "rationale" : "Additive, backwards-compatible design: nullable expires_at, 410 on expired redirects, 400 for past expiry, contract updated. Idempotency and statistics semantics are specified explicitly.",
+  "files" : [ "docs/design-expiry.md", "openapi.yaml" ],
+  "data" : {
+    "risks" : [ "irreversible migration", "v1 regression", "clock skew" ],
+    "contractVersion" : "1.1.0"
+  }
+}
