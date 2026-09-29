@@ -1,0 +1,181 @@
+openapi: 3.0.3
+info:
+  title: URL Shortener API
+  version: 1.0.0
+  description: |
+    Create short links, redirect through them, and read aggregate click statistics.
+    Every non-2xx/3xx response uses the ErrorResponse envelope.
+servers:
+  - url: http://localhost:8080
+paths:
+  /api/v1/links:
+    post:
+      operationId: createLink
+      summary: Create a short link (idempotent on the normalized URL)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLinkRequest'
+      responses:
+        '201':
+          description: Link created
+          headers:
+            Location:
+              description: The short URL
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Link'
+        '200':
+          description: The normalized URL was already shortened; the existing link is returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Link'
+        '400':
+          description: INVALID_URL, INVALID_ALIAS, or INVALID_REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: ALIAS_TAKEN, or URL_ALREADY_SHORTENED when an alias is requested for a URL shortened under another code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: RATE_LIMITED (default 20 creates per minute per client)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: CODE_GENERATION_FAILED after 5 collisions, or INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /{code}:
+    get:
+      operationId: redirect
+      summary: Redirect to the destination URL; the click is recorded asynchronously
+      parameters:
+        - $ref: '#/components/parameters/Code'
+      responses:
+        '302':
+          description: Redirect to the destination
+          headers:
+            Location:
+              required: true
+              schema:
+                type: string
+                format: uri
+        '404':
+          description: LINK_NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/links/{code}/stats:
+    get:
+      operationId: getLinkStats
+      summary: Aggregate click statistics (no personal data)
+      parameters:
+        - $ref: '#/components/parameters/Code'
+      responses:
+        '200':
+          description: Totals and per-UTC-day buckets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkStats'
+        '404':
+          description: LINK_NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  parameters:
+    Code:
+      in: path
+      name: code
+      required: true
+      schema:
+        type: string
+        pattern: '^[A-Za-z0-9_-]{3,32}$'
+  schemas:
+    CreateLinkRequest:
+      type: object
+      additionalProperties: false
+      required: [url]
+      properties:
+        url:
+          type: string
+          maxLength: 2048
+          description: http or https URL with a public host
+        customAlias:
+          type: string
+          pattern: '^[A-Za-z0-9_-]{3,32}$'
+          description: Optional alias; api, actuator, health and stats are reserved
+    Link:
+      type: object
+      required: [code, shortUrl, url, createdAt]
+      properties:
+        code:
+          type: string
+        shortUrl:
+          type: string
+          format: uri
+        url:
+          type: string
+          format: uri
+        createdAt:
+          type: string
+          format: date-time
+    LinkStats:
+      type: object
+      required: [code, totalClicks, lastAccessedAt, clicksPerDay]
+      properties:
+        code:
+          type: string
+        totalClicks:
+          type: integer
+          format: int64
+        lastAccessedAt:
+          type: string
+          format: date-time
+          nullable: true
+        clicksPerDay:
+          type: array
+          items:
+            $ref: '#/components/schemas/DailyClicks'
+    DailyClicks:
+      type: object
+      required: [date, count]
+      properties:
+        date:
+          type: string
+          format: date
+        count:
+          type: integer
+          format: int64
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              pattern: '^[A-Z][A-Z0-9_]*$'
+            message:
+              type: string
