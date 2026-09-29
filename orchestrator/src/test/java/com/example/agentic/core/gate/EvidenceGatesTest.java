@@ -94,7 +94,7 @@ class EvidenceGatesTest {
         GateResult pass = documented.judge(classes);
         assertThat(pass).isInstanceOf(GateResult.Pass.class);
         assertThat(((GateResult.Pass) pass).detail())
-                .isEqualTo("line 85.7% (12/14), branch 100.0% (6/6), target 100% over 2 classes; below target (documented): "
+                .isEqualTo("line 100.0% (12/12), branch 100.0% (6/6), target 100% over 1 classes; below target (documented): "
                         + "com.example.Launcher (line 0.0%, branch 100.0%): main() only");
         assertThat(reason(undocumented.judge(classes))).contains("below target without a documented exception: com.example.Launcher");
         assertThat(reason(strict.judge(classes))).contains("below the minimum (line 100.0%, branch 100.0%)");

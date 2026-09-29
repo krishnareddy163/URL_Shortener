@@ -76,10 +76,14 @@ public final class TestCoverageGate implements Gate {
     }
 
     GateResult judge(List<ClassCoverage> classes) {
-        int lineMissed = classes.stream().mapToInt(ClassCoverage::lineMissed).sum();
-        int lineCovered = classes.stream().mapToInt(ClassCoverage::lineCovered).sum();
-        int branchMissed = classes.stream().mapToInt(ClassCoverage::branchMissed).sum();
-        int branchCovered = classes.stream().mapToInt(ClassCoverage::branchCovered).sum();
+        // Exclude documented exception classes from totals, mirroring the JaCoCo <excludes> in pom.xml.
+        List<ClassCoverage> functional = classes.stream()
+                .filter(c -> !policy.exceptions().containsKey(c.name()))
+                .toList();
+        int lineMissed = functional.stream().mapToInt(ClassCoverage::lineMissed).sum();
+        int lineCovered = functional.stream().mapToInt(ClassCoverage::lineCovered).sum();
+        int branchMissed = functional.stream().mapToInt(ClassCoverage::branchMissed).sum();
+        int branchCovered = functional.stream().mapToInt(ClassCoverage::branchCovered).sum();
         double line = percent(lineCovered, lineMissed);
         double branch = percent(branchCovered, branchMissed);
         List<String> belowTarget = new ArrayList<>();
@@ -97,7 +101,7 @@ public final class TestCoverageGate implements Gate {
         }
         String summary = String.format(Locale.ROOT, "line %.1f%% (%d/%d), branch %.1f%% (%d/%d), target %.0f%% over %d classes",
                 line, lineCovered, lineCovered + lineMissed, branch, branchCovered, branchCovered + branchMissed,
-                policy.target(), classes.size());
+                policy.target(), functional.size());
         if (line < policy.minimumLine() || branch < policy.minimumBranch()) {
             return GateResult.fail(id(), summary + String.format(Locale.ROOT, "; below the minimum (line %.1f%%, branch %.1f%%)",
                     policy.minimumLine(), policy.minimumBranch()));
