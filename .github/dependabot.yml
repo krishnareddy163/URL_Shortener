@@ -1,0 +1,17 @@
+version: 2
+updates:
+  # Keep Maven dependencies up to date, minor/patch only.
+  # Major version bumps require deliberate evaluation (e.g. Spring Boot 4.x).
+  - package-ecosystem: maven
+    directory: /
+    schedule:
+      interval: weekly
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  # Keep GitHub Actions pinned to the latest SHA of the current major.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
