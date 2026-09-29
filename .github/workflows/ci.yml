@@ -1,0 +1,91 @@
+# Continuous integration: build, test, static analysis, security scan, and Docker image build on
+# every push and pull request. Runners are pinned to ubuntu-24.04.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build, test, SAST, SCA, and coverage
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    concurrency:
+      group: ci-build-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+
+      - name: Tool versions
+        run: |
+          java -version
+          mvn -version
+
+      # Strict build (-Werror), SpotBugs + FindSecBugs, PMD + CPD, all tests, JaCoCo floor,
+      # CycloneDX SBOM, Trivy SCA on the SBOM.
+      - name: mvn verify (tests + SAST + coverage)
+        run: mvn -B verify
+
+      - name: Trivy SCA — scan the CycloneDX SBOM for known CVEs
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}/target/classes/META-INF/sbom:/sbom:ro" \
+            aquasec/trivy:0.74.0 sbom --severity HIGH,CRITICAL --exit-code 1 /sbom/application.cdx.json
+
+      - name: Upload test and coverage reports
+        if: always()
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
+        with:
+          name: reports
+          if-no-files-found: ignore
+          path: |
+            target/site/jacoco/
+            target/surefire-reports/
+
+  docker:
+    name: Docker image build and Trivy image scan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    concurrency:
+      group: ci-docker-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Build Docker image
+        run: docker build -t url-shortener .
+
+      - name: Trivy image scan (OS packages and application jars)
+        run: >-
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock
+          aquasec/trivy:0.74.0
+          image --quiet --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1
+          url-shortener
+
+      - name: Smoke test — service starts and responds to health check
+        run: |
+          docker run -d --name smoke-test -p 8080:8080 url-shortener
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8080/api/v1/links/nonexistent/stats 2>&1 | grep -q '"LINK_NOT_FOUND"'; then
+              echo "Service is up"; break
+            fi
+            sleep 2
+          done
+          docker stop smoke-test
+          docker rm smoke-test
