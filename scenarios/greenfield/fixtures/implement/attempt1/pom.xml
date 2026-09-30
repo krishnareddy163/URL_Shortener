@@ -22,6 +22,7 @@
     <logstash-logback-encoder.version>8.0</logstash-logback-encoder.version>
     <springdoc.version>2.5.0</springdoc.version>
     <!-- Security overrides of Spring Boot-managed versions (patched releases; SCA via Trivy on the SBOM). -->
+    <commons-lang3.version>3.18.0</commons-lang3.version>
     <tomcat.version>10.1.60</tomcat.version>
     <jackson-bom.version>2.22.3</jackson-bom.version>
     <log4j2.version>2.26.1</log4j2.version>
