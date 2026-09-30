@@ -1,3 +1,10 @@
+---
+version: 1.0.0
+updated: 2026-09-29
+changes:
+  - "1.0.0 (2026-09-29): Initial version"
+---
+
 # Security Skill
 
 **Purpose:** Identify and mitigate security risks in design and implementation.  

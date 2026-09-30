@@ -1,3 +1,10 @@
+---
+version: 1.0.0
+updated: 2026-09-29
+changes:
+  - "1.0.0 (2026-09-29): Initial version"
+---
+
 # Claude Agent — Modular Skill-Based Architecture
 
 This project uses a **modular skill library**. Before starting any engineering task, always load
@@ -51,3 +58,35 @@ The orchestration skill will instruct you which further skills to load and in wh
 - Each skill produces concrete, reviewable outputs; do not move to the next skill until the current
   one's outputs are complete.
 - When a skill says "document assumptions", do so explicitly in the response before proceeding.
+
+## Skill versioning protocol
+
+Every skill file carries a YAML frontmatter block at the top:
+
+```yaml
+---
+version: MAJOR.MINOR.PATCH
+updated: YYYY-MM-DD
+changes:
+  - "MAJOR.MINOR.PATCH (YYYY-MM-DD): description of what changed"
+  - "... older entries below, newest first ..."
+---
+```
+
+**Version bump rules (semantic versioning):**
+
+| Change type | Bump |
+|---|---|
+| Removed or renamed a required section, changed a workflow's decision logic | `MAJOR` |
+| Added a new section, checklist item, workflow step, or example | `MINOR` |
+| Clarified wording, fixed a typo, reordered content without adding/removing | `PATCH` |
+
+**When you modify a skill file, you must:**
+
+1. Increment the version number in the frontmatter following the rules above.
+2. Prepend a new entry to the `changes` list (newest first).
+3. Update the `updated` date.
+4. Update the corresponding row in `.claude/skills/REGISTRY.md`.
+
+**The registry** (`.claude/skills/REGISTRY.md`) is the single source of truth for current versions.
+Read it to see what has changed across the library. It is always updated in the same commit as any skill change.

@@ -1,3 +1,10 @@
+---
+version: 1.0.0
+updated: 2026-09-29
+changes:
+  - "1.0.0 (2026-09-29): Initial version"
+---
+
 # Orchestration Skill
 
 **Purpose:** Classify the incoming task, select the right skill combination, and define execution order.  

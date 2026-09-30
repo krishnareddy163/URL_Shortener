@@ -1,3 +1,10 @@
+---
+version: 1.0.0
+updated: 2026-09-29
+changes:
+  - "1.0.0 (2026-09-29): Initial version"
+---
+
 # Design Skill
 
 **Purpose:** Produce an architectural and detailed design that satisfies the analysis outputs before any code is written.  

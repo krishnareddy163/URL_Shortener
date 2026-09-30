@@ -1,3 +1,10 @@
+---
+version: 1.0.0
+updated: 2026-09-29
+changes:
+  - "1.0.0 (2026-09-29): Initial version"
+---
+
 # Observability Skill
 
 **Purpose:** Ensure every production change is visible, diagnosable, and measurable in operations.  

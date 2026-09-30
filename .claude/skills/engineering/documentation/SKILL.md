@@ -1,3 +1,10 @@
+---
+version: 1.0.0
+updated: 2026-09-29
+changes:
+  - "1.0.0 (2026-09-29): Initial version"
+---
+
 # Documentation Skill
 
 **Purpose:** Produce and maintain the documentation that enables others to understand, operate, and extend the system.  

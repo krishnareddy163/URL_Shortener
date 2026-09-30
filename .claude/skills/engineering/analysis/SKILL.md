@@ -1,3 +1,10 @@
+---
+version: 1.0.0
+updated: 2026-09-29
+changes:
+  - "1.0.0 (2026-09-29): Initial version"
+---
+
 # Analysis Skill
 
 **Purpose:** Transform a request into a structured set of requirements, constraints, risks, and acceptance criteria.  

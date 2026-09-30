@@ -1,3 +1,10 @@
+---
+version: 1.0.0
+updated: 2026-09-29
+changes:
+  - "1.0.0 (2026-09-29): Initial version"
+---
+
 # Performance Quality Skill
 
 **Purpose:** Define how to measure, benchmark, and validate performance for production code.  

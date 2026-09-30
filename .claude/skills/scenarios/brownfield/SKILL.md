@@ -1,3 +1,10 @@
+---
+version: 1.0.0
+updated: 2026-09-29
+changes:
+  - "1.0.0 (2026-09-29): Initial version"
+---
+
 # Brownfield Scenario Skill
 
 **Purpose:** Guide changes to an existing codebase while preserving its behaviour, patterns, and integrity.  

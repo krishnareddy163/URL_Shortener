@@ -1,3 +1,10 @@
+---
+version: 1.0.0
+updated: 2026-09-29
+changes:
+  - "1.0.0 (2026-09-29): Initial version"
+---
+
 # Greenfield Scenario Skill
 
 **Purpose:** Guide the development of a new application, service, or component built from scratch.  

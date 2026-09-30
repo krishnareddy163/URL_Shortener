@@ -1,3 +1,10 @@
+---
+version: 1.0.0
+updated: 2026-09-29
+changes:
+  - "1.0.0 (2026-09-29): Initial version"
+---
+
 # Development Skill
 
 **Purpose:** Implement the designed solution following project standards, with production-quality code.  

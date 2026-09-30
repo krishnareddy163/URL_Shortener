@@ -1,3 +1,10 @@
+---
+version: 1.0.0
+updated: 2026-09-29
+changes:
+  - "1.0.0 (2026-09-29): Initial version"
+---
+
 # Bug Fix Scenario Skill
 
 **Purpose:** Reproduce, diagnose, fix, and verify a defect with the smallest safe change.  

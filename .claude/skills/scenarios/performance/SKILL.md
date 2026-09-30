@@ -1,3 +1,10 @@
+---
+version: 1.0.0
+updated: 2026-09-29
+changes:
+  - "1.0.0 (2026-09-29): Initial version"
+---
+
 # Performance Optimisation Scenario Skill
 
 **Purpose:** Identify, measure, and fix performance bottlenecks with evidence-driven changes.  
