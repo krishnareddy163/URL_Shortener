@@ -47,6 +47,7 @@
       "src/main/resources/application.properties",
       "src/main/resources/db/migration/V1__init.sql",
       "src/main/resources/logback.xml",
+      "src/test/java/com/example/shortener/ShortenerApplicationTest.java",
       "src/test/java/com/example/shortener/api/ApiExceptionHandlerTest.java",
       "src/test/java/com/example/shortener/api/AuditFilterTest.java",
       "src/test/java/com/example/shortener/api/RequestIdFilterTest.java",
@@ -58,6 +59,7 @@
       "src/test/java/com/example/shortener/service/IncidentNotificationServiceTest.java",
       "src/test/java/com/example/shortener/service/IncidentSeverityTest.java",
       "src/test/java/com/example/shortener/service/RateLimiterTest.java",
+      "src/test/java/com/example/shortener/service/Sha256Test.java",
       "src/test/java/com/example/shortener/service/ShortenerServiceTest.java",
       "src/test/java/com/example/shortener/service/UrlValidatorEdgeCaseTest.java",
       "src/test/java/com/example/shortener/service/UrlValidatorTest.java"

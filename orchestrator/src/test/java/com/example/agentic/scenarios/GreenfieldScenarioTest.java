@@ -54,15 +54,14 @@ class GreenfieldScenarioTest {
     /** The QA, review and requirements evidence the roles must produce, as measured by the gates. */
     private static void assertQualityEvidence(ScenarioHarness run) throws Exception {
         assertThat(gateDetail(run, "qa_report", "test-coverage"))
-                .contains("branch 100.0%", "target 100%")
-                .contains("below target (documented): com.example.shortener.ShortenerApplication",
-                        "com.example.shortener.service.Sha256");
+                .contains("line 100.0%", "branch 100.0%", "target 100%")
+                .doesNotContain("below target");
         assertThat(gateDetail(run, "qa_report", "functional-coverage")).startsWith("9 of 9 acceptance criteria mapped to");
         assertThat(run.events()).anyMatch(event -> event.type() == EventType.GATE_PASSED
                 && event.nodeId().equals("review") && event.payload(Payload.GatePassed.class).gate().equals("review-complete"));
         String report = run.report();
         assertThat(report).contains("## Quality evidence", "### User stories (`requirements`)", "| `docs/design.md` | 2 |",
-                "### Functional coverage (`qa_report`)", "### Code review (`review`): GO", "Reviewed 53 of 53 submitted files.",
+                "### Functional coverage (`qa_report`)", "### Code review (`review`): GO", "Reviewed 55 of 55 submitted files.",
                 "| FIXED |", "| DEFERRED |", "### Workspace git history", "| demo-reviewer |");
     }
 

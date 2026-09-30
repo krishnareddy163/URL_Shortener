@@ -104,9 +104,7 @@ coverage:
   target: 100
   minimumLine: 100
   minimumBranch: 100
-  exceptions:
-    com.example.shortener.ShortenerApplication: "main() only launches Spring Boot; tests start the application context through @SpringBootTest"
-    com.example.shortener.service.Sha256: "the NoSuchAlgorithmException handler cannot run: every Java platform must provide SHA-256"
+  exceptions: {}
 
 # Build sandbox for gates that execute generated code (R10).
 build:

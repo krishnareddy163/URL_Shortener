@@ -14,10 +14,14 @@ public final class Sha256 {
     }
 
     public static byte[] digest(String value) {
+        return digest("SHA-256", value);
+    }
+
+    static byte[] digest(String algorithm, String value) {
         try {
-            return MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8));
+            return MessageDigest.getInstance(algorithm).digest(value.getBytes(StandardCharsets.UTF_8));
         } catch (NoSuchAlgorithmException exception) {
-            throw new IllegalStateException("SHA-256 unavailable", exception);
+            throw new IllegalStateException(algorithm + " unavailable", exception);
         }
     }
 }
