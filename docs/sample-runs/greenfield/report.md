@@ -1,4 +1,4 @@
-# Run report: `greenfield-20260929-154142`
+# Run report: `greenfield-20260930-194355`
 
 ## Run summary
 
@@ -72,95 +72,95 @@ graph TD
 
 | Seq | Time (UTC) | Node | Event | Actor | Detail |
 |---:|---|---|---|---|---|
-| 1 | 15:41:43.697 |  | RUN_STARTED | engine | workflow greenfield |
-| 2 | 15:41:43.730 | requirements | NODE_STARTED | engine | agent requirements, variant default |
-| 3 | 15:41:43.739 | requirements | AGENT_CALLED | requirements | requirements attempt 1 |
-| 4 | 15:41:43.744 | requirements | GATE_PASSED | engine | artifact-metadata |
-| 5 | 15:41:43.745 | requirements | GATE_PASSED | engine | requirements-complete |
-| 6 | 15:41:43.750 | requirements | NODE_DONE | engine | artifact d1f94f38a55e, 0 file(s) |
-| 7 | 15:41:43.754 | design | NODE_STARTED | engine | agent architect, variant default |
-| 8 | 15:41:43.755 | design | GATE_PASSED | engine | path-allowlist |
-| 9 | 15:41:43.757 | design | AGENT_CALLED | architect | architect attempt 1 |
-| 10 | 15:41:43.758 | design | GATE_PASSED | engine | artifact-metadata |
-| 11 | 15:41:43.760 | design | GATE_PASSED | engine | design-diagrams |
-| 12 | 15:41:43.760 | design | GATE_PASSED | engine | path-allowlist |
-| 13 | 15:41:43.763 | design | GATE_PASSED | engine | schema-valid |
-| 14 | 15:41:43.766 | design | GATE_PASSED | engine | secret-scan |
-| 15 | 15:41:43.770 | design | APPROVAL_REQUESTED | engine | hash 1d0b735a0615; [APPROVE_AFTER: human sign-off required, MigrationPathRule: schema migration changed (src/main/resources/db/migration/V1__init.sql), DiffSizeRule: 297 changed lines exceeds 200] |
-| 16 | 15:41:43.773 |  | RUN_PAUSED | engine | waiting {design=AWAITING_APPROVAL} |
-| 17 | 15:41:44.862 | design | APPROVED | demo-reviewer | by demo-reviewer on 1d0b735a0615: Contract, V1 schema and risk list reviewed |
-| 18 | 15:41:44.941 | design | NODE_DONE | demo-reviewer | artifact 1d0b735a0615, 3 file(s), commit 9788025d4eba |
-| 19 | 15:41:45.493 |  | RESUMED | engine |  |
-| 20 | 15:41:45.505 | implement | NODE_STARTED | engine | agent developer, variant default |
-| 21 | 15:41:45.507 | docs | NODE_STARTED | engine | agent docs, variant default |
-| 22 | 15:41:45.507 | implement | GATE_PASSED | engine | path-allowlist |
-| 23 | 15:41:45.508 | security_review | NODE_STARTED | engine | agent reviewer, variant default |
-| 24 | 15:41:45.514 | security_review | AGENT_CALLED | reviewer | reviewer attempt 1 |
-| 25 | 15:41:45.516 | docs | AGENT_CALLED | docs | docs attempt 1 |
-| 26 | 15:41:45.520 | implement | AGENT_CALLED | developer | developer attempt 1 |
-| 27 | 15:41:45.520 | security_review | GATE_PASSED | engine | artifact-metadata |
-| 28 | 15:41:45.521 | docs | GATE_PASSED | engine | artifact-metadata |
-| 29 | 15:41:45.521 | docs | GATE_PASSED | engine | path-allowlist |
-| 30 | 15:41:45.521 | security_review | GATE_PASSED | engine | review-complete |
-| 31 | 15:41:45.523 | docs | GATE_PASSED | engine | secret-scan |
-| 32 | 15:41:45.526 | security_review | NODE_DONE | engine | artifact 94945665bf47, 0 file(s) |
-| 33 | 15:41:45.528 | implement | GATE_PASSED | engine | artifact-metadata |
-| 34 | 15:41:45.529 | implement | GATE_PASSED | engine | path-allowlist |
-| 35 | 15:41:45.533 | implement | GATE_PASSED | engine | secret-scan |
-| 36 | 15:41:45.538 | implement | GATE_PASSED | engine | forbidden-api |
-| 37 | 15:41:45.545 | implement | GATE_PASSED | engine | dependency-allowlist |
-| 38 | 15:41:45.548 | implement | GATE_PASSED | engine | no-raw-ip-logging |
-| 39 | 15:41:45.595 | docs | NODE_DONE | engine | artifact cd35e2d72520, 2 file(s), commit 7f9dfd7fedc9 |
-| 40 | 15:41:46.970 | implement | GATE_PASSED | engine | compile |
-| 41 | 15:41:46.984 | implement | APPROVAL_REQUESTED | engine | hash 6f8e251e61b6; [PomChangeRule: build file changed (pom.xml), DiffSizeRule: 1350 changed lines exceeds 200] |
-| 42 | 15:41:46.987 |  | RUN_PAUSED | engine | waiting {implement=AWAITING_APPROVAL} |
-| 43 | 15:41:48.171 | implement | APPROVED | demo-reviewer | by demo-reviewer on 6f8e251e61b6: Dependencies are allowlisted; implementation matches the design |
-| 44 | 15:41:48.257 | implement | NODE_DONE | demo-reviewer | artifact 6f8e251e61b6, 30 file(s), commit 6d6505263dc2 |
-| 45 | 15:41:48.820 |  | RESUMED | engine |  |
-| 46 | 15:41:48.832 | integration_tests | NODE_STARTED | engine | agent tester, variant default |
-| 47 | 15:41:48.833 | unit_tests | NODE_STARTED | engine | agent tester, variant default |
-| 48 | 15:41:48.842 | integration_tests | AGENT_CALLED | tester | tester attempt 1 |
-| 49 | 15:41:48.844 | unit_tests | AGENT_CALLED | tester | tester attempt 1 |
-| 50 | 15:41:48.859 | unit_tests | GATE_PASSED | engine | artifact-metadata |
-| 51 | 15:41:48.860 | integration_tests | GATE_PASSED | engine | artifact-metadata |
-| 52 | 15:41:48.860 | unit_tests | GATE_PASSED | engine | path-allowlist |
-| 53 | 15:41:48.860 | integration_tests | GATE_PASSED | engine | path-allowlist |
-| 54 | 15:41:48.863 | integration_tests | GATE_PASSED | engine | secret-scan |
-| 55 | 15:41:48.864 | unit_tests | GATE_PASSED | engine | secret-scan |
-| 56 | 15:41:52.680 | unit_tests | GATE_FAILED | engine | unit-tests: mvn test failed (exit 1): CodeGeneratorTest.generatesSevenCharacterCodes:13 Expected size: 8 but was: 7 |
-| 57 | 15:41:52.692 | unit_tests | ATTEMPT_DISCARDED | engine | rolled back attempt 1 (unit-tests, sig c93b06229350) |
-| 58 | 15:41:52.699 | unit_tests | AGENT_CALLED | tester | tester attempt 2 |
-| 59 | 15:41:52.712 | unit_tests | GATE_PASSED | engine | artifact-metadata |
-| 60 | 15:41:52.712 | unit_tests | GATE_PASSED | engine | path-allowlist |
-| 61 | 15:41:52.715 | unit_tests | GATE_PASSED | engine | secret-scan |
-| 62 | 15:41:55.260 | integration_tests | GATE_PASSED | engine | unit-tests |
-| 63 | 15:41:55.349 | integration_tests | NODE_DONE | engine | artifact 351b80301898, 3 file(s), commit 33355d0a8d7a |
-| 64 | 15:41:56.894 | unit_tests | GATE_PASSED | engine | unit-tests |
-| 65 | 15:41:56.963 | unit_tests | NODE_DONE | engine | artifact b559ddaea5e1, 8 file(s), commit 5e53f1ccdd14 |
-| 66 | 15:41:56.969 | qa_report | NODE_STARTED | engine | agent tester, variant default |
-| 67 | 15:41:56.970 | qa_report | AGENT_CALLED | tester | tester attempt 1 |
-| 68 | 15:41:56.982 | qa_report | GATE_PASSED | engine | artifact-metadata |
-| 69 | 15:41:56.988 | qa_report | GATE_PASSED | engine | functional-coverage |
-| 70 | 15:42:03.237 | qa_report | GATE_PASSED | engine | test-coverage |
-| 71 | 15:42:03.243 | qa_report | NODE_DONE | engine | artifact 28dfb764ac9b, 0 file(s) |
-| 72 | 15:42:03.254 | review | NODE_STARTED | engine | agent reviewer, variant default |
-| 73 | 15:42:03.256 | review | AGENT_CALLED | reviewer | reviewer attempt 1 |
-| 74 | 15:42:03.268 | review | GATE_PASSED | engine | artifact-metadata |
-| 75 | 15:42:03.269 | review | GATE_PASSED | engine | review-complete |
-| 76 | 15:42:09.390 | review | GATE_PASSED | engine | regression-tests |
-| 77 | 15:42:09.394 | review | NODE_DONE | engine | artifact e68b9af804af, 0 file(s) |
-| 78 | 15:42:09.405 | release | NODE_STARTED | engine | agent docs, variant default |
-| 79 | 15:42:09.407 | release | GATE_PASSED | engine | review-go |
-| 80 | 15:42:09.408 | release | AGENT_CALLED | docs | docs attempt 1 |
-| 81 | 15:42:09.421 | release | GATE_PASSED | engine | artifact-metadata |
-| 82 | 15:42:09.422 | release | GATE_PASSED | engine | path-allowlist |
-| 83 | 15:42:09.422 | release | GATE_PASSED | engine | secret-scan |
-| 84 | 15:42:09.423 | release | APPROVAL_REQUESTED | engine | hash 793599919e3a; [APPROVE_AFTER: human sign-off required] |
-| 85 | 15:42:09.426 |  | RUN_PAUSED | engine | waiting {release=AWAITING_APPROVAL} |
-| 86 | 15:42:10.525 | release | APPROVED | demo-reviewer | by demo-reviewer on 793599919e3a: Review GO, full suite green: release 1.0.0 |
-| 87 | 15:42:10.586 | release | NODE_DONE | demo-reviewer | artifact 793599919e3a, 1 file(s), commit b1c1c69b900c |
-| 88 | 15:42:11.174 |  | RESUMED | engine |  |
-| 89 | 15:42:11.180 |  | RUN_COMPLETED | engine |  |
+| 1 | 19:43:56.474 |  | RUN_STARTED | engine | workflow greenfield |
+| 2 | 19:43:56.503 | requirements | NODE_STARTED | engine | agent requirements, variant default |
+| 3 | 19:43:56.512 | requirements | AGENT_CALLED | requirements | requirements attempt 1 |
+| 4 | 19:43:56.516 | requirements | GATE_PASSED | engine | artifact-metadata |
+| 5 | 19:43:56.517 | requirements | GATE_PASSED | engine | requirements-complete |
+| 6 | 19:43:56.523 | requirements | NODE_DONE | engine | artifact d1f94f38a55e, 0 file(s) |
+| 7 | 19:43:56.527 | design | NODE_STARTED | engine | agent architect, variant default |
+| 8 | 19:43:56.527 | design | GATE_PASSED | engine | path-allowlist |
+| 9 | 19:43:56.529 | design | AGENT_CALLED | architect | architect attempt 1 |
+| 10 | 19:43:56.531 | design | GATE_PASSED | engine | artifact-metadata |
+| 11 | 19:43:56.532 | design | GATE_PASSED | engine | design-diagrams |
+| 12 | 19:43:56.533 | design | GATE_PASSED | engine | path-allowlist |
+| 13 | 19:43:56.535 | design | GATE_PASSED | engine | schema-valid |
+| 14 | 19:43:56.538 | design | GATE_PASSED | engine | secret-scan |
+| 15 | 19:43:56.542 | design | APPROVAL_REQUESTED | engine | hash 1d0b735a0615; [APPROVE_AFTER: human sign-off required, MigrationPathRule: schema migration changed (src/main/resources/db/migration/V1__init.sql), DiffSizeRule: 297 changed lines exceeds 200] |
+| 16 | 19:43:56.545 |  | RUN_PAUSED | engine | waiting {design=AWAITING_APPROVAL} |
+| 17 | 19:43:57.586 | design | APPROVED | demo-reviewer | by demo-reviewer on 1d0b735a0615: Contract, V1 schema and risk list reviewed |
+| 18 | 19:43:57.663 | design | NODE_DONE | demo-reviewer | artifact 1d0b735a0615, 3 file(s), commit 4217928781d5 |
+| 19 | 19:43:58.287 |  | RESUMED | engine |  |
+| 20 | 19:43:58.299 | docs | NODE_STARTED | engine | agent docs, variant default |
+| 21 | 19:43:58.301 | implement | NODE_STARTED | engine | agent developer, variant default |
+| 22 | 19:43:58.302 | security_review | NODE_STARTED | engine | agent reviewer, variant default |
+| 23 | 19:43:58.302 | implement | GATE_PASSED | engine | path-allowlist |
+| 24 | 19:43:58.310 | security_review | AGENT_CALLED | reviewer | reviewer attempt 1 |
+| 25 | 19:43:58.312 | docs | AGENT_CALLED | docs | docs attempt 1 |
+| 26 | 19:43:58.315 | security_review | GATE_PASSED | engine | artifact-metadata |
+| 27 | 19:43:58.316 | security_review | GATE_PASSED | engine | review-complete |
+| 28 | 19:43:58.316 | docs | GATE_PASSED | engine | artifact-metadata |
+| 29 | 19:43:58.317 | docs | GATE_PASSED | engine | path-allowlist |
+| 30 | 19:43:58.318 | docs | GATE_PASSED | engine | secret-scan |
+| 31 | 19:43:58.321 | implement | AGENT_CALLED | developer | developer attempt 1 |
+| 32 | 19:43:58.323 | security_review | NODE_DONE | engine | artifact 94945665bf47, 0 file(s) |
+| 33 | 19:43:58.330 | implement | GATE_PASSED | engine | artifact-metadata |
+| 34 | 19:43:58.330 | implement | GATE_PASSED | engine | path-allowlist |
+| 35 | 19:43:58.336 | implement | GATE_PASSED | engine | secret-scan |
+| 36 | 19:43:58.341 | implement | GATE_PASSED | engine | forbidden-api |
+| 37 | 19:43:58.349 | implement | GATE_PASSED | engine | dependency-allowlist |
+| 38 | 19:43:58.352 | implement | GATE_PASSED | engine | no-raw-ip-logging |
+| 39 | 19:43:58.396 | docs | NODE_DONE | engine | artifact cd35e2d72520, 2 file(s), commit 61ac172ea483 |
+| 40 | 19:44:00.527 | implement | GATE_PASSED | engine | compile |
+| 41 | 19:44:00.535 | implement | APPROVAL_REQUESTED | engine | hash f8125539dd95; [PomChangeRule: build file changed (pom.xml), DiffSizeRule: 1707 changed lines exceeds 200] |
+| 42 | 19:44:00.540 |  | RUN_PAUSED | engine | waiting {implement=AWAITING_APPROVAL} |
+| 43 | 19:44:01.722 | implement | APPROVED | demo-reviewer | by demo-reviewer on f8125539dd95: Dependencies are allowlisted; implementation matches the design |
+| 44 | 19:44:01.808 | implement | NODE_DONE | demo-reviewer | artifact f8125539dd95, 34 file(s), commit 8c7b43bb8482 |
+| 45 | 19:44:02.530 |  | RESUMED | engine |  |
+| 46 | 19:44:02.543 | integration_tests | NODE_STARTED | engine | agent tester, variant default |
+| 47 | 19:44:02.544 | unit_tests | NODE_STARTED | engine | agent tester, variant default |
+| 48 | 19:44:02.554 | integration_tests | AGENT_CALLED | tester | tester attempt 1 |
+| 49 | 19:44:02.557 | unit_tests | AGENT_CALLED | tester | tester attempt 1 |
+| 50 | 19:44:02.569 | unit_tests | GATE_PASSED | engine | artifact-metadata |
+| 51 | 19:44:02.570 | integration_tests | GATE_PASSED | engine | artifact-metadata |
+| 52 | 19:44:02.570 | unit_tests | GATE_PASSED | engine | path-allowlist |
+| 53 | 19:44:02.570 | integration_tests | GATE_PASSED | engine | path-allowlist |
+| 54 | 19:44:02.574 | integration_tests | GATE_PASSED | engine | secret-scan |
+| 55 | 19:44:02.574 | unit_tests | GATE_PASSED | engine | secret-scan |
+| 56 | 19:44:07.330 | unit_tests | GATE_FAILED | engine | unit-tests: mvn test failed (exit 1): CodeGeneratorTest.generatesSevenCharacterCodes:13 Expected size: 8 but was: 7 |
+| 57 | 19:44:07.343 | unit_tests | ATTEMPT_DISCARDED | engine | rolled back attempt 1 (unit-tests, sig c93b06229350) |
+| 58 | 19:44:07.353 | unit_tests | AGENT_CALLED | tester | tester attempt 2 |
+| 59 | 19:44:07.368 | unit_tests | GATE_PASSED | engine | artifact-metadata |
+| 60 | 19:44:07.369 | unit_tests | GATE_PASSED | engine | path-allowlist |
+| 61 | 19:44:07.373 | unit_tests | GATE_PASSED | engine | secret-scan |
+| 62 | 19:44:09.619 | integration_tests | GATE_PASSED | engine | unit-tests |
+| 63 | 19:44:09.688 | integration_tests | NODE_DONE | engine | artifact 351b80301898, 3 file(s), commit fda5a2378df5 |
+| 64 | 19:44:13.564 | unit_tests | GATE_PASSED | engine | unit-tests |
+| 65 | 19:44:13.631 | unit_tests | NODE_DONE | engine | artifact 6395dfeeed45, 13 file(s), commit ff89f6767b44 |
+| 66 | 19:44:13.644 | qa_report | NODE_STARTED | engine | agent tester, variant default |
+| 67 | 19:44:13.646 | qa_report | AGENT_CALLED | tester | tester attempt 1 |
+| 68 | 19:44:13.655 | qa_report | GATE_PASSED | engine | artifact-metadata |
+| 69 | 19:44:13.659 | qa_report | GATE_PASSED | engine | functional-coverage |
+| 70 | 19:44:20.995 | qa_report | GATE_PASSED | engine | test-coverage |
+| 71 | 19:44:20.997 | qa_report | NODE_DONE | engine | artifact 28dfb764ac9b, 0 file(s) |
+| 72 | 19:44:21.013 | review | NODE_STARTED | engine | agent reviewer, variant default |
+| 73 | 19:44:21.015 | review | AGENT_CALLED | reviewer | reviewer attempt 1 |
+| 74 | 19:44:21.046 | review | GATE_PASSED | engine | artifact-metadata |
+| 75 | 19:44:21.047 | review | GATE_PASSED | engine | review-complete |
+| 76 | 19:44:28.165 | review | GATE_PASSED | engine | regression-tests |
+| 77 | 19:44:28.166 | review | NODE_DONE | engine | artifact 9912dbfd0dca, 0 file(s) |
+| 78 | 19:44:28.177 | release | NODE_STARTED | engine | agent docs, variant default |
+| 79 | 19:44:28.178 | release | GATE_PASSED | engine | review-go |
+| 80 | 19:44:28.179 | release | AGENT_CALLED | docs | docs attempt 1 |
+| 81 | 19:44:28.189 | release | GATE_PASSED | engine | artifact-metadata |
+| 82 | 19:44:28.189 | release | GATE_PASSED | engine | path-allowlist |
+| 83 | 19:44:28.189 | release | GATE_PASSED | engine | secret-scan |
+| 84 | 19:44:28.190 | release | APPROVAL_REQUESTED | engine | hash 793599919e3a; [APPROVE_AFTER: human sign-off required] |
+| 85 | 19:44:28.192 |  | RUN_PAUSED | engine | waiting {release=AWAITING_APPROVAL} |
+| 86 | 19:44:29.306 | release | APPROVED | demo-reviewer | by demo-reviewer on 793599919e3a: Review GO, full suite green: release 1.0.0 |
+| 87 | 19:44:29.364 | release | NODE_DONE | demo-reviewer | artifact 793599919e3a, 1 file(s), commit bfdc6077b3dc |
+| 88 | 19:44:29.945 |  | RESUMED | engine |  |
+| 89 | 19:44:29.951 |  | RUN_COMPLETED | engine |  |
 
 ## Metrics
 
@@ -170,10 +170,10 @@ graph TD
 | Retries (discarded attempts) | 1 {unit_tests=1} |
 | Rollbacks (staging discarded) | 1 |
 | Fallbacks | 0 |
-| MTTR | 4.282 s over 1 node(s) |
-| End-to-end latency (gross) | 27.483 s |
-| Human wait excluded | 3.381 s |
-| End-to-end latency (net) | 24.101 s |
+| MTTR | 6.300 s over 1 node(s) |
+| End-to-end latency (gross) | 33.477 s |
+| Human wait excluded | 3.346 s |
+| End-to-end latency (net) | 30.130 s |
 | Approvals requested / granted / rejected | 3 / 3 / 0 |
 | Clarifications requested | 0 |
 | Invalidations / replans | 0 / 0 |
@@ -183,21 +183,21 @@ graph TD
 
 | Seq | Node | Decision | Who | When (UTC) | Hash approved | Comment | Revoked later |
 |---:|---|---|---|---|---|---|---|
-| 17 | design | APPROVED | demo-reviewer | 15:41:44.862 | `1d0b735a0615` | Contract, V1 schema and risk list reviewed | no |
-| 43 | implement | APPROVED | demo-reviewer | 15:41:48.171 | `6f8e251e61b6` | Dependencies are allowlisted; implementation matches the design | no |
-| 86 | release | APPROVED | demo-reviewer | 15:42:10.525 | `793599919e3a` | Review GO, full suite green: release 1.0.0 | no |
+| 17 | design | APPROVED | demo-reviewer | 19:43:57.586 | `1d0b735a0615` | Contract, V1 schema and risk list reviewed | no |
+| 43 | implement | APPROVED | demo-reviewer | 19:44:01.722 | `f8125539dd95` | Dependencies are allowlisted; implementation matches the design | no |
+| 86 | release | APPROVED | demo-reviewer | 19:44:29.306 | `793599919e3a` | Review GO, full suite green: release 1.0.0 | no |
 
 ## Decision lineage
 
 - **release** `793599919e3a`: Release notes for 1.0.0 summarizing capabilities and known limitations; release readiness requires the GO review and a human sign-off.
-  - **review** `e68b9af804af`: Joined review of implementation, tests and docs. The full suite passes in the review gate; no high-severity findings.
-    - **unit_tests** `b559ddaea5e1`: The unit-tests gate showed generatesSevenCharacterCodes expecting 8 characters while the design and CodeGenerator.LENGTH specify 7. Corrected the expectation...
-      - **implement** `6f8e251e61b6`: Implemented the approved design: Spring Boot web + JDBC + Flyway on H2, service rules exactly as specified, and a global error envelope. The pom.xml and the ...
+  - **review** `9912dbfd0dca`: Joined review of implementation, tests and docs. The full suite passes in the review gate; no high-severity findings.
+    - **unit_tests** `6395dfeeed45`: The unit-tests gate showed generatesSevenCharacterCodes expecting 8 characters while the design and CodeGenerator.LENGTH specify 7. Corrected the expectation...
+      - **implement** `f8125539dd95`: Implemented the approved design: Spring Boot web + JDBC + Flyway on H2, service rules exactly as specified, and a global error envelope. The pom.xml and the ...
         - **design** `1d0b735a0615`: Layered design (api/service/domain/storage) with uniqueness enforced by the database, validation at creation time, and an asynchronous bounded click pipeline...
           - **requirements** `d1f94f38a55e`: Normalized the request into an HTTP service with three endpoints, explicit validation and abuse controls, and aggregate-only analytics. Non-blocking gaps are...
             - requirement: "Build a URL shortener service: create short links (with an optional custom alias), redirect by code, and report click statistics. It must not become an SSRF ..."
     - **integration_tests** `351b80301898`: MockMvc integration tests against a real H2 database covering create/redirect, 404, idempotency, alias conflicts, invalid input, rate limiting and per-day st...
-      - **implement** `6f8e251e61b6` (see above)
+      - **implement** `f8125539dd95` (see above)
       - **design** `1d0b735a0615` (see above)
     - **docs** `cd35e2d72520`: Operator- and developer-facing documentation: how to run and test, configuration, observability counters and failure behavior.
       - **design** `1d0b735a0615` (see above)
@@ -210,13 +210,13 @@ Artifacts by node:
 |---|---|---:|---|
 | requirements | `d1f94f38a55e` | 0 | Normalized the request into an HTTP service with three endpoints, explicit validation and abuse controls, and aggregate-only analytics. Non-blocking gaps are recorded as assumptions so design can proceed. |
 | design | `1d0b735a0615` | 3 | Layered design (api/service/domain/storage) with uniqueness enforced by the database, validation at creation time, and an asynchronous bounded click pipeline. The OpenAPI contract and V1 schema make the design reviewable before code exists. |
-| implement | `6f8e251e61b6` | 30 | Implemented the approved design: Spring Boot web + JDBC + Flyway on H2, service rules exactly as specified, and a global error envelope. The pom.xml and the size of the change require human approval under policy. |
-| unit_tests | `b559ddaea5e1` | 8 | The unit-tests gate showed generatesSevenCharacterCodes expecting 8 characters while the design and CodeGenerator.LENGTH specify 7. Corrected the expectation; all other tests unchanged. |
+| implement | `f8125539dd95` | 34 | Implemented the approved design: Spring Boot web + JDBC + Flyway on H2, service rules exactly as specified, and a global error envelope. The pom.xml and the size of the change require human approval under policy. |
+| unit_tests | `6395dfeeed45` | 13 | The unit-tests gate showed generatesSevenCharacterCodes expecting 8 characters while the design and CodeGenerator.LENGTH specify 7. Corrected the expectation; all other tests unchanged. |
 | integration_tests | `351b80301898` | 3 | MockMvc integration tests against a real H2 database covering create/redirect, 404, idempotency, alias conflicts, invalid input, rate limiting and per-day statistics with a controllable clock. |
 | qa_report | `28dfb764ac9b` | 0 | Unit and integration suites are both in place. Every acceptance criterion maps to the tests that prove it; the test-coverage gate measures line and branch coverage and names every class below the 100% target. |
 | docs | `cd35e2d72520` | 2 | Operator- and developer-facing documentation: how to run and test, configuration, observability counters and failure behavior. |
 | security_review | `94945665bf47` | 0 | Threat-model review of the approved design before implementation lands. |
-| review | `e68b9af804af` | 0 | Joined review of implementation, tests and docs. The full suite passes in the review gate; no high-severity findings. |
+| review | `9912dbfd0dca` | 0 | Joined review of implementation, tests and docs. The full suite passes in the review gate; no high-severity findings. |
 | release | `793599919e3a` | 1 | Release notes for 1.0.0 summarizing capabilities and known limitations; release readiness requires the GO review and a human sign-off. |
 
 ## Quality evidence
@@ -243,7 +243,7 @@ Acceptance criteria: 9.
 | Node / gate | Result |
 |---|---|
 | `qa_report / functional-coverage` | 9 of 9 acceptance criteria mapped to 32 existing tests |
-| `qa_report / test-coverage` | line 98.8% (324/328), branch 100.0% (161/161), target 100% over 29 classes; below target (documented): com.example.shortener.ShortenerApplication (line 50.0%, branch 100.0%): main() only launches Spring Boot; tests start the application context through @SpringBootTest; com.example.shortener.service.Sha256 (line 33.3%, branch 100.0%): the NoSuchAlgorithmException handler cannot run: every Java platform must provide SHA-256 |
+| `qa_report / test-coverage` | line 100.0% (400/400), branch 100.0% (183/183), target 100% over 32 classes; every class at target |
 
 ### Functional coverage (`qa_report`)
 
@@ -270,7 +270,7 @@ Reviewed 3 of 3 submitted files.
 
 ### Code review (`review`): GO
 
-Reviewed 46 of 46 submitted files.
+Reviewed 55 of 55 submitted files.
 
 | Severity | File | Finding | Status | Resolution |
 |---|---|---|---|---|
@@ -283,12 +283,12 @@ Each promotion is one commit in the run's workspace (`git log` there shows the r
 
 | Seq | Node | Commit | Files | Approved by |
 |---|---|---|---:|---|
-| 18 | `design` | `9788025d4eba` | 3 | demo-reviewer |
-| 39 | `docs` | `7f9dfd7fedc9` | 2 | - |
-| 44 | `implement` | `6d6505263dc2` | 30 | demo-reviewer |
-| 63 | `integration_tests` | `33355d0a8d7a` | 3 | - |
-| 65 | `unit_tests` | `5e53f1ccdd14` | 8 | - |
-| 87 | `release` | `b1c1c69b900c` | 1 | demo-reviewer |
+| 18 | `design` | `4217928781d5` | 3 | demo-reviewer |
+| 39 | `docs` | `61ac172ea483` | 2 | - |
+| 44 | `implement` | `8c7b43bb8482` | 34 | demo-reviewer |
+| 63 | `integration_tests` | `fda5a2378df5` | 3 | - |
+| 65 | `unit_tests` | `ff89f6767b44` | 13 | - |
+| 87 | `release` | `bfdc6077b3dc` | 1 | demo-reviewer |
 
 ## Policy and gate results
 
@@ -313,7 +313,7 @@ Each promotion is one commit in the run's workspace (`git log` there shows the r
 
 Failures:
 
-- seq 56 `unit_tests` / `unit-tests`: mvn test failed (exit 1): ⏎ [ERROR] Tests run: 4, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.027 s <<< FAILURE! -- in com.example.shortener.service.CodeGeneratorTest ⏎ [ERROR] com.example.shortener.service.CodeGeneratorTest.gene...
+- seq 56 `unit_tests` / `unit-tests`: mvn test failed (exit 1): ⏎ [ERROR] Tests run: 4, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.035 s <<< FAILURE! -- in com.example.shortener.service.CodeGeneratorTest ⏎ [ERROR] com.example.shortener.service.CodeGeneratorTest.gene...
 
 ## Invalidation and replan history
 

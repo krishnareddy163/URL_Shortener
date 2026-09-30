@@ -37,8 +37,8 @@ The assignment's differentiator is **governed orchestration**, so the engine is 
 
 ## Artifacts produced
 
-- `orchestrator/`: the engine, agents and CLI (packaged as `orchestrator.jar`), with 160 tests.
-- `shortener-service/`: shortener v1 with `openapi.yaml`, Flyway `V1__init.sql`, 88 tests, and design, operations and release documentation.
+- `orchestrator/`: the engine, agents and CLI (packaged as `orchestrator.jar`), with 163 tests.
+- `shortener-service/`: shortener v1 with `openapi.yaml`, Flyway `V1__init.sql`, 161 tests, and design, operations and release documentation.
 - `scenarios/*`: three workflows plus fixtures, including brownfield expiry (`V2__add_expiry.sql`, 9 changed sources, 2 new test classes) and two ambiguous variants (https-only, domain blocklist).
 - `policies/policies.yaml`, `scripts/`, `Makefile`.
 - `docs/`: architecture, 21 ADRs, testing, 4 walkthroughs, 4 committed sample reports.
@@ -60,7 +60,7 @@ The assignment's differentiator is **governed orchestration**, so the engine is 
 
 ## Code quality and security status
 
-CI ([.github/workflows/ci.yml](../.github/workflows/ci.yml)) runs all of the following plus the demos on every push. On the final code, both projects have: 0 compiler warnings under `-Werror`; 0 SpotBugs/FindSecBugs findings; 0 PMD/CPD violations; SonarQube 0 bugs, 0 vulnerabilities, 0 hotspots and 0 code smells (quality gate OK); JaCoCo coverage of 100% line and 100% branch (functional classes) for the shortener and 90.8% line and 78.7% branch for the orchestrator, with floors in both builds and every gap in [coverage.md](coverage.md); 0 known-vulnerable dependencies (Trivy on CycloneDX SBOMs); no secrets. The shortener also passes an OWASP ZAP API scan with 0 failures and 0 warnings. Veracode was not run (it needs a commercial account). Reproduce with `make scan`; details are in [testing.md](testing.md#code-quality-and-security-scans).
+CI ([.github/workflows/ci.yml](../.github/workflows/ci.yml)) runs all of the following plus the demos on every push. On the final code, both projects have: 0 compiler warnings under `-Werror`; 0 SpotBugs/FindSecBugs findings; 0 PMD/CPD violations; SonarQube 0 bugs, 0 vulnerabilities, 0 hotspots and 0 code smells (quality gate OK); JaCoCo coverage of 100% line and 100% branch for the shortener and 91.4% line and 78.7% branch for the orchestrator, with floors in both builds and every gap in [coverage.md](coverage.md); 0 known-vulnerable dependencies (Trivy on CycloneDX SBOMs); no secrets. The shortener also passes an OWASP ZAP API scan with 0 failures and 0 warnings. Veracode was not run (it needs a commercial account). Reproduce with `make scan`; details are in [testing.md](testing.md#code-quality-and-security-scans).
 
 ## Assumptions
 
@@ -79,13 +79,13 @@ CI ([.github/workflows/ci.yml](../.github/workflows/ci.yml)) runs all of the fol
 - Graph patches can add nodes and edges or remove edges, but cannot remove nodes (the specification's patch schema has no removal).
 - The wall-clock budget is checked between attempts, so a running gate is bounded by its own 120 s timeout rather than interrupted by the budget.
 - Report latencies are machine-dependent; the metric definitions are fixed by tests.
-- Test coverage is 100% of lines and 100% of branches (functional classes) for the shortener, but 90.8% of lines and 78.7% of branches for the orchestrator itself (the CLI package is lowest, at 68% of lines, because the demos exercise it end to end). A floor stops regressions and [coverage.md](coverage.md) lists every class below 100%; reaching the target for the orchestrator is open work.
+- Test coverage is 100% of lines and 100% of branches for the shortener (every class, no exclusions), but 91.4% of lines and 78.7% of branches for the orchestrator itself (the CLI package is lowest because the demos exercise it end to end; `CliEndToEndTest` now drives it in process). A floor stops regressions and [coverage.md](coverage.md) lists every class below 100%; reaching the target for the orchestrator is open work.
 
 ## Acceptance checklist (Section 14)
 
 | Item | Result | Evidence |
 |---|---|---|
-| AC-1 `make test` green, includes all Section 10 tests | **PASS** | 135 shortener + 160 orchestrator tests, 0 failures; mapping in [testing.md](testing.md#mapping-to-section-10) |
+| AC-1 `make test` green, includes all Section 10 tests | **PASS** | 161 shortener + 163 orchestrator tests, 0 failures; mapping in [testing.md](testing.md#mapping-to-section-10) |
 | AC-2 Each `make demo-*` runs end to end and writes `report.md` | **PASS** | `make demo-all` exits 0 in about 70 s; reports committed under `docs/sample-runs/` |
 | AC-3 Invalid workflows rejected at load with clear messages | **PASS** | `WorkflowLoaderTest` (named cycle, duplicates, unknown references, negative retries, unknown fields); CLI exit 2 in `ResilienceScenarioTest` |
 | AC-4 A join starts only after all dependencies are DONE | **PASS** | `SchedulerTest`, `GreenfieldScenarioTest`; greenfield timeline shows `review` NODE_STARTED at seq 64, after the 4 NODE_DONEs |
@@ -98,5 +98,5 @@ CI ([.github/workflows/ci.yml](../.github/workflows/ci.yml)) runs all of the fol
 | AC-11 Greenfield: real failing test, retry with feedback, success | **PASS** | `GreenfieldScenarioTest`; [greenfield report](sample-runs/greenfield/report.md) seq 47 to 65 |
 | AC-12 Replayed state equals live state; kill-and-resume skips DONE nodes | **PASS** | `DurabilityTest` |
 | AC-13 Reports include graph, timeline, metrics, approvals, lineage | **PASS** | `ReportWriter`; section assertions in `GreenfieldScenarioTest`; sample reports |
-| AC-14 Shortener satisfies Section 5 and its tests pass | **PASS** | 88 tests: `CodeGeneratorTest` (length, alphabet), `ShortenerServiceTest` (collision retry, exhaustion, aliases), `UrlValidatorTest` (every rule), `RateLimiterTest` (refill and exhaustion with an injected clock), `LinkApiIntegrationTest` (all seven integration cases) |
+| AC-14 Shortener satisfies Section 5 and its tests pass | **PASS** | 161 tests: `CodeGeneratorTest` (length, alphabet), `ShortenerServiceTest` (collision retry, exhaustion, aliases), `UrlValidatorTest` (every rule), `RateLimiterTest` (refill and exhaustion with an injected clock), `LinkApiIntegrationTest` (all seven integration cases) |
 | AC-15 Section 11 docs exist and match behavior | **PASS** | README and `docs/` as listed above; numbers quoted from the sample runs and test reports |

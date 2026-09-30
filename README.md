@@ -88,7 +88,7 @@ make demo-all          # all four, about 2 minutes with a warm Maven cache
 **3. Run the tests and scans:**
 
 ```sh
-make test        # 135 shortener tests + 160 orchestrator tests (including the scenarios with real Maven gates)
+make test        # 161 shortener tests + 163 orchestrator tests (including the scenarios with real Maven gates)
 make live-smoke  # real-model bug-fix run that must reach the API (needs ANTHROPIC_API_KEY/ANTHROPIC_MODEL)
 make coverage    # docs/coverage.md: line and branch coverage of both projects, every class below 100%
 make lint        # actionlint, zizmor, shellcheck, gitleaks (full history), Trivy Dockerfile config

@@ -1,4 +1,4 @@
-# Run report: `ambiguous-20260929-154255`
+# Run report: `ambiguous-20260930-194522`
 
 ## Run summary
 
@@ -96,126 +96,126 @@ graph TD
 
 | Seq | Time (UTC) | Node | Event | Actor | Detail |
 |---:|---|---|---|---|---|
-| 1 | 15:42:55.891 |  | RUN_STARTED | engine | workflow ambiguous |
-| 2 | 15:42:55.917 | requirements | NODE_STARTED | engine | agent requirements, variant default |
-| 3 | 15:42:55.924 | requirements | AGENT_CALLED | requirements | requirements attempt 1 |
-| 4 | 15:42:55.937 | requirements | GATE_PASSED | engine | artifact-metadata |
-| 5 | 15:42:55.939 | requirements | GATE_PASSED | engine | requirements-complete |
-| 6 | 15:42:55.944 | requirements | CLARIFICATION_REQUESTED | requirements | q-secure: What does 'more secure' mean for this service? |
-| 7 | 15:42:55.947 |  | RUN_PAUSED | engine | waiting {requirements=AWAITING_CLARIFICATION} |
-| 8 | 15:42:56.972 | requirements | ANSWERED | demo-reviewer | q-secure = https-only |
-| 9 | 15:42:56.984 | requirements | NODE_DONE | demo-reviewer | artifact de232ac79401, 0 file(s) |
-| 10 | 15:42:57.555 |  | RESUMED | engine |  |
-| 11 | 15:42:57.565 | design | NODE_STARTED | engine | agent architect, variant https-only |
-| 12 | 15:42:57.573 | design | AGENT_CALLED | architect | architect attempt 1 |
-| 13 | 15:42:57.586 | design | GATE_PASSED | engine | artifact-metadata |
-| 14 | 15:42:57.588 | design | GATE_PASSED | engine | design-diagrams |
-| 15 | 15:42:57.589 | design | GATE_PASSED | engine | path-allowlist |
-| 16 | 15:42:57.593 | design | GATE_PASSED | engine | schema-valid |
-| 17 | 15:42:57.594 | design | GATE_PASSED | engine | secret-scan |
-| 18 | 15:42:57.676 | design | NODE_DONE | engine | artifact fbbd7e7b7d70, 1 file(s), commit 5ee3976c276b |
-| 19 | 15:42:57.684 | implement | NODE_STARTED | engine | agent developer, variant https-only |
-| 20 | 15:42:57.684 | implement | GATE_PASSED | engine | path-allowlist |
-| 21 | 15:42:57.686 | implement | AGENT_CALLED | developer | developer attempt 1 |
-| 22 | 15:42:57.699 | implement | GATE_PASSED | engine | artifact-metadata |
-| 23 | 15:42:57.699 | implement | GATE_PASSED | engine | path-allowlist |
-| 24 | 15:42:57.701 | implement | GATE_PASSED | engine | secret-scan |
-| 25 | 15:42:57.703 | implement | GATE_PASSED | engine | forbidden-api |
-| 26 | 15:42:57.704 | implement | GATE_PASSED | engine | dependency-allowlist |
-| 27 | 15:42:57.705 | implement | GATE_PASSED | engine | no-raw-ip-logging |
-| 28 | 15:42:59.164 | implement | GATE_PASSED | engine | compile |
-| 29 | 15:42:59.244 | implement | NODE_DONE | engine | artifact 3a70fd645bcf, 1 file(s), commit a0408f83d553 |
-| 30 | 15:42:59.250 | docs | NODE_STARTED | engine | agent docs, variant https-only |
-| 31 | 15:42:59.251 | tests | NODE_STARTED | engine | agent tester, variant https-only |
-| 32 | 15:42:59.252 | tests | AGENT_CALLED | tester | tester attempt 1 |
-| 33 | 15:42:59.253 | docs | AGENT_CALLED | docs | docs attempt 1 |
-| 34 | 15:42:59.265 | docs | GATE_PASSED | engine | artifact-metadata |
-| 35 | 15:42:59.266 | docs | GATE_PASSED | engine | path-allowlist |
-| 36 | 15:42:59.266 | tests | GATE_PASSED | engine | artifact-metadata |
-| 37 | 15:42:59.266 | tests | GATE_PASSED | engine | path-allowlist |
-| 38 | 15:42:59.266 | docs | GATE_PASSED | engine | secret-scan |
-| 39 | 15:42:59.267 | tests | GATE_PASSED | engine | secret-scan |
-| 40 | 15:42:59.339 | docs | NODE_DONE | engine | artifact 4f72ce3eefd0, 1 file(s), commit d03506299088 |
-| 41 | 15:43:05.698 | tests | GATE_PASSED | engine | unit-tests |
-| 42 | 15:43:05.778 | tests | NODE_DONE | engine | artifact 5dedcc0fc41d, 1 file(s), commit 6f2de03d7e74 |
-| 43 | 15:43:05.785 | review | NODE_STARTED | engine | agent reviewer, variant https-only |
-| 44 | 15:43:05.786 | review | AGENT_CALLED | reviewer | reviewer attempt 1 |
-| 45 | 15:43:05.798 | review | GATE_PASSED | engine | artifact-metadata |
-| 46 | 15:43:05.800 | review | GATE_PASSED | engine | review-complete |
-| 47 | 15:43:11.962 | review | GATE_PASSED | engine | regression-tests |
-| 48 | 15:43:11.964 | review | NODE_DONE | engine | artifact 14d6b7b34fc0, 0 file(s) |
-| 49 | 15:43:11.969 | release | NODE_STARTED | engine | agent docs, variant https-only |
-| 50 | 15:43:11.970 | release | GATE_PASSED | engine | review-go |
-| 51 | 15:43:11.971 | release | AGENT_CALLED | docs | docs attempt 1 |
-| 52 | 15:43:11.982 | release | GATE_PASSED | engine | artifact-metadata |
-| 53 | 15:43:11.982 | release | GATE_PASSED | engine | path-allowlist |
-| 54 | 15:43:11.982 | release | GATE_PASSED | engine | secret-scan |
-| 55 | 15:43:11.984 | release | APPROVAL_REQUESTED | engine | hash bee95a1ca6c8; [APPROVE_AFTER: human sign-off required] |
-| 56 | 15:43:11.987 |  | RUN_PAUSED | engine | waiting {release=AWAITING_APPROVAL} |
-| 57 | 15:43:12.532 | release | APPROVED | demo-reviewer | by demo-reviewer on bee95a1ca6c8: HTTPS-only policy approved |
-| 58 | 15:43:12.616 | release | NODE_DONE | demo-reviewer | artifact bee95a1ca6c8, 1 file(s), commit c31a4d61ecc9 |
-| 59 | 15:43:13.184 |  | RESUMED | engine |  |
-| 60 | 15:43:13.190 |  | RUN_COMPLETED | engine |  |
-| 61 | 15:43:13.724 | requirements | ANSWERED | demo-reviewer | q-secure = domain-blocklist |
-| 62 | 15:43:13.734 | requirements | NODE_DONE | demo-reviewer | artifact 31e4d248c82b, 0 file(s) |
-| 63 | 15:43:13.810 | design | INVALIDATED | engine | upstream requirements changed; reverted 1 file(s) |
-| 64 | 15:43:13.813 | implement | INVALIDATED | engine | upstream requirements changed; reverted 1 file(s) |
-| 65 | 15:43:13.814 | tests | INVALIDATED | engine | upstream requirements changed; reverted 1 file(s) |
-| 66 | 15:43:13.814 | docs | INVALIDATED | engine | upstream requirements changed; reverted 1 file(s) |
-| 67 | 15:43:13.814 | review | INVALIDATED | engine | upstream requirements changed; reverted 0 file(s) |
-| 68 | 15:43:13.815 | release | INVALIDATED | engine | upstream requirements changed; reverted 1 file(s); approval revoked |
-| 69 | 15:43:13.815 | requirements | REPLAN | engine | invalidation: artifact of 'requirements' changed |
-| 70 | 15:43:14.897 |  | RESUMED | engine |  |
-| 71 | 15:43:14.908 | design | NODE_STARTED | engine | agent architect, variant domain-blocklist |
-| 72 | 15:43:14.916 | design | AGENT_CALLED | architect | architect attempt 1 |
-| 73 | 15:43:14.931 | design | GATE_PASSED | engine | artifact-metadata |
-| 74 | 15:43:14.932 | design | GATE_PASSED | engine | design-diagrams |
-| 75 | 15:43:14.932 | design | GATE_PASSED | engine | path-allowlist |
-| 76 | 15:43:14.937 | design | GATE_PASSED | engine | schema-valid |
-| 77 | 15:43:14.938 | design | GATE_PASSED | engine | secret-scan |
-| 78 | 15:43:15.000 | design | NODE_DONE | engine | artifact 6cfd200218a1, 1 file(s), commit 83eeb55eb6f0 |
-| 79 | 15:43:15.009 | implement | NODE_STARTED | engine | agent developer, variant domain-blocklist |
-| 80 | 15:43:15.009 | implement | GATE_PASSED | engine | path-allowlist |
-| 81 | 15:43:15.013 | implement | AGENT_CALLED | developer | developer attempt 1 |
-| 82 | 15:43:15.027 | implement | GATE_PASSED | engine | artifact-metadata |
-| 83 | 15:43:15.028 | implement | GATE_PASSED | engine | path-allowlist |
-| 84 | 15:43:15.030 | implement | GATE_PASSED | engine | secret-scan |
-| 85 | 15:43:15.033 | implement | GATE_PASSED | engine | forbidden-api |
-| 86 | 15:43:15.033 | implement | GATE_PASSED | engine | dependency-allowlist |
-| 87 | 15:43:15.034 | implement | GATE_PASSED | engine | no-raw-ip-logging |
-| 88 | 15:43:16.424 | implement | GATE_PASSED | engine | compile |
-| 89 | 15:43:16.506 | implement | NODE_DONE | engine | artifact 0908780e9b79, 3 file(s), commit 175d456fe4d8 |
-| 90 | 15:43:16.512 | docs | NODE_STARTED | engine | agent docs, variant domain-blocklist |
-| 91 | 15:43:16.512 | tests | NODE_STARTED | engine | agent tester, variant domain-blocklist |
-| 92 | 15:43:16.514 | docs | AGENT_CALLED | docs | docs attempt 1 |
-| 93 | 15:43:16.514 | tests | AGENT_CALLED | tester | tester attempt 1 |
-| 94 | 15:43:16.529 | docs | GATE_PASSED | engine | artifact-metadata |
-| 95 | 15:43:16.530 | docs | GATE_PASSED | engine | path-allowlist |
-| 96 | 15:43:16.530 | tests | GATE_PASSED | engine | artifact-metadata |
-| 97 | 15:43:16.530 | tests | GATE_PASSED | engine | path-allowlist |
-| 98 | 15:43:16.531 | docs | GATE_PASSED | engine | secret-scan |
-| 99 | 15:43:16.531 | tests | GATE_PASSED | engine | secret-scan |
-| 100 | 15:43:16.597 | docs | NODE_DONE | engine | artifact 712ed297e61c, 1 file(s), commit cca11c09c9c3 |
-| 101 | 15:43:22.871 | tests | GATE_PASSED | engine | unit-tests |
-| 102 | 15:43:22.954 | tests | NODE_DONE | engine | artifact 9c6b4c515042, 2 file(s), commit 991bcca4b7be |
-| 103 | 15:43:22.959 | review | NODE_STARTED | engine | agent reviewer, variant domain-blocklist |
-| 104 | 15:43:22.960 | review | AGENT_CALLED | reviewer | reviewer attempt 1 |
-| 105 | 15:43:22.972 | review | GATE_PASSED | engine | artifact-metadata |
-| 106 | 15:43:22.973 | review | GATE_PASSED | engine | review-complete |
-| 107 | 15:43:29.039 | review | GATE_PASSED | engine | regression-tests |
-| 108 | 15:43:29.042 | review | NODE_DONE | engine | artifact 5e41ff19b1ac, 0 file(s) |
-| 109 | 15:43:29.055 | release | NODE_STARTED | engine | agent docs, variant domain-blocklist |
-| 110 | 15:43:29.056 | release | GATE_PASSED | engine | review-go |
-| 111 | 15:43:29.058 | release | AGENT_CALLED | docs | docs attempt 1 |
-| 112 | 15:43:29.072 | release | GATE_PASSED | engine | artifact-metadata |
-| 113 | 15:43:29.072 | release | GATE_PASSED | engine | path-allowlist |
-| 114 | 15:43:29.073 | release | GATE_PASSED | engine | secret-scan |
-| 115 | 15:43:29.074 | release | APPROVAL_REQUESTED | engine | hash 55043e2f1f51; [APPROVE_AFTER: human sign-off required] |
-| 116 | 15:43:29.076 |  | RUN_PAUSED | engine | waiting {release=AWAITING_APPROVAL} |
-| 117 | 15:43:29.639 | release | APPROVED | demo-reviewer | by demo-reviewer on 55043e2f1f51: Domain blocklist approved |
-| 118 | 15:43:29.705 | release | NODE_DONE | demo-reviewer | artifact 55043e2f1f51, 1 file(s), commit 4c0616350bb9 |
-| 119 | 15:43:30.278 |  | RESUMED | engine |  |
-| 120 | 15:43:30.284 |  | RUN_COMPLETED | engine |  |
+| 1 | 19:45:23.257 |  | RUN_STARTED | engine | workflow ambiguous |
+| 2 | 19:45:23.282 | requirements | NODE_STARTED | engine | agent requirements, variant default |
+| 3 | 19:45:23.290 | requirements | AGENT_CALLED | requirements | requirements attempt 1 |
+| 4 | 19:45:23.304 | requirements | GATE_PASSED | engine | artifact-metadata |
+| 5 | 19:45:23.305 | requirements | GATE_PASSED | engine | requirements-complete |
+| 6 | 19:45:23.309 | requirements | CLARIFICATION_REQUESTED | requirements | q-secure: What does 'more secure' mean for this service? |
+| 7 | 19:45:23.313 |  | RUN_PAUSED | engine | waiting {requirements=AWAITING_CLARIFICATION} |
+| 8 | 19:45:24.370 | requirements | ANSWERED | demo-reviewer | q-secure = https-only |
+| 9 | 19:45:24.382 | requirements | NODE_DONE | demo-reviewer | artifact de232ac79401, 0 file(s) |
+| 10 | 19:45:24.924 |  | RESUMED | engine |  |
+| 11 | 19:45:24.935 | design | NODE_STARTED | engine | agent architect, variant https-only |
+| 12 | 19:45:24.943 | design | AGENT_CALLED | architect | architect attempt 1 |
+| 13 | 19:45:24.957 | design | GATE_PASSED | engine | artifact-metadata |
+| 14 | 19:45:24.958 | design | GATE_PASSED | engine | design-diagrams |
+| 15 | 19:45:24.959 | design | GATE_PASSED | engine | path-allowlist |
+| 16 | 19:45:24.963 | design | GATE_PASSED | engine | schema-valid |
+| 17 | 19:45:24.964 | design | GATE_PASSED | engine | secret-scan |
+| 18 | 19:45:25.037 | design | NODE_DONE | engine | artifact fbbd7e7b7d70, 1 file(s), commit b846793cc286 |
+| 19 | 19:45:25.044 | implement | NODE_STARTED | engine | agent developer, variant https-only |
+| 20 | 19:45:25.044 | implement | GATE_PASSED | engine | path-allowlist |
+| 21 | 19:45:25.046 | implement | AGENT_CALLED | developer | developer attempt 1 |
+| 22 | 19:45:25.056 | implement | GATE_PASSED | engine | artifact-metadata |
+| 23 | 19:45:25.057 | implement | GATE_PASSED | engine | path-allowlist |
+| 24 | 19:45:25.059 | implement | GATE_PASSED | engine | secret-scan |
+| 25 | 19:45:25.060 | implement | GATE_PASSED | engine | forbidden-api |
+| 26 | 19:45:25.061 | implement | GATE_PASSED | engine | dependency-allowlist |
+| 27 | 19:45:25.062 | implement | GATE_PASSED | engine | no-raw-ip-logging |
+| 28 | 19:45:27.281 | implement | GATE_PASSED | engine | compile |
+| 29 | 19:45:27.338 | implement | NODE_DONE | engine | artifact 3a70fd645bcf, 1 file(s), commit a69bcb376141 |
+| 30 | 19:45:27.347 | docs | NODE_STARTED | engine | agent docs, variant https-only |
+| 31 | 19:45:27.347 | tests | NODE_STARTED | engine | agent tester, variant https-only |
+| 32 | 19:45:27.349 | tests | AGENT_CALLED | tester | tester attempt 1 |
+| 33 | 19:45:27.349 | docs | AGENT_CALLED | docs | docs attempt 1 |
+| 34 | 19:45:27.361 | docs | GATE_PASSED | engine | artifact-metadata |
+| 35 | 19:45:27.361 | docs | GATE_PASSED | engine | path-allowlist |
+| 36 | 19:45:27.362 | tests | GATE_PASSED | engine | artifact-metadata |
+| 37 | 19:45:27.362 | tests | GATE_PASSED | engine | path-allowlist |
+| 38 | 19:45:27.362 | docs | GATE_PASSED | engine | secret-scan |
+| 39 | 19:45:27.362 | tests | GATE_PASSED | engine | secret-scan |
+| 40 | 19:45:27.416 | docs | NODE_DONE | engine | artifact 4f72ce3eefd0, 1 file(s), commit a9ac5bc35f68 |
+| 41 | 19:45:34.926 | tests | GATE_PASSED | engine | unit-tests |
+| 42 | 19:45:34.983 | tests | NODE_DONE | engine | artifact 5dedcc0fc41d, 1 file(s), commit 528351a1f449 |
+| 43 | 19:45:34.994 | review | NODE_STARTED | engine | agent reviewer, variant https-only |
+| 44 | 19:45:34.995 | review | AGENT_CALLED | reviewer | reviewer attempt 1 |
+| 45 | 19:45:35.006 | review | GATE_PASSED | engine | artifact-metadata |
+| 46 | 19:45:35.007 | review | GATE_PASSED | engine | review-complete |
+| 47 | 19:45:42.411 | review | GATE_PASSED | engine | regression-tests |
+| 48 | 19:45:42.413 | review | NODE_DONE | engine | artifact 14d6b7b34fc0, 0 file(s) |
+| 49 | 19:45:42.427 | release | NODE_STARTED | engine | agent docs, variant https-only |
+| 50 | 19:45:42.427 | release | GATE_PASSED | engine | review-go |
+| 51 | 19:45:42.428 | release | AGENT_CALLED | docs | docs attempt 1 |
+| 52 | 19:45:42.440 | release | GATE_PASSED | engine | artifact-metadata |
+| 53 | 19:45:42.440 | release | GATE_PASSED | engine | path-allowlist |
+| 54 | 19:45:42.440 | release | GATE_PASSED | engine | secret-scan |
+| 55 | 19:45:42.441 | release | APPROVAL_REQUESTED | engine | hash bee95a1ca6c8; [APPROVE_AFTER: human sign-off required] |
+| 56 | 19:45:42.444 |  | RUN_PAUSED | engine | waiting {release=AWAITING_APPROVAL} |
+| 57 | 19:45:42.990 | release | APPROVED | demo-reviewer | by demo-reviewer on bee95a1ca6c8: HTTPS-only policy approved |
+| 58 | 19:45:43.048 | release | NODE_DONE | demo-reviewer | artifact bee95a1ca6c8, 1 file(s), commit dab6e0bede23 |
+| 59 | 19:45:43.609 |  | RESUMED | engine |  |
+| 60 | 19:45:43.614 |  | RUN_COMPLETED | engine |  |
+| 61 | 19:45:44.162 | requirements | ANSWERED | demo-reviewer | q-secure = domain-blocklist |
+| 62 | 19:45:44.173 | requirements | NODE_DONE | demo-reviewer | artifact 31e4d248c82b, 0 file(s) |
+| 63 | 19:45:44.246 | design | INVALIDATED | engine | upstream requirements changed; reverted 1 file(s) |
+| 64 | 19:45:44.249 | implement | INVALIDATED | engine | upstream requirements changed; reverted 1 file(s) |
+| 65 | 19:45:44.249 | tests | INVALIDATED | engine | upstream requirements changed; reverted 1 file(s) |
+| 66 | 19:45:44.249 | docs | INVALIDATED | engine | upstream requirements changed; reverted 1 file(s) |
+| 67 | 19:45:44.250 | review | INVALIDATED | engine | upstream requirements changed; reverted 0 file(s) |
+| 68 | 19:45:44.250 | release | INVALIDATED | engine | upstream requirements changed; reverted 1 file(s); approval revoked |
+| 69 | 19:45:44.250 | requirements | REPLAN | engine | invalidation: artifact of 'requirements' changed |
+| 70 | 19:45:45.370 |  | RESUMED | engine |  |
+| 71 | 19:45:45.380 | design | NODE_STARTED | engine | agent architect, variant domain-blocklist |
+| 72 | 19:45:45.388 | design | AGENT_CALLED | architect | architect attempt 1 |
+| 73 | 19:45:45.403 | design | GATE_PASSED | engine | artifact-metadata |
+| 74 | 19:45:45.404 | design | GATE_PASSED | engine | design-diagrams |
+| 75 | 19:45:45.405 | design | GATE_PASSED | engine | path-allowlist |
+| 76 | 19:45:45.409 | design | GATE_PASSED | engine | schema-valid |
+| 77 | 19:45:45.410 | design | GATE_PASSED | engine | secret-scan |
+| 78 | 19:45:45.467 | design | NODE_DONE | engine | artifact 6cfd200218a1, 1 file(s), commit cc4a6de49f89 |
+| 79 | 19:45:45.474 | implement | NODE_STARTED | engine | agent developer, variant domain-blocklist |
+| 80 | 19:45:45.474 | implement | GATE_PASSED | engine | path-allowlist |
+| 81 | 19:45:45.477 | implement | AGENT_CALLED | developer | developer attempt 1 |
+| 82 | 19:45:45.488 | implement | GATE_PASSED | engine | artifact-metadata |
+| 83 | 19:45:45.489 | implement | GATE_PASSED | engine | path-allowlist |
+| 84 | 19:45:45.491 | implement | GATE_PASSED | engine | secret-scan |
+| 85 | 19:45:45.493 | implement | GATE_PASSED | engine | forbidden-api |
+| 86 | 19:45:45.494 | implement | GATE_PASSED | engine | dependency-allowlist |
+| 87 | 19:45:45.495 | implement | GATE_PASSED | engine | no-raw-ip-logging |
+| 88 | 19:45:47.691 | implement | GATE_PASSED | engine | compile |
+| 89 | 19:45:47.755 | implement | NODE_DONE | engine | artifact 0908780e9b79, 3 file(s), commit 800852c1ec9a |
+| 90 | 19:45:47.764 | docs | NODE_STARTED | engine | agent docs, variant domain-blocklist |
+| 91 | 19:45:47.765 | tests | NODE_STARTED | engine | agent tester, variant domain-blocklist |
+| 92 | 19:45:47.766 | docs | AGENT_CALLED | docs | docs attempt 1 |
+| 93 | 19:45:47.766 | tests | AGENT_CALLED | tester | tester attempt 1 |
+| 94 | 19:45:47.779 | docs | GATE_PASSED | engine | artifact-metadata |
+| 95 | 19:45:47.779 | docs | GATE_PASSED | engine | path-allowlist |
+| 96 | 19:45:47.780 | docs | GATE_PASSED | engine | secret-scan |
+| 97 | 19:45:47.780 | tests | GATE_PASSED | engine | artifact-metadata |
+| 98 | 19:45:47.781 | tests | GATE_PASSED | engine | path-allowlist |
+| 99 | 19:45:47.781 | tests | GATE_PASSED | engine | secret-scan |
+| 100 | 19:45:47.838 | docs | NODE_DONE | engine | artifact 712ed297e61c, 1 file(s), commit e78c85bb40c4 |
+| 101 | 19:45:55.490 | tests | GATE_PASSED | engine | unit-tests |
+| 102 | 19:45:55.546 | tests | NODE_DONE | engine | artifact 9c6b4c515042, 2 file(s), commit 89a475da7d09 |
+| 103 | 19:45:55.559 | review | NODE_STARTED | engine | agent reviewer, variant domain-blocklist |
+| 104 | 19:45:55.561 | review | AGENT_CALLED | reviewer | reviewer attempt 1 |
+| 105 | 19:45:55.574 | review | GATE_PASSED | engine | artifact-metadata |
+| 106 | 19:45:55.575 | review | GATE_PASSED | engine | review-complete |
+| 107 | 19:46:03.181 | review | GATE_PASSED | engine | regression-tests |
+| 108 | 19:46:03.182 | review | NODE_DONE | engine | artifact 5e41ff19b1ac, 0 file(s) |
+| 109 | 19:46:03.194 | release | NODE_STARTED | engine | agent docs, variant domain-blocklist |
+| 110 | 19:46:03.194 | release | GATE_PASSED | engine | review-go |
+| 111 | 19:46:03.195 | release | AGENT_CALLED | docs | docs attempt 1 |
+| 112 | 19:46:03.206 | release | GATE_PASSED | engine | artifact-metadata |
+| 113 | 19:46:03.206 | release | GATE_PASSED | engine | path-allowlist |
+| 114 | 19:46:03.207 | release | GATE_PASSED | engine | secret-scan |
+| 115 | 19:46:03.208 | release | APPROVAL_REQUESTED | engine | hash 55043e2f1f51; [APPROVE_AFTER: human sign-off required] |
+| 116 | 19:46:03.209 |  | RUN_PAUSED | engine | waiting {release=AWAITING_APPROVAL} |
+| 117 | 19:46:03.791 | release | APPROVED | demo-reviewer | by demo-reviewer on 55043e2f1f51: Domain blocklist approved |
+| 118 | 19:46:03.849 | release | NODE_DONE | demo-reviewer | artifact 55043e2f1f51, 1 file(s), commit 23f1fa660646 |
+| 119 | 19:46:04.430 |  | RESUMED | engine |  |
+| 120 | 19:46:04.435 |  | RUN_COMPLETED | engine |  |
 
 ## Metrics
 
@@ -226,9 +226,9 @@ graph TD
 | Rollbacks (staging discarded) | 0 |
 | Fallbacks | 0 |
 | MTTR | n/a (no recovered failures) over 0 node(s) |
-| End-to-end latency (gross) | 34.392 s |
-| Human wait excluded | 3.849 s |
-| End-to-end latency (net) | 30.542 s |
+| End-to-end latency (gross) | 41.177 s |
+| Human wait excluded | 3.948 s |
+| End-to-end latency (net) | 37.229 s |
 | Approvals requested / granted / rejected | 2 / 2 / 0 |
 | Clarifications requested | 1 |
 | Invalidations / replans | 6 / 1 |
@@ -238,8 +238,8 @@ graph TD
 
 | Seq | Node | Decision | Who | When (UTC) | Hash approved | Comment | Revoked later |
 |---:|---|---|---|---|---|---|---|
-| 57 | release | APPROVED | demo-reviewer | 15:43:12.532 | `bee95a1ca6c8` | HTTPS-only policy approved | yes (INVALIDATED seq 68) |
-| 117 | release | APPROVED | demo-reviewer | 15:43:29.639 | `55043e2f1f51` | Domain blocklist approved | no |
+| 57 | release | APPROVED | demo-reviewer | 19:45:42.990 | `bee95a1ca6c8` | HTTPS-only policy approved | yes (INVALIDATED seq 68) |
+| 117 | release | APPROVED | demo-reviewer | 19:46:03.791 | `55043e2f1f51` | Domain blocklist approved | no |
 
 ## Decision lineage
 
@@ -294,16 +294,16 @@ Each promotion is one commit in the run's workspace (`git log` there shows the r
 
 | Seq | Node | Commit | Files | Approved by |
 |---|---|---|---:|---|
-| 18 | `design` | `5ee3976c276b` | 1 | - |
-| 29 | `implement` | `a0408f83d553` | 1 | - |
-| 40 | `docs` | `d03506299088` | 1 | - |
-| 42 | `tests` | `6f2de03d7e74` | 1 | - |
-| 58 | `release` | `c31a4d61ecc9` | 1 | demo-reviewer |
-| 78 | `design` | `83eeb55eb6f0` | 1 | - |
-| 89 | `implement` | `175d456fe4d8` | 3 | - |
-| 100 | `docs` | `cca11c09c9c3` | 1 | - |
-| 102 | `tests` | `991bcca4b7be` | 2 | - |
-| 118 | `release` | `4c0616350bb9` | 1 | demo-reviewer |
+| 18 | `design` | `b846793cc286` | 1 | - |
+| 29 | `implement` | `a69bcb376141` | 1 | - |
+| 40 | `docs` | `a9ac5bc35f68` | 1 | - |
+| 42 | `tests` | `528351a1f449` | 1 | - |
+| 58 | `release` | `dab6e0bede23` | 1 | demo-reviewer |
+| 78 | `design` | `cc4a6de49f89` | 1 | - |
+| 89 | `implement` | `800852c1ec9a` | 3 | - |
+| 100 | `docs` | `e78c85bb40c4` | 1 | - |
+| 102 | `tests` | `89a475da7d09` | 2 | - |
+| 118 | `release` | `23f1fa660646` | 1 | demo-reviewer |
 
 ## Policy and gate results
 

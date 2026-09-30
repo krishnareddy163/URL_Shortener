@@ -2,15 +2,15 @@
 
 Exported by `scripts/export-sdlc-artifacts.py` from the QA report artifacts and gate results of these runs; do not edit by hand.
 
-- `greenfield-20260929-154142` (greenfield): [report](../sample-runs/greenfield/report.md)
-- `brownfield-20260929-154212` (brownfield): [report](../sample-runs/brownfield/report.md)
-- `ambiguous-20260929-154255` (ambiguous): [report](../sample-runs/ambiguous/report.md)
-- `bugfix-20260929-154330` (bugfix): [report](../sample-runs/bugfix/report.md)
+- `greenfield-20260930-194355` (greenfield): [report](../sample-runs/greenfield/report.md)
+- `brownfield-20260930-194431` (brownfield): [report](../sample-runs/brownfield/report.md)
+- `ambiguous-20260930-194522` (ambiguous): [report](../sample-runs/ambiguous/report.md)
+- `bugfix-20260930-194605` (bugfix): [report](../sample-runs/bugfix/report.md)
 
 ## greenfield
 
 - **Functional coverage** (`functional-coverage`, seq 69): 9 of 9 acceptance criteria mapped to 32 existing tests.
-- **Measured unit and integration coverage** (`test-coverage`, JaCoCo in the build sandbox, seq 70): line 98.8% (324/328), branch 100.0% (161/161), target 100% over 29 classes; below target (documented): com.example.shortener.ShortenerApplication (line 50.0%, branch 100.0%): main() only launches Spring Boot; tests start the application context through @SpringBootTest; com.example.shortener.service.Sha256 (line 33.3%, branch 100.0%): the NoSuchAlgorithmException handler cannot run: every Java platform must provide SHA-256.
+- **Measured unit and integration coverage** (`test-coverage`, JaCoCo in the build sandbox, seq 70): line 100.0% (400/400), branch 100.0% (183/183), target 100% over 32 classes; every class at target.
 - The full per-class inventory for both projects is in [coverage.md](../coverage.md).
 
 | # | Acceptance criterion | Tests that prove it |

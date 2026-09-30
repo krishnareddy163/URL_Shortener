@@ -13,8 +13,8 @@ On a host with the project toolchain:
 
 ```sh
 make test                                           # both suites (about 45 s with a warm Maven cache)
-mvn -q -f shortener-service/pom.xml verify  # shortener only: 135 tests
-mvn -q verify                                       # orchestrator only: 160 tests
+mvn -q -f shortener-service/pom.xml verify  # shortener only: 161 tests
+mvn -q verify                                       # orchestrator only: 163 tests
 mvn -q -pl orchestrator test -Dtest='*ScenarioTest' # the four scenario integration tests
 ```
 
@@ -74,7 +74,7 @@ Enforced on every build (`mvn verify`, both projects): `javac -Xlint:all -Werror
 | SAST | SpotBugs 4.10 + FindSecBugs 1.14 | 0 findings | 0 findings |
 | Static analysis / duplication | PMD 7 + CPD | 0 / 0 | 0 / 0 |
 | SonarQube (26.9 Community, Sonar way) | bugs / vulnerabilities / hotspots / code smells | 0 / 0 / 0 / 0, quality gate OK | 0 / 0 / 0 / 0, quality gate OK |
-| Coverage (JaCoCo, target 100%) | line / branch; floor enforced by `mvn verify` | 90.8% / 78.7%; floor 88% / 75%; every gap in [coverage.md](coverage.md) | **100% / 100%** (functional classes); floor 100% / 100%; `ShortenerApplication.main()` and `Sha256` catch excluded — see [coverage.md](coverage.md) |
+| Coverage (JaCoCo, target 100%) | line / branch; floor enforced by `mvn verify` | 91.4% / 78.7%; floor 88% / 75%; every gap in [coverage.md](coverage.md) | **100% / 100%** (every class, no exclusions); floor 100% / 100% |
 | SBOM | CycloneDX 1.6 | `orchestrator/target/bom.json` (11 runtime components) | `META-INF/sbom/application.cdx.json` in the jar (46 components) |
 | SCA | Trivy on the SBOMs | 0 vulnerabilities | 0 vulnerabilities (after patching Tomcat, Jackson, Log4j) |
 | Secrets | Trivy secret scan of the repository | none | none |
@@ -83,7 +83,7 @@ Enforced on every build (`mvn verify`, both projects): `javac -Xlint:all -Werror
 | CI supply chain | zizmor, actions pinned to SHAs, scanner images pinned to versions | 0 findings | n/a |
 | DAST | OWASP ZAP API scan driven by `openapi.yaml` (40 URLs) | n/a (CLI, no HTTP surface) | 118 rules passed, 0 failures, 0 warnings |
 
-**Coverage.** The target is 100% line and branch coverage on all functional code. The shortener enforces 100% line and 100% branch via the `coverage-floor` JaCoCo execution. Two classes are excluded from the floor and documented in [coverage.md](coverage.md): `ShortenerApplication.main()` (Spring Boot entry point unreachable via `@SpringBootTest`) and `Sha256`'s `NoSuchAlgorithmException` catch (impossible per JCA spec). The orchestrator is at 90.8% line and 78.7% branch coverage; its floor stops regressions, and [coverage.md](coverage.md) lists every class below 100%. `make coverage` regenerates that file, and CI publishes it with both JaCoCo HTML reports.
+**Coverage.** The target is 100% line and branch coverage on all functional code. The shortener enforces 100% line and 100% branch via the `coverage-floor` JaCoCo execution. No class is excluded: `ShortenerApplication.main()` is called by a test and `Sha256` exposes a package-private overload taking the algorithm name, so its `NoSuchAlgorithmException` handler is tested. The orchestrator is at 91.4% line and 78.7% branch coverage; its floor stops regressions, and [coverage.md](coverage.md) lists every class below 100%. `make coverage` regenerates that file, and CI publishes it with both JaCoCo HTML reports.
 
 The image scan skips the image's pre-warmed Maven cache (`/home/app/.m2`). It holds only the dependencies of build plugins, which run offline, unprivileged and at build time. Scanned in full, it has 18 fixable HIGH findings (for example `plexus-utils` and an old `jackson-databind` used by plugins), which can be fixed only by upstream plugin releases. Both runtime SBOMs, which the SCA row covers, are clean. The image runs as an unprivileged `app` user (UID 1000), because its gates execute generated code.
 

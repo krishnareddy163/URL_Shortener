@@ -1,4 +1,4 @@
-# Run report: `brownfield-20260929-154212`
+# Run report: `brownfield-20260930-194431`
 
 ## Run summary
 
@@ -98,92 +98,92 @@ graph TD
 
 | Seq | Time (UTC) | Node | Event | Actor | Detail |
 |---:|---|---|---|---|---|
-| 1 | 15:42:13.394 |  | RUN_STARTED | engine | workflow brownfield |
-| 2 | 15:42:13.419 | analysis | NODE_STARTED | engine | agent analyst, variant default |
-| 3 | 15:42:13.564 | analysis | AGENT_CALLED | analyst | analyst attempt 1 |
-| 4 | 15:42:13.576 | analysis | GATE_PASSED | engine | artifact-metadata |
-| 5 | 15:42:13.577 | analysis | GATE_PASSED | engine | impact-files-exist |
-| 6 | 15:42:13.589 | analysis | NODE_DONE | engine | artifact 90f6ba4a4524, 0 file(s) |
-| 7 | 15:42:13.590 | analysis | REPLAN | analysis | graph-patch: Schema change detected (link.expires_at). Insert a dedicated db_migration node between design and implement so the migration is gated by schema validation, the full regression suite and a human approval before any code depen... |
-| 8 | 15:42:13.601 | design | NODE_STARTED | engine | agent architect, variant default |
-| 9 | 15:42:13.601 | design | GATE_PASSED | engine | path-allowlist |
-| 10 | 15:42:13.602 | design | AGENT_CALLED | architect | architect attempt 1 |
-| 11 | 15:42:13.612 | design | GATE_PASSED | engine | artifact-metadata |
-| 12 | 15:42:13.613 | design | GATE_PASSED | engine | design-diagrams |
-| 13 | 15:42:13.613 | design | GATE_PASSED | engine | path-allowlist |
-| 14 | 15:42:13.616 | design | GATE_PASSED | engine | schema-valid |
-| 15 | 15:42:13.624 | design | GATE_PASSED | engine | secret-scan |
-| 16 | 15:42:13.699 | design | NODE_DONE | engine | artifact 56656fd4d0e6, 2 file(s), commit 0ff82257fb7a |
-| 17 | 15:42:13.705 | db_migration | NODE_STARTED | engine | agent developer, variant default |
-| 18 | 15:42:13.705 | db_migration | GATE_PASSED | engine | path-allowlist |
-| 19 | 15:42:13.707 | db_migration | AGENT_CALLED | developer | developer attempt 1 |
-| 20 | 15:42:13.718 | db_migration | GATE_PASSED | engine | artifact-metadata |
-| 21 | 15:42:13.718 | db_migration | GATE_PASSED | engine | path-allowlist |
-| 22 | 15:42:13.721 | db_migration | GATE_PASSED | engine | schema-valid |
-| 23 | 15:42:19.834 | db_migration | GATE_PASSED | engine | regression-tests |
-| 24 | 15:42:19.838 | db_migration | APPROVAL_REQUESTED | engine | hash 952bdc0b4b78; [MigrationPathRule: schema migration changed (src/main/resources/db/migration/V2__add_expiry.sql)] |
-| 25 | 15:42:19.844 |  | RUN_PAUSED | engine | waiting {db_migration=AWAITING_APPROVAL} |
-| 26 | 15:42:21.533 | db_migration | APPROVED | demo-reviewer | by demo-reviewer on 952bdc0b4b78: Additive nullable column; no backfill |
-| 27 | 15:42:21.593 | db_migration | NODE_DONE | demo-reviewer | artifact 952bdc0b4b78, 1 file(s), commit 47364d067141 |
-| 28 | 15:42:22.223 |  | RESUMED | engine |  |
-| 29 | 15:42:22.235 | implement | NODE_STARTED | engine | agent developer, variant default |
-| 30 | 15:42:22.236 | implement | GATE_PASSED | engine | path-allowlist |
-| 31 | 15:42:22.247 | implement | AGENT_CALLED | developer | developer attempt 1 |
-| 32 | 15:42:22.263 | implement | GATE_PASSED | engine | artifact-metadata |
-| 33 | 15:42:22.263 | implement | GATE_PASSED | engine | path-allowlist |
-| 34 | 15:42:22.267 | implement | GATE_PASSED | engine | secret-scan |
-| 35 | 15:42:22.270 | implement | GATE_PASSED | engine | forbidden-api |
-| 36 | 15:42:22.271 | implement | GATE_PASSED | engine | dependency-allowlist |
-| 37 | 15:42:22.272 | implement | GATE_PASSED | engine | no-raw-ip-logging |
-| 38 | 15:42:23.585 | implement | GATE_PASSED | engine | compile |
-| 39 | 15:42:29.433 | implement | GATE_FAILED | engine | regression-tests: mvn test failed (exit 1): LinkApiIntegrationTest.createThenRedirectReturns302WithLocation:50 Short link has expired |
-| 40 | 15:42:29.440 | implement | ATTEMPT_DISCARDED | engine | rolled back attempt 1 (regression-tests, sig cdab0e7f1d25) |
-| 41 | 15:42:29.446 | implement | AGENT_CALLED | developer | developer attempt 2 |
-| 42 | 15:42:29.459 | implement | GATE_PASSED | engine | artifact-metadata |
-| 43 | 15:42:29.460 | implement | GATE_PASSED | engine | path-allowlist |
-| 44 | 15:42:29.461 | implement | GATE_PASSED | engine | secret-scan |
-| 45 | 15:42:29.463 | implement | GATE_PASSED | engine | forbidden-api |
-| 46 | 15:42:29.463 | implement | GATE_PASSED | engine | dependency-allowlist |
-| 47 | 15:42:29.464 | implement | GATE_PASSED | engine | no-raw-ip-logging |
-| 48 | 15:42:30.737 | implement | GATE_PASSED | engine | compile |
-| 49 | 15:42:36.637 | implement | GATE_PASSED | engine | regression-tests |
-| 50 | 15:42:36.735 | implement | NODE_DONE | engine | artifact 54841b788f10, 9 file(s), commit 69f8c42804b7 |
-| 51 | 15:42:36.744 | regression_check | NODE_STARTED | engine | agent tester, variant default |
-| 52 | 15:42:36.746 | new_tests | NODE_STARTED | engine | agent tester, variant default |
-| 53 | 15:42:36.748 | regression_check | AGENT_CALLED | tester | tester attempt 1 |
-| 54 | 15:42:36.749 | new_tests | AGENT_CALLED | tester | tester attempt 1 |
-| 55 | 15:42:36.761 | regression_check | GATE_PASSED | engine | artifact-metadata |
-| 56 | 15:42:36.768 | new_tests | GATE_PASSED | engine | artifact-metadata |
-| 57 | 15:42:36.768 | new_tests | GATE_PASSED | engine | path-allowlist |
-| 58 | 15:42:36.769 | new_tests | GATE_PASSED | engine | secret-scan |
-| 59 | 15:42:44.426 | regression_check | GATE_PASSED | engine | regression-tests |
-| 60 | 15:42:44.429 | regression_check | NODE_DONE | engine | artifact d016ae009b99, 0 file(s) |
-| 61 | 15:42:44.741 | new_tests | GATE_PASSED | engine | unit-tests |
-| 62 | 15:42:44.818 | new_tests | NODE_DONE | engine | artifact 1a8d835d1cc6, 2 file(s), commit b4cdd8e48dc1 |
-| 63 | 15:42:44.825 | docs | NODE_STARTED | engine | agent docs, variant default |
-| 64 | 15:42:44.826 | docs | AGENT_CALLED | docs | docs attempt 1 |
-| 65 | 15:42:44.837 | docs | GATE_PASSED | engine | artifact-metadata |
-| 66 | 15:42:44.838 | docs | GATE_PASSED | engine | path-allowlist |
-| 67 | 15:42:44.838 | docs | GATE_PASSED | engine | secret-scan |
-| 68 | 15:42:44.893 | docs | NODE_DONE | engine | artifact 795abf6e684a, 1 file(s), commit c524dac747a0 |
-| 69 | 15:42:44.898 | review | NODE_STARTED | engine | agent reviewer, variant default |
-| 70 | 15:42:44.899 | review | AGENT_CALLED | reviewer | reviewer attempt 1 |
-| 71 | 15:42:44.910 | review | GATE_PASSED | engine | artifact-metadata |
-| 72 | 15:42:44.911 | review | GATE_PASSED | engine | review-complete |
-| 73 | 15:42:51.347 | review | GATE_PASSED | engine | regression-tests |
-| 74 | 15:42:51.350 | review | NODE_DONE | engine | artifact 983a298505b3, 0 file(s) |
-| 75 | 15:42:51.360 | release | NODE_STARTED | engine | agent docs, variant default |
-| 76 | 15:42:51.361 | release | GATE_PASSED | engine | review-go |
-| 77 | 15:42:51.363 | release | AGENT_CALLED | docs | docs attempt 1 |
-| 78 | 15:42:51.376 | release | GATE_PASSED | engine | artifact-metadata |
-| 79 | 15:42:51.376 | release | GATE_PASSED | engine | path-allowlist |
-| 80 | 15:42:51.376 | release | GATE_PASSED | engine | secret-scan |
-| 81 | 15:42:51.377 | release | APPROVAL_REQUESTED | engine | hash 7a39da3645cb; [APPROVE_AFTER: human sign-off required] |
-| 82 | 15:42:51.379 |  | RUN_PAUSED | engine | waiting {release=AWAITING_APPROVAL} |
-| 83 | 15:42:52.834 | release | APPROVED | demo-reviewer | by demo-reviewer on 7a39da3645cb: Review GO, v1 suite and expiry tests green: release 1.1.0 |
-| 84 | 15:42:52.897 | release | NODE_DONE | demo-reviewer | artifact 7a39da3645cb, 1 file(s), commit 9f6fa8597f63 |
-| 85 | 15:42:53.483 |  | RESUMED | engine |  |
-| 86 | 15:42:53.489 |  | RUN_COMPLETED | engine |  |
+| 1 | 19:44:32.285 |  | RUN_STARTED | engine | workflow brownfield |
+| 2 | 19:44:32.311 | analysis | NODE_STARTED | engine | agent analyst, variant default |
+| 3 | 19:44:32.507 | analysis | AGENT_CALLED | analyst | analyst attempt 1 |
+| 4 | 19:44:32.523 | analysis | GATE_PASSED | engine | artifact-metadata |
+| 5 | 19:44:32.524 | analysis | GATE_PASSED | engine | impact-files-exist |
+| 6 | 19:44:32.538 | analysis | NODE_DONE | engine | artifact b48c481ead29, 0 file(s) |
+| 7 | 19:44:32.540 | analysis | REPLAN | analysis | graph-patch: Schema change detected (link.expires_at). Insert a dedicated db_migration node between design and implement so the migration is gated by schema validation, the full regression suite and a human approval before any code depen... |
+| 8 | 19:44:32.552 | design | NODE_STARTED | engine | agent architect, variant default |
+| 9 | 19:44:32.553 | design | GATE_PASSED | engine | path-allowlist |
+| 10 | 19:44:32.555 | design | AGENT_CALLED | architect | architect attempt 1 |
+| 11 | 19:44:32.566 | design | GATE_PASSED | engine | artifact-metadata |
+| 12 | 19:44:32.567 | design | GATE_PASSED | engine | design-diagrams |
+| 13 | 19:44:32.568 | design | GATE_PASSED | engine | path-allowlist |
+| 14 | 19:44:32.572 | design | GATE_PASSED | engine | schema-valid |
+| 15 | 19:44:32.576 | design | GATE_PASSED | engine | secret-scan |
+| 16 | 19:44:32.654 | design | NODE_DONE | engine | artifact 56656fd4d0e6, 2 file(s), commit dbbc92c3ad11 |
+| 17 | 19:44:32.660 | db_migration | NODE_STARTED | engine | agent developer, variant default |
+| 18 | 19:44:32.660 | db_migration | GATE_PASSED | engine | path-allowlist |
+| 19 | 19:44:32.662 | db_migration | AGENT_CALLED | developer | developer attempt 1 |
+| 20 | 19:44:32.674 | db_migration | GATE_PASSED | engine | artifact-metadata |
+| 21 | 19:44:32.675 | db_migration | GATE_PASSED | engine | path-allowlist |
+| 22 | 19:44:32.681 | db_migration | GATE_PASSED | engine | schema-valid |
+| 23 | 19:44:40.123 | db_migration | GATE_PASSED | engine | regression-tests |
+| 24 | 19:44:40.125 | db_migration | APPROVAL_REQUESTED | engine | hash 952bdc0b4b78; [MigrationPathRule: schema migration changed (src/main/resources/db/migration/V2__add_expiry.sql)] |
+| 25 | 19:44:40.127 |  | RUN_PAUSED | engine | waiting {db_migration=AWAITING_APPROVAL} |
+| 26 | 19:44:41.677 | db_migration | APPROVED | demo-reviewer | by demo-reviewer on 952bdc0b4b78: Additive nullable column; no backfill |
+| 27 | 19:44:41.734 | db_migration | NODE_DONE | demo-reviewer | artifact 952bdc0b4b78, 1 file(s), commit 8c0b5a6a3b8e |
+| 28 | 19:44:42.318 |  | RESUMED | engine |  |
+| 29 | 19:44:42.330 | implement | NODE_STARTED | engine | agent developer, variant default |
+| 30 | 19:44:42.332 | implement | GATE_PASSED | engine | path-allowlist |
+| 31 | 19:44:42.344 | implement | AGENT_CALLED | developer | developer attempt 1 |
+| 32 | 19:44:42.361 | implement | GATE_PASSED | engine | artifact-metadata |
+| 33 | 19:44:42.361 | implement | GATE_PASSED | engine | path-allowlist |
+| 34 | 19:44:42.366 | implement | GATE_PASSED | engine | secret-scan |
+| 35 | 19:44:42.368 | implement | GATE_PASSED | engine | forbidden-api |
+| 36 | 19:44:42.368 | implement | GATE_PASSED | engine | dependency-allowlist |
+| 37 | 19:44:42.369 | implement | GATE_PASSED | engine | no-raw-ip-logging |
+| 38 | 19:44:44.560 | implement | GATE_PASSED | engine | compile |
+| 39 | 19:44:51.630 | implement | GATE_FAILED | engine | regression-tests: mvn test failed (exit 1): LinkApiIntegrationTest.createThenRedirectReturns302WithLocation:50 {"@timestamp":"2026-09-30T15:44:48.70623-04:00","message":"Audit event could not be recorded: IllegalStateException","logger_n... |
+| 40 | 19:44:51.647 | implement | ATTEMPT_DISCARDED | engine | rolled back attempt 1 (regression-tests, sig e00b0e57931d) |
+| 41 | 19:44:51.655 | implement | AGENT_CALLED | developer | developer attempt 2 |
+| 42 | 19:44:51.669 | implement | GATE_PASSED | engine | artifact-metadata |
+| 43 | 19:44:51.669 | implement | GATE_PASSED | engine | path-allowlist |
+| 44 | 19:44:51.670 | implement | GATE_PASSED | engine | secret-scan |
+| 45 | 19:44:51.672 | implement | GATE_PASSED | engine | forbidden-api |
+| 46 | 19:44:51.672 | implement | GATE_PASSED | engine | dependency-allowlist |
+| 47 | 19:44:51.673 | implement | GATE_PASSED | engine | no-raw-ip-logging |
+| 48 | 19:44:53.721 | implement | GATE_PASSED | engine | compile |
+| 49 | 19:45:00.988 | implement | GATE_PASSED | engine | regression-tests |
+| 50 | 19:45:01.064 | implement | NODE_DONE | engine | artifact 2810e13d3498, 10 file(s), commit 65dc5d87a8cf |
+| 51 | 19:45:01.079 | regression_check | NODE_STARTED | engine | agent tester, variant default |
+| 52 | 19:45:01.082 | new_tests | NODE_STARTED | engine | agent tester, variant default |
+| 53 | 19:45:01.083 | regression_check | AGENT_CALLED | tester | tester attempt 1 |
+| 54 | 19:45:01.084 | new_tests | AGENT_CALLED | tester | tester attempt 1 |
+| 55 | 19:45:01.096 | regression_check | GATE_PASSED | engine | artifact-metadata |
+| 56 | 19:45:01.096 | new_tests | GATE_PASSED | engine | artifact-metadata |
+| 57 | 19:45:01.097 | new_tests | GATE_PASSED | engine | path-allowlist |
+| 58 | 19:45:01.097 | new_tests | GATE_PASSED | engine | secret-scan |
+| 59 | 19:45:10.872 | regression_check | GATE_PASSED | engine | regression-tests |
+| 60 | 19:45:10.874 | regression_check | NODE_DONE | engine | artifact d016ae009b99, 0 file(s) |
+| 61 | 19:45:11.016 | new_tests | GATE_PASSED | engine | unit-tests |
+| 62 | 19:45:11.079 | new_tests | NODE_DONE | engine | artifact 1a8d835d1cc6, 2 file(s), commit 5f9ada3f12aa |
+| 63 | 19:45:11.092 | docs | NODE_STARTED | engine | agent docs, variant default |
+| 64 | 19:45:11.093 | docs | AGENT_CALLED | docs | docs attempt 1 |
+| 65 | 19:45:11.106 | docs | GATE_PASSED | engine | artifact-metadata |
+| 66 | 19:45:11.107 | docs | GATE_PASSED | engine | path-allowlist |
+| 67 | 19:45:11.107 | docs | GATE_PASSED | engine | secret-scan |
+| 68 | 19:45:11.158 | docs | NODE_DONE | engine | artifact 795abf6e684a, 1 file(s), commit e98fde7b89c1 |
+| 69 | 19:45:11.163 | review | NODE_STARTED | engine | agent reviewer, variant default |
+| 70 | 19:45:11.164 | review | AGENT_CALLED | reviewer | reviewer attempt 1 |
+| 71 | 19:45:11.175 | review | GATE_PASSED | engine | artifact-metadata |
+| 72 | 19:45:11.176 | review | GATE_PASSED | engine | review-complete |
+| 73 | 19:45:19.165 | review | GATE_PASSED | engine | regression-tests |
+| 74 | 19:45:19.167 | review | NODE_DONE | engine | artifact 8e3a5ca23c54, 0 file(s) |
+| 75 | 19:45:19.181 | release | NODE_STARTED | engine | agent docs, variant default |
+| 76 | 19:45:19.181 | release | GATE_PASSED | engine | review-go |
+| 77 | 19:45:19.182 | release | AGENT_CALLED | docs | docs attempt 1 |
+| 78 | 19:45:19.194 | release | GATE_PASSED | engine | artifact-metadata |
+| 79 | 19:45:19.195 | release | GATE_PASSED | engine | path-allowlist |
+| 80 | 19:45:19.195 | release | GATE_PASSED | engine | secret-scan |
+| 81 | 19:45:19.196 | release | APPROVAL_REQUESTED | engine | hash 7a39da3645cb; [APPROVE_AFTER: human sign-off required] |
+| 82 | 19:45:19.198 |  | RUN_PAUSED | engine | waiting {release=AWAITING_APPROVAL} |
+| 83 | 19:45:20.308 | release | APPROVED | demo-reviewer | by demo-reviewer on 7a39da3645cb: Review GO, v1 suite and expiry tests green: release 1.1.0 |
+| 84 | 19:45:20.370 | release | NODE_DONE | demo-reviewer | artifact 7a39da3645cb, 1 file(s), commit 5937c11a9962 |
+| 85 | 19:45:20.960 |  | RESUMED | engine |  |
+| 86 | 19:45:20.965 |  | RUN_COMPLETED | engine |  |
 
 ## Metrics
 
@@ -193,10 +193,10 @@ graph TD
 | Retries (discarded attempts) | 1 {implement=1} |
 | Rollbacks (staging discarded) | 1 |
 | Fallbacks | 0 |
-| MTTR | 7.302 s over 1 node(s) |
-| End-to-end latency (gross) | 40.095 s |
-| Human wait excluded | 3.152 s |
-| End-to-end latency (net) | 36.942 s |
+| MTTR | 9.434 s over 1 node(s) |
+| End-to-end latency (gross) | 48.680 s |
+| Human wait excluded | 2.664 s |
+| End-to-end latency (net) | 46.016 s |
 | Approvals requested / granted / rejected | 2 / 2 / 0 |
 | Clarifications requested | 0 |
 | Invalidations / replans | 0 / 1 |
@@ -206,37 +206,37 @@ graph TD
 
 | Seq | Node | Decision | Who | When (UTC) | Hash approved | Comment | Revoked later |
 |---:|---|---|---|---|---|---|---|
-| 26 | db_migration | APPROVED | demo-reviewer | 15:42:21.533 | `952bdc0b4b78` | Additive nullable column; no backfill | no |
-| 83 | release | APPROVED | demo-reviewer | 15:42:52.834 | `7a39da3645cb` | Review GO, v1 suite and expiry tests green: release 1.1.0 | no |
+| 26 | db_migration | APPROVED | demo-reviewer | 19:44:41.677 | `952bdc0b4b78` | Additive nullable column; no backfill | no |
+| 83 | release | APPROVED | demo-reviewer | 19:45:20.308 | `7a39da3645cb` | Review GO, v1 suite and expiry tests green: release 1.1.0 | no |
 
 ## Decision lineage
 
 - **release** `7a39da3645cb`: Release notes for 1.1.0 (link expiry). Release readiness: review GO, full regression suite green, migration approved.
-  - **review** `983a298505b3`: Reviewed the expiry change: additive migration approved, v1 suite green, new behavior covered by tests. Full suite re-run in this gate.
+  - **review** `8e3a5ca23c54`: Reviewed the expiry change: additive migration approved, v1 suite green, new behavior covered by tests. Full suite re-run in this gate.
     - **docs** `795abf6e684a`: README documents the optional expiresAt field with an example and links the expiry design note.
       - **new_tests** `1a8d835d1cc6`: New tests for expiry: redirect before and at expiry (410), links without expiry unchanged forever, invalid expiry rejected, and idempotency with expiry. A se...
-        - **implement** `54841b788f10`: The regression-tests gate showed v1 redirects returning 410: the expiry check treated a null expiresAt as expired. Resolve now uses ShortLink.isExpiredAt, wh...
+        - **implement** `2810e13d3498`: The regression-tests gate showed v1 redirects returning 410: the expiry check treated a null expiresAt as expired. Resolve now uses ShortLink.isExpiredAt, wh...
           - **design** `56656fd4d0e6`: Additive, backwards-compatible design: nullable expires_at, 410 on expired redirects, 400 for past expiry, contract updated. Idempotency and statistics seman...
-            - **analysis** `90f6ba4a4524`: Expiry touches the persisted model, the redirect path and the public contract. The scan confirms every file below exists; the schema change is irreversible o...
+            - **analysis** `b48c481ead29`: Expiry touches the persisted model, the redirect path and the public contract. The scan confirms every file below exists; the schema change is irreversible o...
               - requirement: "Links must be able to expire. Creating a link may specify an optional expiry instant; after it passes, redirects must fail with 410 Gone. Links without an ex..."
           - **db_migration** `952bdc0b4b78`: Additive migration adding a nullable expires_at column. No backfill and no default, so every existing link keeps v1 semantics.
             - **design** `56656fd4d0e6` (see above)
         - **design** `56656fd4d0e6` (see above)
       - **regression_check** `d016ae009b99`: Re-runs the complete pre-existing suite against the promoted implementation to prove v1 behavior is unchanged.
-        - **implement** `54841b788f10` (see above)
+        - **implement** `2810e13d3498` (see above)
 
 Artifacts by node:
 
 | Node | Artifact | Files | Rationale |
 |---|---|---:|---|
-| analysis | `90f6ba4a4524` | 0 | Expiry touches the persisted model, the redirect path and the public contract. The scan confirms every file below exists; the schema change is irreversible once deployed, so it is split into its own governed db_migration step ahead of im... |
+| analysis | `b48c481ead29` | 0 | Expiry touches the persisted model, the redirect path and the public contract. The scan confirms every file below exists; the schema change is irreversible once deployed, so it is split into its own governed db_migration step ahead of im... |
 | design | `56656fd4d0e6` | 2 | Additive, backwards-compatible design: nullable expires_at, 410 on expired redirects, 400 for past expiry, contract updated. Idempotency and statistics semantics are specified explicitly. |
 | db_migration | `952bdc0b4b78` | 1 | Additive migration adding a nullable expires_at column. No backfill and no default, so every existing link keeps v1 semantics. |
-| implement | `54841b788f10` | 9 | The regression-tests gate showed v1 redirects returning 410: the expiry check treated a null expiresAt as expired. Resolve now uses ShortLink.isExpiredAt, where a null expiry never expires, so v1 behavior is preserved. |
+| implement | `2810e13d3498` | 10 | The regression-tests gate showed v1 redirects returning 410: the expiry check treated a null expiresAt as expired. Resolve now uses ShortLink.isExpiredAt, where a null expiry never expires, so v1 behavior is preserved. |
 | regression_check | `d016ae009b99` | 0 | Re-runs the complete pre-existing suite against the promoted implementation to prove v1 behavior is unchanged. |
 | new_tests | `1a8d835d1cc6` | 2 | New tests for expiry: redirect before and at expiry (410), links without expiry unchanged forever, invalid expiry rejected, and idempotency with expiry. A separate H2 database keeps the new context isolated from v1 tests. |
 | docs | `795abf6e684a` | 1 | README documents the optional expiresAt field with an example and links the expiry design note. |
-| review | `983a298505b3` | 0 | Reviewed the expiry change: additive migration approved, v1 suite green, new behavior covered by tests. Full suite re-run in this gate. |
+| review | `8e3a5ca23c54` | 0 | Reviewed the expiry change: additive migration approved, v1 suite green, new behavior covered by tests. Full suite re-run in this gate. |
 | release | `7a39da3645cb` | 1 | Release notes for 1.1.0 (link expiry). Release readiness: review GO, full regression suite green, migration approved. |
 
 ## Quality evidence
@@ -249,7 +249,7 @@ Artifacts by node:
 
 ### Code review (`review`): GO
 
-Reviewed 15 of 15 submitted files.
+Reviewed 16 of 16 submitted files.
 
 | Severity | File | Finding | Status | Resolution |
 |---|---|---|---|---|
@@ -261,12 +261,12 @@ Each promotion is one commit in the run's workspace (`git log` there shows the r
 
 | Seq | Node | Commit | Files | Approved by |
 |---|---|---|---:|---|
-| 16 | `design` | `0ff82257fb7a` | 2 | - |
-| 27 | `db_migration` | `47364d067141` | 1 | demo-reviewer |
-| 50 | `implement` | `69f8c42804b7` | 9 | - |
-| 62 | `new_tests` | `b4cdd8e48dc1` | 2 | - |
-| 68 | `docs` | `c524dac747a0` | 1 | - |
-| 84 | `release` | `9f6fa8597f63` | 1 | demo-reviewer |
+| 16 | `design` | `dbbc92c3ad11` | 2 | - |
+| 27 | `db_migration` | `8c0b5a6a3b8e` | 1 | demo-reviewer |
+| 50 | `implement` | `65dc5d87a8cf` | 10 | - |
+| 62 | `new_tests` | `5f9ada3f12aa` | 2 | - |
+| 68 | `docs` | `e98fde7b89c1` | 1 | - |
+| 84 | `release` | `5937c11a9962` | 1 | demo-reviewer |
 
 ## Policy and gate results
 
@@ -289,7 +289,7 @@ Each promotion is one commit in the run's workspace (`git log` there shows the r
 
 Failures:
 
-- seq 39 `implement` / `regression-tests`: mvn test failed (exit 1): ⏎ [ERROR] Tests run: 22, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.698 s <<< FAILURE! -- in com.example.shortener.service.ShortenerServiceTest ⏎ [ERROR] com.example.shortener.service.ShortenerServiceTe...
+- seq 39 `implement` / `regression-tests`: mvn test failed (exit 1): ⏎ {"@timestamp":"2026-09-30T15:44:48.70623-04:00","message":"Audit event could not be recorded: IllegalStateException","logger_name":"com.example.shortener.api.AuditFilter","thread_name":"main","level":"WARN"} ⏎...
 
 ## Invalidation and replan history
 

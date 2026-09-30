@@ -27,7 +27,7 @@ A production-grade URL shortener service implemented in Java 25 / Spring Boot 3.
 | Orchestration design | `docs/orchestration.md`, `docs/architecture.md` | DAG scheduler, gates, governance, failure handling, re-planning |
 | SDLC scenarios | `docs/scenarios/` | Greenfield, brownfield, ambiguous (plus bugfix) walkthroughs with committed sample reports in `docs/sample-runs/` |
 | Code Review Agent output | `docs/code-review-agent.md` | 7 findings, 4 fixed, 3 accepted |
-| QA Agent output | `docs/qa-agent.md` | 135 tests, coverage report, functional traceability |
+| QA Agent output | `docs/qa-agent.md` | 161 tests, coverage report, functional traceability |
 | Operations runbook | `docs/operations.md` | Config, observability, failure behavior |
 | Release notes | `docs/release-notes.md` | v1.0.0 changelog |
 
@@ -92,7 +92,7 @@ The orchestrator runs a workflow as an explicit dependency DAG with entry and ex
 | Async click recording (queue + worker) | Redirect latency is UX-critical; analytics writes are not — decoupling the two is the right trade |
 | Token bucket rate limiter (in-memory) | Simplest correct implementation; single instance is the stated v1 constraint; Redis is the obvious v2 upgrade path |
 | AuditFilter at servlet level (not AOP) | Servlet filter captures all requests, including those rejected before Spring dispatches to a controller. AOP would miss filter-level rejections. |
-| 100% line / 100% branch JaCoCo floor (functional classes) | 100% line requires excluding two platform bootstrap classes (ShortenerApplication.main() and Sha256's unreachable catch); 100% branch ensures every conditional is exercised; the floor enforces this in CI rather than relying on convention |
+| 100% line / 100% branch JaCoCo floor (functional classes) | Every class at 100% line and branch with no exclusions (`ShortenerApplication.main()` is called by a test; `Sha256` takes the algorithm name so its error path is testable); the floor enforces this in CI rather than relying on convention |
 
 ---
 

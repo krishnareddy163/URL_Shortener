@@ -177,7 +177,7 @@ The algorithm is in [NodeRunner.java](../orchestrator/src/main/java/com/example/
 | 4. Audit-grade observability | `SqliteEventStore` (insert-only), `ReportWriter` | `SqliteEventStoreTest`, `DurabilityTest.foldOfPersistedEvents...` |
 | 4. Reliability metrics | `MetricsCalculator` | `MetricsCalculatorTest` |
 | 4. Dynamic re-planning | `ReplanService` | `InvalidationTest`, `GraphPatchTest`, `AmbiguousScenarioTest`, `BrownfieldScenarioTest` |
-| 5. Production-quality outputs | `shortener-service` and fixtures, compiled and tested by real gates | shortener suite (88 tests); `GreenfieldScenarioTest` proves the baseline equals the greenfield output |
+| 5. Production-quality outputs | `shortener-service` and fixtures, compiled and tested by real gates | shortener suite (161 tests); `GreenfieldScenarioTest` proves the baseline equals the greenfield output |
 | 6. Validation and risk control | gates, risk rules, budgets | see the rows above |
 | 7. Controlled autonomy | `Autonomy`, `--by`, hash binding | `ApprovalServiceTest`, demo scripts |
 | 8. Final engineering summary | [system-engineering-summary.md](system-engineering-summary.md) (orchestrator), [engineering-summary.md](engineering-summary.md) (service) | n/a |

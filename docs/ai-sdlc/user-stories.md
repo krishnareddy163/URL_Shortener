@@ -2,10 +2,10 @@
 
 Exported by `scripts/export-sdlc-artifacts.py` from the requirements artifacts of these runs; do not edit by hand.
 
-- `greenfield-20260929-154142` (greenfield): [report](../sample-runs/greenfield/report.md)
-- `brownfield-20260929-154212` (brownfield): [report](../sample-runs/brownfield/report.md)
-- `ambiguous-20260929-154255` (ambiguous): [report](../sample-runs/ambiguous/report.md)
-- `bugfix-20260929-154330` (bugfix): [report](../sample-runs/bugfix/report.md)
+- `greenfield-20260930-194355` (greenfield): [report](../sample-runs/greenfield/report.md)
+- `brownfield-20260930-194431` (brownfield): [report](../sample-runs/brownfield/report.md)
+- `ambiguous-20260930-194522` (ambiguous): [report](../sample-runs/ambiguous/report.md)
+- `bugfix-20260930-194605` (bugfix): [report](../sample-runs/bugfix/report.md)
 
 ## greenfield
 

@@ -2,14 +2,14 @@
 
 Exported by `scripts/export-sdlc-artifacts.py` from the review artifacts of these runs; do not edit by hand.
 
-- `greenfield-20260929-154142` (greenfield): [report](../sample-runs/greenfield/report.md)
-- `brownfield-20260929-154212` (brownfield): [report](../sample-runs/brownfield/report.md)
-- `ambiguous-20260929-154255` (ambiguous): [report](../sample-runs/ambiguous/report.md)
-- `bugfix-20260929-154330` (bugfix): [report](../sample-runs/bugfix/report.md)
+- `greenfield-20260930-194355` (greenfield): [report](../sample-runs/greenfield/report.md)
+- `brownfield-20260930-194431` (brownfield): [report](../sample-runs/brownfield/report.md)
+- `ambiguous-20260930-194522` (ambiguous): [report](../sample-runs/ambiguous/report.md)
+- `bugfix-20260930-194605` (bugfix): [report](../sample-runs/bugfix/report.md)
 
 ## greenfield / `security_review`: GO
 
-`review-complete` passed at seq 30: all 3 files submitted by the upstream steps were reviewed, and every finding has a status and a resolution.
+`review-complete` passed at seq 27: all 3 files submitted by the upstream steps were reviewed, and every finding has a status and a resolution.
 
 | Severity | File | Finding | Status | Resolution |
 |---|---|---|---|---|
@@ -26,7 +26,7 @@ Exported by `scripts/export-sdlc-artifacts.py` from the review artifacts of thes
 
 ## greenfield / `review`: GO
 
-`review-complete` passed at seq 75: all 46 files submitted by the upstream steps were reviewed, and every finding has a status and a resolution.
+`review-complete` passed at seq 75: all 55 files submitted by the upstream steps were reviewed, and every finding has a status and a resolution.
 
 | Severity | File | Finding | Status | Resolution |
 |---|---|---|---|---|
@@ -44,6 +44,7 @@ Exported by `scripts/export-sdlc-artifacts.py` from the review artifacts of thes
 - `src/main/java/com/example/shortener/ShortenerApplication.java`
 - `src/main/java/com/example/shortener/api/ApiExceptionHandler.java`
 - `src/main/java/com/example/shortener/api/AuditFilter.java`
+- `src/main/java/com/example/shortener/api/RequestIdFilter.java`
 - `src/main/java/com/example/shortener/api/ClientKeyResolver.java`
 - `src/main/java/com/example/shortener/api/CreateLinkRequest.java`
 - `src/main/java/com/example/shortener/api/ErrorResponse.java`
@@ -58,6 +59,8 @@ Exported by `scripts/export-sdlc-artifacts.py` from the review artifacts of thes
 - `src/main/java/com/example/shortener/service/ClickRecorder.java`
 - `src/main/java/com/example/shortener/service/CodeGenerator.java`
 - `src/main/java/com/example/shortener/service/ErrorCode.java`
+- `src/main/java/com/example/shortener/service/IncidentNotificationService.java`
+- `src/main/java/com/example/shortener/service/IncidentSeverity.java`
 - `src/main/java/com/example/shortener/service/LogSanitizer.java`
 - `src/main/java/com/example/shortener/service/RateLimiter.java`
 - `src/main/java/com/example/shortener/service/Sha256.java`
@@ -70,14 +73,20 @@ Exported by `scripts/export-sdlc-artifacts.py` from the review artifacts of thes
 - `src/main/java/com/example/shortener/storage/LinkRepository.java`
 - `src/main/resources/application.properties`
 - `src/main/resources/db/migration/V1__init.sql`
+- `src/main/resources/logback.xml`
+- `src/test/java/com/example/shortener/ShortenerApplicationTest.java`
 - `src/test/java/com/example/shortener/api/ApiExceptionHandlerTest.java`
 - `src/test/java/com/example/shortener/api/AuditFilterTest.java`
+- `src/test/java/com/example/shortener/api/RequestIdFilterTest.java`
 - `src/test/java/com/example/shortener/api/AuditTrailIntegrationTest.java`
 - `src/test/java/com/example/shortener/api/ConfiguredBaseUrlIntegrationTest.java`
 - `src/test/java/com/example/shortener/api/LinkApiIntegrationTest.java`
 - `src/test/java/com/example/shortener/service/ClickRecorderTest.java`
 - `src/test/java/com/example/shortener/service/CodeGeneratorTest.java`
+- `src/test/java/com/example/shortener/service/IncidentNotificationServiceTest.java`
+- `src/test/java/com/example/shortener/service/IncidentSeverityTest.java`
 - `src/test/java/com/example/shortener/service/RateLimiterTest.java`
+- `src/test/java/com/example/shortener/service/Sha256Test.java`
 - `src/test/java/com/example/shortener/service/ShortenerServiceTest.java`
 - `src/test/java/com/example/shortener/service/UrlValidatorEdgeCaseTest.java`
 - `src/test/java/com/example/shortener/service/UrlValidatorTest.java`
@@ -86,7 +95,7 @@ Exported by `scripts/export-sdlc-artifacts.py` from the review artifacts of thes
 
 ## brownfield / `review`: GO
 
-`review-complete` passed at seq 72: all 15 files submitted by the upstream steps were reviewed, and every finding has a status and a resolution.
+`review-complete` passed at seq 72: all 22 files submitted by the upstream steps were reviewed, and every finding has a status and a resolution.
 
 | Severity | File | Finding | Status | Resolution |
 |---|---|---|---|---|
@@ -99,16 +108,23 @@ Exported by `scripts/export-sdlc-artifacts.py` from the review artifacts of thes
 - `openapi.yaml`
 - `src/main/java/com/example/shortener/api/ApiExceptionHandler.java`
 - `src/main/java/com/example/shortener/api/CreateLinkRequest.java`
+- `src/main/java/com/example/shortener/api/RequestIdFilter.java`
 - `src/main/java/com/example/shortener/api/LinkController.java`
 - `src/main/java/com/example/shortener/api/LinkResponse.java`
 - `src/main/java/com/example/shortener/domain/ShortLink.java`
 - `src/main/java/com/example/shortener/service/ErrorCode.java`
+- `src/main/java/com/example/shortener/service/IncidentNotificationService.java`
+- `src/main/java/com/example/shortener/service/IncidentSeverity.java`
 - `src/main/java/com/example/shortener/service/ShortenerService.java`
 - `src/main/java/com/example/shortener/storage/JdbcLinkRepository.java`
 - `src/main/java/com/example/shortener/storage/LinkRepository.java`
 - `src/main/resources/db/migration/V2__add_expiry.sql`
+- `src/main/resources/logback.xml`
 - `src/test/java/com/example/shortener/api/LinkExpiryIntegrationTest.java`
+- `src/test/java/com/example/shortener/api/RequestIdFilterTest.java`
 - `src/test/java/com/example/shortener/domain/ShortLinkExpiryTest.java`
+- `src/test/java/com/example/shortener/service/IncidentNotificationServiceTest.java`
+- `src/test/java/com/example/shortener/service/IncidentSeverityTest.java`
 
 </details>
 
@@ -134,7 +150,7 @@ Exported by `scripts/export-sdlc-artifacts.py` from the review artifacts of thes
 
 ## bugfix / `review`: GO
 
-`review-complete` passed at seq 55: all 3 files submitted by the upstream steps were reviewed, and every finding has a status and a resolution.
+`review-complete` passed at seq 54: all 3 files submitted by the upstream steps were reviewed, and every finding has a status and a resolution.
 
 | Severity | File | Finding | Status | Resolution |
 |---|---|---|---|---|
