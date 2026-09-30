@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.Optional;
 
+import static com.example.shortener.service.LogSanitizer.clean;
+
 /**
  * Sends email alerts when an incident is recorded.
  *
@@ -65,11 +67,12 @@ public class IncidentNotificationService {
             message.setSubject(subject(severity));
             message.setText(body(severity, errorCode, requestId));
             mailSender.send(message);
-            log.info("Incident notification sent: severity={} errorCode={} requestId={}", severity, errorCode, requestId);
+            log.info("Incident notification sent: severity={} errorCode={} requestId={}",
+                    severity, clean(errorCode), clean(requestId));
         } catch (MailException e) {
             // Log message only — full SMTP stack trace adds noise without diagnostic value here.
             log.error("Failed to send incident notification: severity={} requestId={} reason={}",
-                    severity, requestId, e.getMessage());
+                    severity, clean(requestId), e.getMessage());
         }
     }
 
