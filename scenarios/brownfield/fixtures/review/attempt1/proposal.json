@@ -10,16 +10,21 @@
       "openapi.yaml",
       "src/main/java/com/example/shortener/api/ApiExceptionHandler.java",
       "src/main/java/com/example/shortener/api/CreateLinkRequest.java",
+      "src/main/java/com/example/shortener/api/RequestIdFilter.java",
       "src/main/java/com/example/shortener/api/LinkController.java",
       "src/main/java/com/example/shortener/api/LinkResponse.java",
       "src/main/java/com/example/shortener/domain/ShortLink.java",
       "src/main/java/com/example/shortener/service/ErrorCode.java",
+      "src/main/java/com/example/shortener/service/IncidentSeverity.java",
       "src/main/java/com/example/shortener/service/ShortenerService.java",
       "src/main/java/com/example/shortener/storage/JdbcLinkRepository.java",
       "src/main/java/com/example/shortener/storage/LinkRepository.java",
       "src/main/resources/db/migration/V2__add_expiry.sql",
+      "src/main/resources/logback.xml",
       "src/test/java/com/example/shortener/api/LinkExpiryIntegrationTest.java",
-      "src/test/java/com/example/shortener/domain/ShortLinkExpiryTest.java"
+      "src/test/java/com/example/shortener/api/RequestIdFilterTest.java",
+      "src/test/java/com/example/shortener/domain/ShortLinkExpiryTest.java",
+      "src/test/java/com/example/shortener/service/IncidentSeverityTest.java"
     ],
     "findings": [
       {

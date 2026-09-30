@@ -48,10 +48,13 @@ dependencyAllowlist:
   - "org.springframework.boot:spring-boot-starter-web"
   - "org.springframework.boot:spring-boot-starter-validation"
   - "org.springframework.boot:spring-boot-starter-jdbc"
+  - "org.springframework.boot:spring-boot-starter-actuator"
   - "org.springframework.boot:spring-boot-starter-test"
   - "org.awaitility:awaitility"
   - "org.flywaydb:flyway-core"
   - "com.h2database:h2"
+  - "net.logstash.logback:logstash-logback-encoder"
+  - "org.springdoc:springdoc-openapi-starter-webmvc-ui"
 
 # Security: build plugins, plugin dependencies and parent POMs a pom.xml change may add (groupId:artifactId;
 # a plugin without a groupId is org.apache.maven.plugins). Plugins run code during the compile gate, before any
