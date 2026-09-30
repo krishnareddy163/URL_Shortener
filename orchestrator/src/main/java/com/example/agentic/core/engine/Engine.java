@@ -27,7 +27,7 @@ public final class Engine {
         GateRunner gates = new GateRunner(config.gates(), log, workspace.root(), paths.gateLogs());
         AttemptExecutor attempts = new AttemptExecutor(log, config.agents(), workspace, config.policy(), gates, replan);
         Settlement settlement = new Settlement(log, recorder, config.riskRules(), paths, completion);
-        NodeRunner runner = new NodeRunner(log, artifacts, gates, attempts, settlement, safeStop, budgets);
+        NodeRunner runner = new NodeRunner(log, artifacts, gates, attempts, settlement, safeStop, budgets, replan);
         this.scheduler = new Scheduler(log, runner, safeStop, budgets);
         this.approvals = new ApprovalService(log, artifacts, paths, completion, safeStop);
         this.clarifications = new ClarificationService(log, recorder, paths, completion, safeStop);

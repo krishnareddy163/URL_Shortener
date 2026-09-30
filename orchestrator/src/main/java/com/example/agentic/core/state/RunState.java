@@ -190,6 +190,10 @@ public record RunState(
             case Payload.Answered answered -> next.answers.put(answered.questionId(), answered.answer());
             case Payload.NodeDone done -> next.updateNode(nodeId, node -> new NodeState(NodeStatus.DONE, event.outputHash(),
                     done.baseHash() != null ? done.baseHash() : event.outputHash(), null, node.approvedHash(), null));
+            case Payload.UpstreamRejected rejected ->
+                next.updateNode(nodeId, node -> new NodeState(NodeStatus.PENDING, node.currentHash(),
+                        node.baseHash(), null, null,
+                        "retries exhausted in downstream node '" + rejected.downstream() + "': " + rejected.feedback()));
             case Payload.Invalidated _ -> {
                 next.updateNode(nodeId, node -> new NodeState(NodeStatus.PENDING, node.currentHash(),
                         node.baseHash(), null, null, node.feedback()));

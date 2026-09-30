@@ -17,10 +17,15 @@ import java.util.Set;
  * @param autonomy           oversight level
  * @param maxRetries         extra attempts allowed per agent (2 means at most 3 attempts)
  * @param fallbackAgent      agent used for one round after retries are exhausted, or {@code null}
- * @param fixtureVariantFrom question id whose answer selects the fixture variant, or {@code null}
- * @param task               what this node must achieve, stated to live agents; tells apart nodes that share an
- *                           agent (for example a behavior-preserving refactor and the fix). Only a human-authored
- *                           workflow may set it, never a graph patch. {@code null} if not given
+ * @param fixtureVariantFrom      question id whose answer selects the fixture variant, or {@code null}
+ * @param task                    what this node must achieve, stated to live agents; tells apart nodes that share an
+ *                                agent (for example a behavior-preserving refactor and the fix). Only a human-authored
+ *                                workflow may set it, never a graph patch. {@code null} if not given
+ * @param rejectUpstream          when this node exhausts all its retries, reset this upstream node id to PENDING
+ *                                with the gate failure as feedback, invalidate everything in between, and re-run
+ *                                rather than safe-stopping. {@code null} to disable
+ * @param rejectUpstreamMaxCycles how many times the upstream-rejection loop may fire before the run gives up and
+ *                                safe-stops instead (default 1)
  */
 public record Node(
         String id,
@@ -32,9 +37,12 @@ public record Node(
         int maxRetries,
         String fallbackAgent,
         String fixtureVariantFrom,
-        String task) {
+        String task,
+        String rejectUpstream,
+        int rejectUpstreamMaxCycles) {
 
     public static final int DEFAULT_MAX_RETRIES = 2;
+    public static final int DEFAULT_REJECT_UPSTREAM_MAX_CYCLES = 1;
 
     public Node {
         dependsOn = dependsOn == null ? Set.of() : Set.copyOf(dependsOn);
@@ -42,12 +50,21 @@ public record Node(
         exitGates = exitGates == null ? List.of() : List.copyOf(exitGates);
         autonomy = autonomy == null ? Autonomy.AUTO : autonomy;
         task = task == null || task.isBlank() ? null : task.strip();
+        rejectUpstreamMaxCycles = rejectUpstreamMaxCycles <= 0 ? DEFAULT_REJECT_UPSTREAM_MAX_CYCLES : rejectUpstreamMaxCycles;
     }
 
-    /** A node without a task description. */
+    /** Convenience constructor without upstream-rejection fields (tests and fixtures). */
     public Node(String id, String agent, Set<String> dependsOn, List<String> entryGates, List<String> exitGates,
                 Autonomy autonomy, int maxRetries, String fallbackAgent, String fixtureVariantFrom) {
-        this(id, agent, dependsOn, entryGates, exitGates, autonomy, maxRetries, fallbackAgent, fixtureVariantFrom, null);
+        this(id, agent, dependsOn, entryGates, exitGates, autonomy, maxRetries, fallbackAgent, fixtureVariantFrom,
+                null, null, DEFAULT_REJECT_UPSTREAM_MAX_CYCLES);
+    }
+
+    /** Convenience constructor with a task but without upstream-rejection fields. */
+    public Node(String id, String agent, Set<String> dependsOn, List<String> entryGates, List<String> exitGates,
+                Autonomy autonomy, int maxRetries, String fallbackAgent, String fixtureVariantFrom, String task) {
+        this(id, agent, dependsOn, entryGates, exitGates, autonomy, maxRetries, fallbackAgent, fixtureVariantFrom,
+                task, null, DEFAULT_REJECT_UPSTREAM_MAX_CYCLES);
     }
 
     /** YAML/JSON factory applying defaults for omitted optional fields. */
@@ -61,18 +78,21 @@ public record Node(
                          @JsonProperty("maxRetries") Integer maxRetries,
                          @JsonProperty("fallbackAgent") String fallbackAgent,
                          @JsonProperty("fixtureVariantFrom") String fixtureVariantFrom,
-                         @JsonProperty("task") String task) {
+                         @JsonProperty("task") String task,
+                         @JsonProperty("rejectUpstream") String rejectUpstream,
+                         @JsonProperty("rejectUpstreamMaxCycles") Integer rejectUpstreamMaxCycles) {
         return new Node(id, agent, dependsOn, entryGates, exitGates, autonomy,
-                maxRetries == null ? DEFAULT_MAX_RETRIES : maxRetries, fallbackAgent, fixtureVariantFrom, task);
+                maxRetries == null ? DEFAULT_MAX_RETRIES : maxRetries, fallbackAgent, fixtureVariantFrom, task,
+                rejectUpstream, rejectUpstreamMaxCycles == null ? DEFAULT_REJECT_UPSTREAM_MAX_CYCLES : rejectUpstreamMaxCycles);
     }
 
     public Node withDependsOn(Set<String> newDependencies) {
         return new Node(id, agent, newDependencies, entryGates, exitGates, autonomy, maxRetries, fallbackAgent,
-                fixtureVariantFrom, task);
+                fixtureVariantFrom, task, rejectUpstream, rejectUpstreamMaxCycles);
     }
 
     public Node withFallbackAgent(String newFallbackAgent) {
         return new Node(id, agent, dependsOn, entryGates, exitGates, autonomy, maxRetries, newFallbackAgent,
-                fixtureVariantFrom, task);
+                fixtureVariantFrom, task, rejectUpstream, rejectUpstreamMaxCycles);
     }
 }

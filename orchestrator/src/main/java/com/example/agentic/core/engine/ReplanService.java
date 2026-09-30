@@ -149,6 +149,58 @@ public final class ReplanService {
         return targets;
     }
 
+    /**
+     * Resets {@code upstreamNodeId} to PENDING with {@code feedback}, invalidates everything downstream of it
+     * (including {@code downstreamNodeId}), reverts all promoted files, and emits a REPLAN summary. Called when
+     * a downstream node exhausts its retries and has {@code rejectUpstream} configured instead of safe-stopping.
+     */
+    public void rejectUpstream(String downstreamNodeId, String upstreamNodeId, String feedback)
+            throws IOException, PromotionConflictException {
+        RunState state = log.state();
+        String upstreamHash = state.node(upstreamNodeId).currentHash();
+
+        // Every node downstream of the upstream (including the failing node) that isn't already PENDING.
+        List<String> cascade = state.graph().downstreamOf(upstreamNodeId).stream()
+                .filter(id -> state.status(id) != NodeStatus.PENDING)
+                .toList();
+
+        // Revert files promoted by the upstream and any settled descendants.
+        List<String> toRevert = new ArrayList<>();
+        if (state.status(upstreamNodeId) == NodeStatus.DONE) {
+            toRevert.add(upstreamNodeId);
+        }
+        cascade.stream().filter(id -> state.status(id) == NodeStatus.DONE).forEach(toRevert::add);
+        Map<String, List<String>> reverted = revertPromotions(state, toRevert);
+
+        if (!reverted.isEmpty()) {
+            List<String> allFiles = reverted.values().stream().flatMap(List::stream).distinct().toList();
+            workspace.history().commit(allFiles,
+                    "Revert for upstream rejection: " + upstreamNodeId,
+                    "Node '" + downstreamNodeId + "' exhausted retries; resetting '" + upstreamNodeId + "' with feedback.\n\nRun: " + log.runId(),
+                    "agentic-sdlc engine");
+        }
+
+        // Reset the upstream node to PENDING with feedback.
+        log.append(upstreamNodeId, new Payload.UpstreamRejected(downstreamNodeId, feedback),
+                RunLog.ENGINE, null, upstreamHash);
+
+        // Reset each downstream node to PENDING (preserving existing feedback).
+        for (String target : cascade) {
+            RunState.NodeState ns = state.node(target);
+            log.append(target, new Payload.Invalidated("upstream-rejection of " + upstreamNodeId, upstreamNodeId,
+                    upstreamHash, null, ns.status().name(), ns.approvedHash() != null,
+                    reverted.getOrDefault(target, List.of())), RunLog.ENGINE, null, ns.currentHash());
+        }
+
+        // Emit a REPLAN summary so the report and metrics capture the event.
+        List<String> allReset = new ArrayList<>();
+        allReset.add(upstreamNodeId);
+        allReset.addAll(cascade);
+        log.append(downstreamNodeId, Payload.Replan.ofInvalidation(
+                "upstream rejection: '" + downstreamNodeId + "' retries exhausted, resetting '" + upstreamNodeId + "'",
+                upstreamNodeId, upstreamHash, null, allReset), RunLog.ENGINE, null, null);
+    }
+
     private Map<String, List<String>> revertPromotions(RunState state, List<String> targets)
             throws IOException, PromotionConflictException {
         Map<String, Long> lastDoneSeq = new HashMap<>();

@@ -1,15 +1,20 @@
 package com.example.agentic.core.engine;
 
 import com.example.agentic.core.gate.GateResult;
+import com.example.agentic.core.gate.LogSafe;
 import com.example.agentic.core.graph.Node;
 import com.example.agentic.core.graph.WorkflowValidationException;
 import com.example.agentic.core.state.Artifact;
 import com.example.agentic.core.state.ArtifactStore;
+import com.example.agentic.core.state.EventType;
 import com.example.agentic.core.state.Hashing;
 import com.example.agentic.core.state.Payload;
 import com.example.agentic.core.state.RunLog;
 import com.example.agentic.core.state.RunState;
 import com.example.agentic.core.workspace.PromotionConflictException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -25,8 +30,10 @@ import java.util.Optional;
  */
 public final class NodeRunner {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(NodeRunner.class);
+
     /** Result of executing a node in the current wave. */
-    public enum Result { DONE, WAITING, FAILED, STOPPED }
+    public enum Result { DONE, WAITING, FAILED, STOPPED, PENDING }
 
     private final RunLog log;
     private final ArtifactStore artifacts;
@@ -35,9 +42,10 @@ public final class NodeRunner {
     private final Settlement settlement;
     private final SafeStop safeStop;
     private final BudgetGuard budgets;
+    private final ReplanService replan;
 
     NodeRunner(RunLog log, ArtifactStore artifacts, GateRunner gates, AttemptExecutor attempts, Settlement settlement,
-               SafeStop safeStop, BudgetGuard budgets) {
+               SafeStop safeStop, BudgetGuard budgets, ReplanService replan) {
         this.log = log;
         this.artifacts = artifacts;
         this.gates = gates;
@@ -45,6 +53,7 @@ public final class NodeRunner {
         this.settlement = settlement;
         this.safeStop = safeStop;
         this.budgets = budgets;
+        this.replan = replan;
     }
 
     public Result run(Node node) {
@@ -140,6 +149,22 @@ public final class NodeRunner {
     }
 
     private Result failRound(Node node, String agentId, Round round) {
+        String upstreamId = node.rejectUpstream();
+        if (upstreamId != null) {
+            long cycles = log.events().stream()
+                    .filter(e -> e.type() == EventType.UPSTREAM_REJECTED && upstreamId.equals(e.nodeId()))
+                    .filter(e -> node.id().equals(e.payload(Payload.UpstreamRejected.class).downstream()))
+                    .count();
+            if (cycles < node.rejectUpstreamMaxCycles()) {
+                try {
+                    replan.rejectUpstream(node.id(), upstreamId, round.lastFailure().reason());
+                    return Result.PENDING;
+                } catch (IOException | PromotionConflictException exception) {
+                    LOGGER.warn("upstream rejection revert failed for '{}'; falling through to safe-stop: {}",
+                            LogSafe.clean(upstreamId), LogSafe.clean(exception.getMessage()));
+                }
+            }
+        }
         String cause = round.breakerTripped() ? "circuit breaker tripped" : "retries exhausted";
         return fail(node.id(), agentId, round.lastFailure(),
                 cause + " for '" + node.id() + "': " + firstLine(round.lastFailure().reason()), round.breakerTripped());

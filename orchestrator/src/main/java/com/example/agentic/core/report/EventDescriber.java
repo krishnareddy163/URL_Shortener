@@ -38,6 +38,8 @@ public final class EventDescriber {
             case Payload.Rejected rejected -> decision(rejected.by(), rejected.hash(), rejected.comment());
             case Payload.ClarificationRequested requested -> requested.questionId() + ": " + requested.question();
             case Payload.Answered answered -> answered.questionId() + " = " + answered.answer();
+            case Payload.UpstreamRejected rejected -> "downstream '" + rejected.downstream()
+                    + "' rejected upstream; feedback: " + summary(rejected.feedback());
             case Payload.Invalidated invalidated -> "upstream " + invalidated.upstream() + " changed; reverted "
                     + invalidated.revertedFiles().size() + " file(s)"
                     + (invalidated.approvalRevoked() ? "; approval revoked" : "");

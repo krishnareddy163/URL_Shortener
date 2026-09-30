@@ -30,6 +30,8 @@ nodes:
     dependsOn: [refactor]
     exitGates: [artifact-metadata, path-allowlist, secret-scan, reproduces-defect]
     autonomy: AUTO
+    rejectUpstream: refactor
+    rejectUpstreamMaxCycles: 2
 
   - id: fix
     agent: developer

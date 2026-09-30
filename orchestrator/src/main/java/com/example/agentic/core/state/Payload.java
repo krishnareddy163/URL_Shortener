@@ -50,6 +50,7 @@ public sealed interface Payload {
             case CLARIFICATION_REQUESTED -> ClarificationRequested.class;
             case ANSWERED -> Answered.class;
             case INVALIDATED -> Invalidated.class;
+            case UPSTREAM_REJECTED -> UpstreamRejected.class;
             case REPLAN -> Replan.class;
             case NODE_DONE -> NodeDone.class;
             case RUN_PAUSED -> RunPaused.class;
@@ -329,6 +330,19 @@ public sealed interface Payload {
         @Override
         public EventType type() {
             return EventType.INVALIDATED;
+        }
+    }
+
+    /**
+     * An upstream node was reset to PENDING because a downstream node exhausted its retries.
+     *
+     * @param downstream node id that triggered the rejection
+     * @param feedback   the gate-failure text to feed back to the upstream agent on its next attempt
+     */
+    record UpstreamRejected(String downstream, String feedback) implements Payload {
+        @Override
+        public EventType type() {
+            return EventType.UPSTREAM_REJECTED;
         }
     }
 

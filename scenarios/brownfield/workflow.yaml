@@ -35,6 +35,8 @@ nodes:
     dependsOn: [implement]
     exitGates: [artifact-metadata, regression-tests]
     autonomy: AUTO
+    rejectUpstream: implement
+    rejectUpstreamMaxCycles: 2
 
   - id: new_tests
     agent: tester
@@ -42,6 +44,8 @@ nodes:
     dependsOn: [implement]
     exitGates: [artifact-metadata, path-allowlist, secret-scan, unit-tests]
     autonomy: AUTO
+    rejectUpstream: implement
+    rejectUpstreamMaxCycles: 2
 
   - id: docs
     agent: docs

@@ -38,6 +38,8 @@ nodes:
     exitGates: [artifact-metadata, path-allowlist, secret-scan, unit-tests]
     autonomy: AUTO
     maxRetries: 2
+    rejectUpstream: implement
+    rejectUpstreamMaxCycles: 2
 
   - id: integration_tests
     agent: tester
@@ -45,6 +47,8 @@ nodes:
     dependsOn: [implement]
     exitGates: [artifact-metadata, path-allowlist, secret-scan, unit-tests]
     autonomy: AUTO
+    rejectUpstream: implement
+    rejectUpstreamMaxCycles: 2
 
   - id: qa_report
     agent: tester

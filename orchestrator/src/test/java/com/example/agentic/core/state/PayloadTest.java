@@ -36,6 +36,7 @@ class PayloadTest {
                 new Payload.Rejected("carol", "no", "h"),
                 new Payload.ClarificationRequested("q", "which?", true, List.of("x", "y"), "x", Map.of(), List.of(), ""),
                 new Payload.Answered("q", "x", null),
+                new Payload.UpstreamRejected("tests", "exit gates failed: assertion error"),
                 new Payload.Invalidated("changed", "req", "o", "n", "DONE", true, List.of("a")),
                 Payload.Replan.ofGraphPatch("needs migration", new GraphPatch(List.of(), List.of(), List.of(), "r"),
                         List.of("migration")),
