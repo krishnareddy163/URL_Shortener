@@ -4,7 +4,7 @@
 **Branch reviewed:** `main`  
 **Commit range:** `d7d71e2` → `2df445b` (all production commits)  
 **Reviewer:** Automated (SpotBugs 4.10.4.1, FindSecBugs 1.14.0, PMD 3.28.0) + AI code review  
-**Human sign-off:** Required before Release Agent unlocks
+**Human sign-off:** Required before the `release` node runs
 
 ---
 
@@ -176,4 +176,4 @@ SBOM generated at `META-INF/sbom/application.cdx.json` (CycloneDX format) by `cy
 
 - Automated analysis: SpotBugs 4.10.4.1, FindSecBugs 1.14.0, PMD 3.28.0 — all PASS
 - AI review pass: all 7 findings triaged, 4 fixed, 3 accepted with documented rationale
-- Human reviewer: _[pending sign-off before Release Agent unlocks]_
+- Human reviewer: _[pending sign-off before the `release` node runs]_
