@@ -70,6 +70,7 @@ The orchestrator runs a workflow as an explicit dependency DAG with entry and ex
 - Approvals are bound to the artifact hash and require a named reviewer
 - A failed gate discards staging, feeds the failure back for a bounded retry, then falls back once, then safe-stops with `incident.md` (exit code 20)
 - Changed upstream output invalidates downstream nodes, reverts their files and re-plans; agents can also patch the graph at runtime
+- Cross-node feedback loop: a tester node that exhausts retries can reset the upstream developer node to PENDING with the gate failure as feedback (`rejectUpstream`), re-run the developer, then re-run the tester — capped by `rejectUpstreamMaxCycles` to prevent infinite loops
 - Reliability metrics (success rate, retries, rollbacks, MTTR, gross and net latency) are derived from the log for every run
 
 **Scenarios** ([docs/scenarios/](scenarios/)), each run by `make demo-*`:

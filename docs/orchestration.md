@@ -66,6 +66,7 @@ Approvals are hash-bound: they apply to the artifact hash in the latest `APPROVA
 | Bounded retries | `maxRetries` per node (`2` allows 3 attempts) |
 | Same signature twice in a row | Circuit breaker opens for that agent |
 | Breaker open or retries exhausted, fallback defined | The fallback agent gets exactly one round with its own retries |
+| Retries exhausted and `rejectUpstream` set (within cycle cap) | `UPSTREAM_REJECTED` resets the named upstream node to PENDING with the gate failure as feedback, cascades `INVALIDATED` to all other downstream nodes, and returns `Result.PENDING` so the run continues — the scheduler re-runs the upstream node and then re-runs this node automatically |
 | Retries and fallback exhausted, entry gate fails, or a budget is exceeded | `NODE_FAILED` then `SAFE_STOP`: non-DONE nodes become SKIPPED, DONE nodes stay DONE, `incident.md` is written, exit code 20 |
 | Parallel branches fail together | First failure wins atomically under the `SafeStop` monitor; other branches discard staging and end SKIPPED |
 | A file changed underneath a promotion or revert | Hard failure and safe-stop; the engine never overwrites work it did not stage from |
@@ -79,6 +80,7 @@ Exit codes: `0` completed, `10` paused awaiting a human, `20` safe-stopped, `2` 
 
 1. **Hash invalidation.** When a node's artifact hash differs from its previous DONE hash, every non-PENDING downstream node is `INVALIDATED` transitively. Promoted files are reverted from stored pre-images (newest first), pending work is discarded, and approvals are revoked. One `REPLAN` event summarizes the cascade. Clarification answers are folded into the requirements artifact, so changing an answer is just a hash change.
 2. **Graph patch.** An agent may return `data.graphPatch = {addNodes, removeEdges, addEdges, reason}`. It is validated before promotion (acyclic, known agents and gates, dependencies of settled nodes unchanged), recorded as `REPLAN`, and folded into the current graph. The brownfield analyst uses this to insert `db_migration`.
+3. **Cross-node feedback loop (`rejectUpstream`).** A node may declare `rejectUpstream: <nodeId>` and `rejectUpstreamMaxCycles: N`. When that node exhausts retries, instead of safe-stopping the engine resets the upstream node to PENDING with the gate failure text as `feedback`, reverts its promoted files, and cascades `INVALIDATED` to all other downstream nodes. The scheduler re-runs the upstream node (which receives the failure in `context.feedback()`), then re-runs the downstream node. A cycle counter in the event log caps the loop at `rejectUpstreamMaxCycles` to prevent infinite loops. This implements the "QA finds a bug, developer fixes it" loop without human intervention. Used in all three production scenarios: `unit_tests` and `integration_tests` → `implement` (greenfield/brownfield), `reproduce` → `refactor` (bugfix).
 
 ## Policy guardrails
 
