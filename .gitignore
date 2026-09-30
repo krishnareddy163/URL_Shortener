@@ -13,6 +13,9 @@ target/
 *.log
 *.pid
 
+# Scenario test run artifacts (workspaces contain nested .git repos)
+runs/
+
 # Secrets
 .env
 *.env
