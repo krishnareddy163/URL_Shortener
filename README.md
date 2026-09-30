@@ -1,5 +1,7 @@
 # Agentic SDLC Orchestrator
 
+[![CI](https://github.com/krishnareddy163/URL_Shortener/actions/workflows/ci.yml/badge.svg)](https://github.com/krishnareddy163/URL_Shortener/actions/workflows/ci.yml)
+
 A runnable prototype of a governed, agentic software-engineering system. It takes a requirement through requirements, design, implementation, testing, documentation, review and release readiness. AI agents do the work under strict engine control. A **URL shortener** is the example workload the system builds and then changes.
 
 > **Agents propose. The engine disposes.** Agents execute under defined autonomy boundaries; humans own oversight, approvals, and final quality.
@@ -174,6 +176,48 @@ docker run --rm -it -e ANTHROPIC_API_KEY -e ANTHROPIC_MODEL -v "$PWD/runs:/app/r
 | `docs/ai-assisted-development.md` | How AI assistance was used to build the system, what it caught, what it got wrong, and where humans stayed in control |
 | `docs/coverage.md` | Line and branch coverage of both projects, every class below 100% |
 | `runs/` | Run output (git-ignored): `events.db`, `workspace/`, `artifacts/`, `report.md`, `incident.md` |
+
+## Quality evidence
+
+Every check below runs automatically on every push via [GitHub Actions](.github/workflows/ci.yml). Reproduce locally with `make test`, `make scan`, `make lint` and `make demo-all`.
+
+| Category | Check | Result |
+|---|---|---|
+| **Testing** | Unit and integration tests | 324 tests (161 shortener + 163 orchestrator), all passing |
+| | Shortener coverage (JaCoCo floor) | 100% line, 100% branch — 400/400 lines, 183/183 branches, 37 classes, no exclusions |
+| | Orchestrator coverage (JaCoCo floor) | 91.4% line, 78.7% branch — 88%/75% floor enforced, every gap categorized in [coverage.md](docs/coverage.md) |
+| | Functional coverage | Every acceptance criterion mapped to the tests that prove it ([functional-coverage.md](docs/ai-sdlc/functional-coverage.md)) |
+| | Scenario tests | 4 end-to-end demos (greenfield, brownfield, ambiguous, bugfix) with real gates |
+| **Performance** | k6 smoke (every push) | 1 VU · 30 s · all endpoints · p95 < 500 ms |
+| | k6 load (main) | 10 VUs · 3 min · p95 redirect < 150 ms, stats < 200 ms, create < 300 ms |
+| | k6 stress (main) | 0→100 VUs · ramp to saturation · informational |
+| **SAST** | SpotBugs + FindSecBugs | 0 findings — Java bytecode security analysis |
+| | PMD + CPD | 0 findings — code quality rules, copy-paste detection |
+| | Strict compiler | `javac -Xlint:all -Werror` — warnings are errors |
+| | actionlint + zizmor | GitHub Actions syntax, expressions, security (unpinned actions, template injection) |
+| | ShellCheck | Every shell script linted |
+| **SCA & Secrets** | Trivy SCA (CycloneDX SBOMs) | 0 HIGH/CRITICAL vulnerabilities in dependencies |
+| | Trivy image scan | 0 fixable HIGH/CRITICAL in Docker image (CVE-2026-84782 patched) |
+| | Trivy config scan | Dockerfile misconfigurations checked |
+| | Gitleaks | Full git history scanned — 0 secrets |
+| | Trivy secret scan | Working tree scanned — 0 leaked credentials |
+| **DAST** | OWASP ZAP API scan | Live API scan driven by `openapi.yaml` — injection, XSS, auth, headers |
+| **Code review** | Review complete | 55/55 files reviewed — every finding FIXED, ACCEPTED or DEFERRED with resolution ([code-review.md](docs/ai-sdlc/code-review.md)) |
+| | Regression tests | Full 161-test suite on the merged workspace after review |
+| **Docker** | Tests inside image (`--network none`) | Full test suite runs offline inside the container |
+| | Demos inside image (`--network none`) | All 4 scenario demos run offline |
+| **Observability** | Event-sourced audit log | 20 event types · insert-only SQLite · full decision lineage · crash recovery |
+| | Metrics | MTTR, success rate, gross/net/human-wait latency, gate failures — all derived from events |
+| | Incident email alerts | P1–P4 severity classification · Spring Mail · fail-safe (SMTP errors logged, not thrown) |
+| | Log sanitization | CR/LF stripped · no raw IP logging · gate-enforced |
+| | Audit trail | `audit_event` table — every state-changing request with opaque client key, no PII |
+
+<details>
+<summary><strong>Orchestrator policy gates (enforced per agent, per node)</strong></summary>
+
+`path-allowlist` · `secret-scan` · `forbidden-api` · `dependency-allowlist` · `compile` · `unit-tests` · `regression-tests` · `test-coverage` · `functional-coverage` · `requirements-complete` · `design-diagrams` · `review-complete` · `no-raw-ip-logging` · `artifact-metadata` · `schema-valid`
+
+</details>
 
 ## Where to look first
 
