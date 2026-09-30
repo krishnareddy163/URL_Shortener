@@ -1,15 +1,28 @@
 <configuration>
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-      <pattern>%d{ISO8601} %-5level [%thread] %logger{36} - %msg%n</pattern>
+  <!--
+    JSON output for production log aggregation (Datadog, ELK, Splunk).
+    Every log line is a JSON object; MDC fields (requestId) are included automatically.
+
+    Example output:
+      {"@timestamp":"2026-09-29T20:00:00Z","level":"ERROR","logger":"c.e.s.api.ApiExceptionHandler",
+       "message":"[P1_CRITICAL] Business failure: CODE_GENERATION_FAILED","requestId":"a1b2-..."}
+  -->
+  <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+      <includeContext>false</includeContext>
+      <fieldNames>
+        <timestamp>@timestamp</timestamp>
+        <version>[ignore]</version>
+        <levelValue>[ignore]</levelValue>
+      </fieldNames>
     </encoder>
   </appender>
 
-  <!-- Application code: INFO so P1/P2 log.error and log.warn surface, and normal flow is visible. -->
+  <!-- Application code: INFO so P1/P2 errors surface and normal request flow is visible. -->
   <logger name="com.example.shortener" level="INFO"/>
 
-  <!-- Suppress Spring Boot startup noise in production; keep errors visible. -->
+  <!-- Suppress Spring Boot startup and framework noise; only errors surface at root. -->
   <root level="WARN">
-    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="JSON"/>
   </root>
 </configuration>
