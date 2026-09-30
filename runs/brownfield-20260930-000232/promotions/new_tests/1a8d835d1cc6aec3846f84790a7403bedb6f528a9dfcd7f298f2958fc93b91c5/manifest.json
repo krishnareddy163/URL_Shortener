@@ -1,0 +1,10 @@
+{
+  "src/test/java/com/example/shortener/api/LinkExpiryIntegrationTest.java" : {
+    "after" : "22dbf7eb66361cd58c59325f0aaaa97607d82ae297bf083e90562dd870425720",
+    "before" : "absent"
+  },
+  "src/test/java/com/example/shortener/domain/ShortLinkExpiryTest.java" : {
+    "after" : "7284bba03a90113bd42ef094a4ba788f27fdcdb685749aa672e28e300c25a54a",
+    "before" : "absent"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "hash" : "d016ae009b996763f11f5787700db101a5dc01469a9695b03d0e51d011a24fd6",
+  "nodeId" : "regression_check",
+  "derivedFrom" : [ "implement@54841b788f10e99cff2dc62cfad6dadc4b5a773a5109680993e9375634b76705" ],
+  "rationale" : "Re-runs the complete pre-existing suite against the promoted implementation to prove v1 behavior is unchanged.",
+  "files" : [ ],
+  "data" : {
+    "suite" : "full",
+    "purpose" : "v1 behavior preserved"
+  }
+}

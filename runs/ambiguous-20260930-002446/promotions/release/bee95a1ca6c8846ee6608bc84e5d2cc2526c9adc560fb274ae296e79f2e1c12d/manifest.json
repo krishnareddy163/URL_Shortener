@@ -1,0 +1,6 @@
+{
+  "docs/release-notes.md" : {
+    "before" : "43086ca251628bb64bc4ebf3ca7e45149694044466dbe96239f58d3e06ab2bbb",
+    "after" : "29d0ba1c4762faa3ccfad91cc5fe5648823dddb80152471dc13c078ae380f605"
+  }
+}

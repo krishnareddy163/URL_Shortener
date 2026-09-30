@@ -58,6 +58,11 @@
       <artifactId>h2</artifactId>
       <scope>runtime</scope>
     </dependency>
+    <!-- Email notifications for incident alerts. -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-mail</artifactId>
+    </dependency>
     <!-- JSON log encoding: structured output so log aggregators (Datadog, ELK) can index fields. -->
     <dependency>
       <groupId>net.logstash.logback</groupId>

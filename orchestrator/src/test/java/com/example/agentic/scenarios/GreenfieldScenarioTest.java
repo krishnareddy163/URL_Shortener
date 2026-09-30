@@ -62,7 +62,7 @@ class GreenfieldScenarioTest {
                 && event.nodeId().equals("review") && event.payload(Payload.GatePassed.class).gate().equals("review-complete"));
         String report = run.report();
         assertThat(report).contains("## Quality evidence", "### User stories (`requirements`)", "| `docs/design.md` | 2 |",
-                "### Functional coverage (`qa_report`)", "### Code review (`review`): GO", "Reviewed 51 of 51 submitted files.",
+                "### Functional coverage (`qa_report`)", "### Code review (`review`): GO", "Reviewed 53 of 53 submitted files.",
                 "| FIXED |", "| DEFERRED |", "### Workspace git history", "| demo-reviewer |");
     }
 

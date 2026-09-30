@@ -1,9 +1,12 @@
 package com.example.shortener.api;
 
 import com.example.shortener.service.ErrorCode;
+import com.example.shortener.service.IncidentNotificationService;
+import com.example.shortener.service.IncidentSeverity;
 import com.example.shortener.service.ShortenerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -20,9 +23,19 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class ApiExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(ApiExceptionHandler.class);
+    private final IncidentNotificationService notificationService;
+
+    public ApiExceptionHandler(IncidentNotificationService notificationService) {
+        this.notificationService = notificationService;
+    }
 
     @ExceptionHandler(ShortenerException.class)
     ResponseEntity<ErrorResponse> business(ShortenerException exception) {
+        IncidentSeverity severity = IncidentSeverity.forErrorCode(exception.errorCode());
+        if (severity == IncidentSeverity.P1_CRITICAL) {
+            log.error("[{}] Business failure: {}", severity, exception.errorCode());
+        }
+        notificationService.notify(severity, exception.errorCode().name(), MDC.get(RequestIdFilter.MDC_KEY));
         return respond(statusFor(exception.errorCode()), exception.errorCode().name(), exception.getMessage());
     }
 
@@ -57,7 +70,9 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     ResponseEntity<ErrorResponse> unexpected(Exception exception) {
-        log.error("Unhandled request failure: {}", exception.getClass().getName());
+        IncidentSeverity severity = IncidentSeverity.forUnhandledException(exception);
+        log.error("[{}] Unhandled request failure: {}", severity, exception.getClass().getName());
+        notificationService.notify(severity, exception.getClass().getSimpleName(), MDC.get(RequestIdFilter.MDC_KEY));
         return respond(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_ERROR", "The request could not be completed");
     }
 

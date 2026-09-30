@@ -29,4 +29,28 @@
     <Class name="com.example.shortener.api.LinkController"/>
     <Bug pattern="SPRING_ENDPOINT"/>
   </Match>
+  <!--
+    CRLF_INJECTION_LOGS on ApiExceptionHandler: the logged arguments are enum constants (IncidentSeverity,
+    ErrorCode) and the JVM exception class name — all are compile-time-determined strings that cannot contain
+    CRLF. FindSecBugs cannot prove this statically; the risk is reviewed and accepted as a false positive.
+  -->
+  <Match>
+    <Class name="com.example.shortener.api.ApiExceptionHandler"/>
+    <Bug pattern="CRLF_INJECTION_LOGS"/>
+  </Match>
+  <!--
+    SERVLET_HEADER and HRS_REQUEST_PARAMETER_TO_HTTP_HEADER on RequestIdFilter:
+    Reading X-Request-Id from the caller is intentional — the filter propagates an upstream trace ID
+    when one is provided. HTTP response splitting (CR/LF injection into setHeader) is mitigated by
+    the SAFE_ID whitelist regex: any value that does not match [A-Za-z0-9+/=_.:-]{1,64} is discarded
+    and a freshly generated UUID is used instead. FindSecBugs cannot trace through the regex match to
+    prove this; the risk is reviewed, mitigated and accepted as a static-analysis false positive.
+  -->
+  <Match>
+    <Class name="com.example.shortener.api.RequestIdFilter"/>
+    <Or>
+      <Bug pattern="SERVLET_HEADER"/>
+      <Bug pattern="HRS_REQUEST_PARAMETER_TO_HTTP_HEADER"/>
+    </Or>
+  </Match>
 </FindBugsFilter>

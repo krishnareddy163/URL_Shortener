@@ -1,0 +1,11 @@
+{
+  "hash" : "793599919e3a73c6c1998d36006f2aeff50ee2cfb210d7095138f7a761daf28f",
+  "nodeId" : "release",
+  "derivedFrom" : [ "review@e68b9af804af03e818d16f5427745a564a317f5a1f48a825947f547aa3236f9d" ],
+  "rationale" : "Release notes for 1.0.0 summarizing capabilities and known limitations; release readiness requires the GO review and a human sign-off.",
+  "files" : [ "docs/release-notes.md" ],
+  "data" : {
+    "checklist" : [ "review GO", "full suite green", "docs updated", "known limitations stated" ],
+    "version" : "1.0.0"
+  }
+}

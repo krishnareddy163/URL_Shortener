@@ -1,0 +1,34 @@
+{
+  "src/test/java/com/example/shortener/service/ShortenerServiceTest.java" : {
+    "before" : "absent",
+    "after" : "1e5ffc972cc67ece50f2bbb103e164f04b73d8e9ad9371c67286d08e956ccc29"
+  },
+  "src/test/java/com/example/shortener/service/UrlValidatorTest.java" : {
+    "before" : "absent",
+    "after" : "79345e06bdca58a14f74fb65b39be1d10ff24f971a2e88944deacc7a28c47b00"
+  },
+  "src/test/java/com/example/shortener/api/ApiExceptionHandlerTest.java" : {
+    "before" : "absent",
+    "after" : "97c9eea18e64dbd551dbc51d1eb5ffa6e3b635d5d0e64ed24f0f9e48bea2d6f7"
+  },
+  "src/test/java/com/example/shortener/service/UrlValidatorEdgeCaseTest.java" : {
+    "before" : "absent",
+    "after" : "b53286f324062f4959a239eaaba71a89e0f1d6c29e92b6687cab2b1885ed84c9"
+  },
+  "src/test/java/com/example/shortener/service/RateLimiterTest.java" : {
+    "before" : "absent",
+    "after" : "91833cf5b8ed68accf65fce3a1519ec16808e47ac057f99ca75eff9514896b58"
+  },
+  "src/test/java/com/example/shortener/api/AuditFilterTest.java" : {
+    "before" : "absent",
+    "after" : "ed8af766cde2d4d8162a716e3b2c69afed10ea60ecd99338c6cc496caa00b4f3"
+  },
+  "src/test/java/com/example/shortener/service/CodeGeneratorTest.java" : {
+    "before" : "absent",
+    "after" : "1a98a546173b952ded8c0abf450287cfcce401aa8be35ac0f9bd00a276b7f7af"
+  },
+  "src/test/java/com/example/shortener/service/ClickRecorderTest.java" : {
+    "before" : "absent",
+    "after" : "1ce0b05f55c8aa434cc00c4af259df4fac3d35c8f13000f98d4f16278ff6e54f"
+  }
+}

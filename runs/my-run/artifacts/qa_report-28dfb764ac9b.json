@@ -1,0 +1,37 @@
+{
+  "hash" : "28dfb764ac9b25aa9155fa0e27685493497fdd20b9d5980ad830bcd2ac4b927a",
+  "nodeId" : "qa_report",
+  "derivedFrom" : [ "requirements@d1f94f38a55eb213832ca3ffca6fbb9497f1eb3c2926dd718d1bdba101d639a2", "unit_tests@b559ddaea5e1b9f13bffd3ea4c915c0001c6d4db559b4d819a3f0c52e6760718", "integration_tests@351b80301898093972686d774b356726532aab6c0f52fbec5512cdb08ea1e00e" ],
+  "rationale" : "Unit and integration suites are both in place. Every acceptance criterion maps to the tests that prove it; the test-coverage gate measures line and branch coverage and names every class below the 100% target.",
+  "files" : [ ],
+  "data" : {
+    "functionalCoverage" : [ {
+      "criterion" : "POST /api/v1/links returns 201 with {code, shortUrl, url, createdAt}; the same normalized URL without an alias returns the existing link with 200",
+      "tests" : [ "LinkApiIntegrationTest#createThenRedirectReturns302WithLocation", "LinkApiIntegrationTest#creatingTheSameNormalizedUrlAgainIsIdempotent", "ShortenerServiceTest#returnsExistingLinkForSameNormalizedUrl" ]
+    }, {
+      "criterion" : "Custom aliases are 3-32 chars of [A-Za-z0-9_-], reserved words api/actuator/health/stats are rejected (400), duplicates return 409",
+      "tests" : [ "ShortenerServiceTest#createsLinkWithCustomAlias", "ShortenerServiceTest#rejectsInvalidOrReservedAliases", "LinkApiIntegrationTest#invalidAliasAndMalformedBodiesReturn400", "LinkApiIntegrationTest#duplicateAliasReturns409", "ShortenerServiceTest#rejectsAliasThatIsAlreadyTaken" ]
+    }, {
+      "criterion" : "Generated codes are 7 base62 characters from SecureRandom; collisions retry up to 5 times, then 500 CODE_GENERATION_FAILED",
+      "tests" : [ "CodeGeneratorTest#generatesSevenCharacterCodes", "CodeGeneratorTest#generatedCodesUseOnlyTheBase62Alphabet", "ShortenerServiceTest#retriesGeneratedCodeAfterCollision", "ShortenerServiceTest#failsWithCodeGenerationFailedAfterFiveCollisions", "ApiExceptionHandlerTest#codeGenerationFailureIsA500WithItsCode" ]
+    }, {
+      "criterion" : "URLs must be http/https, <= 2048 chars, have a host, and not target localhost, *.local, or loopback/link-local/private/unspecified literal IPs",
+      "tests" : [ "UrlValidatorTest#rejectsNonHttpSchemes", "UrlValidatorTest#rejectsUrlsLongerThan2048Characters", "UrlValidatorTest#requiresHost", "UrlValidatorTest#rejectsLocalHostNames", "UrlValidatorTest#rejectsNonPublicLiteralAddresses", "UrlValidatorEdgeCaseTest#nonPublicAddressesAreRejected", "LinkApiIntegrationTest#invalidUrlReturns400" ]
+    }, {
+      "criterion" : "GET /{code} returns 302 with Location, or 404; the click is recorded asynchronously and never blocks the redirect",
+      "tests" : [ "LinkApiIntegrationTest#createThenRedirectReturns302WithLocation", "LinkApiIntegrationTest#unknownCodeReturns404WithErrorEnvelope", "ShortenerServiceTest#resolveEnqueuesClickWithoutWaiting", "ClickRecorderTest#aFailedClickDoesNotStopTheWorker" ]
+    }, {
+      "criterion" : "GET /api/v1/links/{code}/stats returns totalClicks, lastAccessedAt and per-UTC-day buckets, or 404",
+      "tests" : [ "LinkApiIntegrationTest#statsReportTotalsLastAccessAndPerDayBuckets", "LinkApiIntegrationTest#statsForUnknownCodeReturns404" ]
+    }, {
+      "criterion" : "Link creation is rate limited per client (default 20/minute) with 429; the client key is a hash and raw IPs are never logged",
+      "tests" : [ "RateLimiterTest#allowsBurstUpToCapacityThenRejects", "LinkApiIntegrationTest#rateLimitReturns429AfterTwentyCreatesPerMinute", "AuditTrailIntegrationTest#createdAndRejectedRequestsAreAuditedWithoutPersonalData" ]
+    }, {
+      "criterion" : "Every non-2xx/3xx response uses {\"error\":{\"code\",\"message\"}}",
+      "tests" : [ "LinkApiIntegrationTest#unknownCodeReturns404WithErrorEnvelope", "LinkApiIntegrationTest#unmappedRoutesAndMethodsUseTheErrorEnvelope", "ApiExceptionHandlerTest#unexpectedFailuresHideTheirDetails" ]
+    }, {
+      "criterion" : "Every state-changing request is recorded in an audit trail with its time, opaque client key, method, path and final status; reads are not recorded",
+      "tests" : [ "AuditTrailIntegrationTest#createdAndRejectedRequestsAreAuditedWithoutPersonalData", "AuditTrailIntegrationTest#readsAreNotAudited", "AuditFilterTest#recordsStateChangingRequestsWithTheirFinalStatus" ]
+    } ]
+  }
+}

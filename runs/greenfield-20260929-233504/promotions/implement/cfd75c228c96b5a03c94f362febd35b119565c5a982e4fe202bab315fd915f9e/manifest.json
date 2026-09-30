@@ -1,0 +1,122 @@
+{
+  "src/main/java/com/example/shortener/service/RateLimiter.java" : {
+    "before" : "absent",
+    "after" : "5c3e56e779d84ddde0464e1b2efab8b3f6821fc689633638c028f78d46ad549f"
+  },
+  "src/main/java/com/example/shortener/domain/DailyClicks.java" : {
+    "before" : "absent",
+    "after" : "df9fa6d283b2011b352da3e3fa210dbedcae193dd6d6b99b6bfc1f5a0c82c8df"
+  },
+  "src/main/java/com/example/shortener/storage/AuditRepository.java" : {
+    "before" : "absent",
+    "after" : "121e21f48880ef577cc45a4c27a1d253c96359ca8a52b8af32b960bd8dba3168"
+  },
+  "src/main/java/com/example/shortener/domain/LinkStats.java" : {
+    "before" : "absent",
+    "after" : "5212fc5671d6f2c10471f9e4b922d86a57aa0339b3596b0ddf538195f3bd186c"
+  },
+  "src/main/java/com/example/shortener/api/SecurityHeadersFilter.java" : {
+    "before" : "absent",
+    "after" : "f60a8961ebd6e86e695a01110dcf1bd0b005990ec4c5526aa8d110a4aa33ded7"
+  },
+  "src/main/java/com/example/shortener/service/AliasValidator.java" : {
+    "before" : "absent",
+    "after" : "1802874ec819d04057af89a919c2daf72c26e93b30b929f46ddf05a6bfa79ffc"
+  },
+  "src/main/java/com/example/shortener/service/ShortenerException.java" : {
+    "before" : "absent",
+    "after" : "161e8ad1f08ced70a48a4c2c80b3634aac29bb0a76f59b9b1b8a08bc6389452a"
+  },
+  "src/main/java/com/example/shortener/api/LinkResponse.java" : {
+    "before" : "absent",
+    "after" : "a189c97a5f69b9b1731c12c0149cf876db3757f09d3a7d4c627376a02ef11f29"
+  },
+  "src/main/java/com/example/shortener/api/ClientKeyResolver.java" : {
+    "before" : "absent",
+    "after" : "5e779802872f915a18473133c17e4f7ffc7c2f80091550c15f0587236ade3f12"
+  },
+  "spotbugs-exclude.xml" : {
+    "before" : "absent",
+    "after" : "706fedf627191c76e70e43eb0fcda591a0a1952d178fb3f4186c6fe800680339"
+  },
+  "src/main/java/com/example/shortener/service/LogSanitizer.java" : {
+    "before" : "absent",
+    "after" : "f16ddb37beda4d167f5f883138044b447108c4672bd7a8674699a7f962896a28"
+  },
+  "src/main/java/com/example/shortener/domain/AuditEvent.java" : {
+    "before" : "absent",
+    "after" : "21f118b39625c5c00588c60fe665c8703df47bbb40700c370796d9634c8416e3"
+  },
+  "src/main/java/com/example/shortener/service/ShortenerService.java" : {
+    "before" : "absent",
+    "after" : "25e67487927ada0c5d0e68f15ef687ecc74dd6e1eef1eae96cf10dca736ba0eb"
+  },
+  "src/main/java/com/example/shortener/service/ClickRecorder.java" : {
+    "before" : "absent",
+    "after" : "a8648571da647241c058817bfd41684c2f9c152166176c5dacdd02051cf306f4"
+  },
+  "src/main/java/com/example/shortener/service/UrlValidator.java" : {
+    "before" : "absent",
+    "after" : "0ec4407269eed365193eafbefdab8ae4e79c73a275a8f1769ab469ab290dbb59"
+  },
+  "src/main/java/com/example/shortener/ShortenerApplication.java" : {
+    "before" : "absent",
+    "after" : "d61426dbca88feb33772ec3ebf1cb5abffdccdfd3ceab992a1d6e7df4e5c9e8f"
+  },
+  "src/main/java/com/example/shortener/storage/JdbcLinkRepository.java" : {
+    "before" : "absent",
+    "after" : "da294be9f442d6b412634522ac14a40e6cebb4c1dd033b14802d6508d6389f42"
+  },
+  "src/main/java/com/example/shortener/storage/JdbcAuditRepository.java" : {
+    "before" : "absent",
+    "after" : "bfcb1ebb363acab20d20639b5ecba6a5e532281a75c19ac6c0900dc0384643b6"
+  },
+  "src/main/java/com/example/shortener/api/AuditFilter.java" : {
+    "before" : "absent",
+    "after" : "39979061035fbfe2d12ea5b55db29ea5768500604c46a2ba12d3f50ba8ce4a07"
+  },
+  "src/main/java/com/example/shortener/storage/LinkRepository.java" : {
+    "before" : "absent",
+    "after" : "b57a805871d97f1ad16fa2095db367dd05e555573e70e8b7267f1e789d1fc991"
+  },
+  "src/main/java/com/example/shortener/api/LinkController.java" : {
+    "before" : "absent",
+    "after" : "3131d9fc224f7e5481ecee57fcb2b63b5554969cf11e0de6d2974cc046d4d493"
+  },
+  "src/main/java/com/example/shortener/service/ErrorCode.java" : {
+    "before" : "absent",
+    "after" : "5d01d15ddaf2d31fbcc6fefb4869e1ac9e2f58c6c17b29f652a9fd98b18ac09a"
+  },
+  "src/main/java/com/example/shortener/api/CreateLinkRequest.java" : {
+    "before" : "absent",
+    "after" : "d1bbc0d1190745a7d281999dde0ca87eb4a41df83831e14fef1406a59a009592"
+  },
+  "src/main/resources/application.properties" : {
+    "before" : "absent",
+    "after" : "9781044d138b7a34aa6146633b0f82e25e93f2a644b5e7cc68b3f81bce974b1c"
+  },
+  "src/main/java/com/example/shortener/service/Sha256.java" : {
+    "before" : "absent",
+    "after" : "0fb42180d0546fa592c5638c2de6cc50537a2ca6febaa500cf27bfe1bd80524d"
+  },
+  "src/main/java/com/example/shortener/api/ErrorResponse.java" : {
+    "before" : "absent",
+    "after" : "81929c2f5faf786f936b28613d5d75f8c1fdaea7d79d1a82234349728ed1fb16"
+  },
+  "pom.xml" : {
+    "before" : "absent",
+    "after" : "15a761d08583680e50292d0c519731518234e72a5f12fe472d6e4bb70c4f82d2"
+  },
+  "src/main/java/com/example/shortener/api/ApiExceptionHandler.java" : {
+    "before" : "absent",
+    "after" : "95c1f4cf7bed980de859819f1b5125b1b6a2eca86982197ad8a69d5fdb24aa7a"
+  },
+  "src/main/java/com/example/shortener/domain/ShortLink.java" : {
+    "before" : "absent",
+    "after" : "012096ae19fa13efacfef07848028ff291433c12d97bc60202c7eba58be227f9"
+  },
+  "src/main/java/com/example/shortener/service/CodeGenerator.java" : {
+    "before" : "absent",
+    "after" : "6001b015a36f5d13f9a374ba5b7d7cf01f33e3222e0d6bda7b0d77fc97ce083d"
+  }
+}
