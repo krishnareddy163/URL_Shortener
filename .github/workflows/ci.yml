@@ -123,6 +123,104 @@ jobs:
       - name: All four demos inside the image, no network
         run: docker run --rm --network none agentic-sdlc demo-all
 
+  perf:
+    name: k6 performance tests (smoke always · load+stress on main)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    concurrency:
+      group: ci-perf-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+
+      - name: Install k6
+        run: |
+          sudo gpg --no-default-keyring \
+            --keyring /usr/share/keyrings/k6-archive-keyring.gpg \
+            --keyserver hkp://keyserver.ubuntu.com:80 \
+            --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" \
+            | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update -q && sudo apt-get install -q k6
+          k6 version
+
+      - name: Build shortener jar (skip tests — quality job covers them)
+        run: mvn -q -B -f shortener-service/pom.xml package -DskipTests
+
+      - name: Start shortener service
+        run: |
+          mkdir -p target/perf
+          nohup java -jar shortener-service/target/shortener-service-*.jar \
+            > target/perf/service.log 2>&1 &
+          echo $! > target/perf/service.pid
+          echo "Service PID: $(cat target/perf/service.pid)"
+
+      - name: Wait for service health
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8080/actuator/health > /dev/null 2>&1; then
+              echo "Service is up"
+              exit 0
+            fi
+            echo "Waiting... ($i/30)"
+            sleep 2
+          done
+          echo "Service did not start in time:" && tail -40 target/perf/service.log
+          exit 1
+
+      # Smoke runs on every push/PR — hard thresholds, fails the job on breach.
+      - name: k6 smoke (1 VU · 30 s · all endpoints)
+        run: |
+          k6 run \
+            --env BASE_URL=http://localhost:8080 \
+            --out json=target/perf/smoke-results.json \
+            perf/k6/smoke.js
+
+      # Load and stress run only on main pushes and manual dispatch.
+      # stress uses continue-on-error because it intentionally saturates
+      # the service and threshold breaches there are informational.
+      - name: k6 load (10 VUs · 3 min · p95 SLOs enforced)
+        if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+        run: |
+          k6 run \
+            --env BASE_URL=http://localhost:8080 \
+            --out json=target/perf/load-results.json \
+            perf/k6/load.js
+
+      - name: k6 stress (ramp 0→100 VUs · saturation point — informational)
+        if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+        continue-on-error: true
+        run: |
+          k6 run \
+            --env BASE_URL=http://localhost:8080 \
+            --out json=target/perf/stress-results.json \
+            perf/k6/stress.js
+
+      - name: Stop shortener service
+        if: always()
+        run: |
+          if [[ -f target/perf/service.pid ]]; then
+            kill "$(cat target/perf/service.pid)" 2>/dev/null || true
+          fi
+
+      - name: Upload k6 results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: perf-results
+          if-no-files-found: ignore
+          path: |
+            target/perf/*-results.json
+            target/perf/service.log
+
   # Real-model integration on every push to main of this repository (not forks) and from the Run workflow button. The
   # job condition excludes pull requests; those from forks could not read the secret anyway. Each run spends API
   # credit (about 170k input tokens) and live output varies, so on a push a failure is reported on the job without

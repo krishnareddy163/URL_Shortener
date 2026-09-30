@@ -4,7 +4,7 @@ BASELINE := shortener-service/pom.xml
 SANDBOX_IMAGE := maven:3.9-eclipse-temurin-25
 QUIET_TESTS := -Dmaven.test.redirectTestOutputToFile=true
 
-.PHONY: build test coverage artifacts lint scan live-smoke demo-greenfield demo-brownfield demo-ambiguous demo-bugfix demo-all live bless-baseline clean
+.PHONY: build test coverage artifacts lint scan live-smoke demo-greenfield demo-brownfield demo-ambiguous demo-bugfix demo-all live bless-baseline clean perf perf-smoke perf-load perf-stress
 
 ## build: verify the baseline (also warms the Maven cache the gates use), then package the orchestrator jar
 build:
@@ -72,6 +72,21 @@ live:
 ## bless-baseline: copy the latest completed greenfield workspace into shortener-service
 bless-baseline:
 	scripts/bless-baseline.sh
+
+## perf: k6 smoke test against the local service (auto-starts if needed; needs k6)
+perf: perf-smoke
+
+## perf-smoke: k6 smoke — 1 VU · 30 s · all endpoints (hard thresholds)
+perf-smoke:
+	scripts/perf.sh smoke
+
+## perf-load: k6 load — ramp 0→10 VUs · 3 min · p95 latency SLOs
+perf-load:
+	scripts/perf.sh load
+
+## perf-stress: k6 stress — ramp 0→100 VUs · 6 min · find saturation point
+perf-stress:
+	scripts/perf.sh stress
 
 clean:
 	$(MVN) -q -B clean
