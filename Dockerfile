@@ -3,6 +3,9 @@
 # demos run without network access.
 FROM maven:3.9-eclipse-temurin-25
 
+# Patch OS-level CVEs (the base image lags behind security advisories).
+RUN apt-get update -qq && apt-get upgrade -y -qq libssl3t64 openssl && rm -rf /var/lib/apt/lists/*
+
 # Run as an unprivileged user: inside this image the gates compile and test generated code directly. UID 1000 is
 # the first user on most Linux hosts, so files written to a mounted runs/ directory belong to that user.
 RUN userdel --remove ubuntu 2> /dev/null; useradd --create-home --uid 1000 --user-group app
