@@ -30,7 +30,7 @@ graph TD
 |---|---|---|
 | requirements | problem statement, **6 user stories**, 9 acceptance criteria, 2 non-blocking ambiguities, recorded as assumptions | artifact-metadata, requirements-complete (stories must read "As a ..., I want ..., so that ...") |
 | design | `openapi.yaml`, `V1__init.sql` (with the `audit_event` table), `docs/design.md` with a component and a sequence **Mermaid diagram**, risk list | + **design-diagrams**, path-allowlist, schema-valid, secret-scan |
-| implement | `pom.xml` (with a JaCoCo coverage floor), `spotbugs-exclude.xml`, 27 main sources (error envelope, sanitized logging, **audit trail**), `application.properties` | + forbidden-api, dependency-allowlist, no-raw-ip-logging, **compile** |
+| implement | `pom.xml` (with a JaCoCo coverage floor), `spotbugs-exclude.xml`, 30 main sources (error envelope, sanitized logging, **audit trail**), `application.properties` | + forbidden-api, dependency-allowlist, no-raw-ip-logging, **compile** |
 | unit_tests / integration_tests | 8 unit test classes / 3 MockMvc suites | **unit-tests** (`mvn test`) |
 | qa_report | the **functional coverage matrix**: every acceptance criterion mapped to the tests that prove it | **functional-coverage** (every criterion mapped, every cited test exists), **test-coverage** (JaCoCo in the sandbox against the 100% target) |
 | docs, security_review | README and operations guide / threat-model findings plus GO | artifact-metadata (+ path-allowlist, secret-scan; **review-complete** for the review) |
@@ -52,7 +52,7 @@ Every step that promotes files also becomes one commit in the run's workspace gi
 | 57 | ATTEMPT_DISCARDED | Staging deleted; the workspace is untouched |
 | 58 to 65 | attempt 2 (fixture fixes the expectation, citing the feedback) passes, then NODE_DONE | Retry with feedback |
 | 66 to 71 | `qa_report` passes **functional-coverage** (9 of 9 criteria, 32 tests) and **test-coverage** (line 100%, branch 100%) | QA evidence measured in the sandbox, every class below target named |
-| 72 to 77 | `review` passes **review-complete** (46 of 46 files) and regression-tests | The join starts only after its three dependencies are DONE; the full 135-test suite runs on the combined workspace |
+| 72 to 77 | `review` passes **review-complete** (55 of 55 files) and regression-tests | The join starts only after its three dependencies are DONE; the full 161-test suite runs on the combined workspace |
 | 78 to 87 | `release` passes review-go, requests approval, is approved | Release readiness gate |
 
 The greenfield `implement` escalation cites PomChangeRule and DiffSizeRule rather than MigrationPathRule, because in this plan the V1 migration is produced (and flagged) by `design`.

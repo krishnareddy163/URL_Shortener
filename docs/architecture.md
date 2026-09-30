@@ -184,5 +184,5 @@ The algorithm is in [NodeRunner.java](../orchestrator/src/main/java/com/example/
 | Requirements: user stories and acceptance criteria | requirements agent, `requirements-complete` | `QualityGatesTest`, `GreenfieldScenarioTest` |
 | Design: design document with diagrams | architect agent, `design-diagrams` | `EvidenceGatesTest`, all design fixtures |
 | Development: error handling, logging, auditing, git history | shortener `ApiExceptionHandler`, `LogSanitizer`, `AuditFilter`; engine `GitHistory` | `ApiExceptionHandlerTest`, `AuditTrailIntegrationTest`, `GitHistoryTest`, `GreenfieldScenarioTest` |
-| Code review: all code reviewed, issues and resolutions | reviewer agent, `review-complete`, report Quality evidence | `EvidenceGatesTest`, `GreenfieldScenarioTest` (46 of 46 files) |
+| Code review: all code reviewed, issues and resolutions | reviewer agent, `review-complete`, report Quality evidence | `EvidenceGatesTest`, `GreenfieldScenarioTest` (55 of 55 files) |
 | QA: unit tests, coverage reports, functional coverage, gaps named | tester `qa_report`, `test-coverage`, `functional-coverage`, `docs/coverage.md` | `EvidenceGatesTest`, `GreenfieldScenarioTest`, JaCoCo floors in both builds |

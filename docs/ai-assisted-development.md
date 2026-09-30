@@ -9,9 +9,9 @@ humans stayed in control. Every claim links to evidence in the repository.
 
 | | |
 |---|---|
-| Commits co-authored by the AI agent | 15 of the 16 commits before this page; the other is a Dependabot update. See the `Co-Authored-By` trailers in `git log` |
-| Tests | 160 orchestrator and 135 shortener tests, all run in CI on every push |
-| Shortener coverage raised by AI-written tests | from 89.7% line and 81.9% branch to 100% line and 100% branch (on all 27 functional classes) |
+| Commits co-authored by the AI agent | All 50 commits carry a `Co-Authored-By` trailer. See `git log` |
+| Tests | 163 orchestrator and 161 shortener tests (324 total), all run in CI on every push |
+| Shortener coverage raised by AI-written tests | from 89.7% line and 81.9% branch to 100% line and 100% branch (on all 37 classes, no exclusions) |
 | Automation | GitHub Actions (lint, SAST, SCA, secrets, container and DAST scans, all demos, tests inside the image, a real-model smoke test), Dependabot, JaCoCo floors, and scripts that export every AI SDLC artifact |
 | Decision records | 21 ADRs in [decisions.md](decisions.md), most of them written while working with the agent |
 
