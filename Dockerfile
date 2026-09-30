@@ -11,6 +11,8 @@ RUN chown app:app /app
 # Tells the engine it already runs in a container, so gates without a nested sandbox are reported accurately.
 ENV AGENTIC_SDLC_CONTAINER=1 HOME=/home/app MAVEN_CONFIG=/home/app/.m2
 COPY --chown=app:app . .
+# runs/ is gitignored so COPY won't create it; create it explicitly so the app user can write run artifacts.
+RUN mkdir -p /app/runs && chown app:app /app/runs
 USER app
 
 # Verify the shortener baseline (downloads everything the scenario gates need), then package the orchestrator
