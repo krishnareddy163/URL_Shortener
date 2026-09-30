@@ -1,30 +1,31 @@
-# Final Engineering Summary — URL Shortener
+# Final Engineering Summary — URL Shortener Service
+
+> This document summarizes the **shortener service** (the workload). The **orchestrator**, which is the assignment's primary deliverable, is summarized in [system-engineering-summary.md](system-engineering-summary.md) and specified in [orchestration.md](orchestration.md) and [architecture.md](architecture.md).
 
 **Author:** Krishna Reddy  
 **Date:** 2026-09-29  
 **Version:** 1.0.0  
-**Repository:** `main` @ `2df445b`
 
 ---
 
 ## 1. What Was Built
 
-A production-grade URL shortener service implemented in Java 25 / Spring Boot 3.5. The service provides link creation, redirect, analytics, rate limiting, audit trail, and security hardening — built end-to-end using an agentic SDLC model with six coordinated agents spanning requirements through release.
+A production-grade URL shortener service implemented in Java 25 / Spring Boot 3.5. The service provides link creation, redirect, analytics, rate limiting, audit trail, and security hardening — built end-to-end by the governed orchestrator in `orchestrator/` (seven agent roles, an event-sourced engine, 18 gates), whose greenfield run reproduces the committed baseline.
 
 ### Delivered Artifacts
 
 | Artifact | Location | Description |
 |----------|----------|-------------|
-| Service application | `src/main/java/` | Spring Boot REST service |
-| Database schema | `src/main/resources/db/migration/V1__init.sql` | Flyway-managed schema |
-| OpenAPI spec | `openapi.yaml` | Full API definition |
-| Dockerfile | `Dockerfile` | Multi-stage, non-root runtime |
+| Service application | `shortener-service/src/main/java/` | Spring Boot REST service |
+| Database schema | `shortener-service/src/main/resources/db/migration/V1__init.sql` | Flyway-managed schema |
+| OpenAPI spec | `shortener-service/openapi.yaml` | Full API definition |
+| Dockerfile | `Dockerfile` | Multi-stage image of the orchestrator and its toolchain (non-root); the offline test and demo target |
 | CI pipeline | `.github/workflows/ci.yml` | Build, test, static analysis, Docker |
 | Dependabot config | `.github/dependabot.yml` | Maven + Actions dependency updates |
 | Requirements Agent output | `docs/requirements-agent.md` | User stories, acceptance criteria, ambiguities |
 | Design doc + diagrams | `docs/design.md` | Components, data model, decisions, risks |
-| Orchestration design | `docs/orchestration.md` | Agent DAG, gates, governance model |
-| Three SDLC scenarios | `docs/scenarios.md` | Greenfield, brownfield, ambiguous walkthroughs |
+| Orchestration design | `docs/orchestration.md`, `docs/architecture.md` | DAG scheduler, gates, governance, failure handling, re-planning |
+| SDLC scenarios | `docs/scenarios/` | Greenfield, brownfield, ambiguous (plus bugfix) walkthroughs with committed sample reports in `docs/sample-runs/` |
 | Code Review Agent output | `docs/code-review-agent.md` | 7 findings, 4 fixed, 3 accepted |
 | QA Agent output | `docs/qa-agent.md` | 135 tests, coverage report, functional traceability |
 | Operations runbook | `docs/operations.md` | Config, observability, failure behavior |
@@ -61,20 +62,21 @@ A production-grade URL shortener service implemented in Java 25 / Spring Boot 3.
 
 ## 3. Agentic SDLC Orchestration
 
-The project was built using six specialist agents coordinated by an explicit dependency DAG with entry/exit gates, human approval checkpoints, bounded retries, and rollback triggers. Full design in `docs/orchestration.md`.
+The orchestrator runs a workflow as an explicit dependency DAG with entry and exit gates, per-branch human approval checkpoints, bounded retries with a circuit breaker and fallback agent, staging-based rollback, and safe-stop. Agents only propose; the engine stages, gates and promotes. All state is an insert-only event log. Full design: [orchestration.md](orchestration.md) and [architecture.md](architecture.md); rationale: [decisions.md](decisions.md).
 
 **Orchestration highlights:**
-- Requirements Agent → Design Agent run sequentially (design depends on approved requirements)
-- Development Agent and QA test-design phase run in parallel
-- Review Agent is a synchronisation point — both development and test-design must complete first
-- QA execution phase follows review sign-off
-- Release Agent requires a human approval checkpoint (coverage report + release notes review)
-- Any agent failure beyond 3 retries emits a `HALT` signal — pipeline pauses for human resolution
+- Independent nodes run in parallel waves; join nodes (`qa_report`, `review`) start only after every dependency is DONE
+- Autonomy per node: `AUTO`, `APPROVE_AFTER`, or `ESCALATE_ON_RISK` (migration, `pom.xml`, large diff, deletion)
+- Approvals are bound to the artifact hash and require a named reviewer
+- A failed gate discards staging, feeds the failure back for a bounded retry, then falls back once, then safe-stops with `incident.md` (exit code 20)
+- Changed upstream output invalidates downstream nodes, reverts their files and re-plans; agents can also patch the graph at runtime
+- Reliability metrics (success rate, retries, rollbacks, MTTR, gross and net latency) are derived from the log for every run
 
-**Three scenarios documented** (`docs/scenarios.md`):
-1. **Greenfield** — building the core shorten/redirect API from nothing
-2. **Brownfield** — adding rate limiting to a running service (impact analysis, regression testing)
-3. **Ambiguous** — interpreting "make it more reliable" via structured disambiguation into four concrete improvements
+**Scenarios** ([docs/scenarios/](scenarios/)), each run by `make demo-*`:
+1. **Greenfield** — build the core service from an empty workspace (10 nodes, parallel waves, 3 human checkpoints)
+2. **Brownfield** — "links must be able to expire" on the committed baseline; the analyst inserts a `db_migration` node at runtime
+3. **Ambiguous** — "make links more secure and add some analytics"; a blocking question whose changed answer invalidates and re-runs downstream nodes
+4. **Bugfix** — an SSRF bypass, reproduced by a failing test before the fix
 
 ---
 
@@ -125,7 +127,7 @@ The project was built using six specialist agents coordinated by an explicit dep
 2. Analytics are for aggregate reporting only — individual click loss (on crash or queue overflow) is acceptable.
 3. The production database is PostgreSQL-compatible; the Flyway migration and JDBC queries are written for both H2 and Postgres.
 4. Custom aliases are case-sensitive and ASCII-only; Unicode alias support is out of scope.
-5. Link expiry (TTL) is out of scope for v1.
+5. Link expiry (TTL) is out of scope for the v1 baseline; it is added by the brownfield scenario.
 6. Authentication / authorization is out of scope for v1 — the rate limiter keys on the client IP hash as a proxy.
 7. The base URL in `shortUrl` must be configured explicitly in production via `shortener.base-url`; the `Host` header derivation is for local development only.
 
@@ -135,14 +137,14 @@ The project was built using six specialist agents coordinated by an explicit dep
 
 | Limitation | Impact | v2 Path |
 |-----------|--------|---------|
-| No link expiry (TTL) | Links live forever | Add `expires_at` column + background cleanup job |
+| No link expiry (TTL) in the v1 baseline | Links live forever | Added by the brownfield scenario (`expires_at`, 410 Gone) |
 | In-memory rate limiter | Limit multiplies with instance count | Redis-backed rate limiter |
 | No authentication | Anyone can create or delete any link | Add API-key or OAuth 2 authentication |
 | No Prometheus / metrics endpoint | Latency and error-rate observability requires log parsing | Add Spring Actuator + Micrometer |
 | DNS-rebinding SSRF not mitigated at application layer | Internal services accessible via SSRF if DNS can be manipulated | Egress proxy with allowlist; or DNS resolution at creation with short TTL check |
 | Click worker not drained on shutdown | Queued clicks lost on non-graceful JVM exit | `@PreDestroy` drain with timeout |
 | No PostgreSQL integration test in CI | Flyway migrations only tested against H2 | Add Testcontainers Postgres test profile |
-| No load testing | Redirect latency SLA not measured under realistic concurrency | k6 or Gatling load suite |
+| Load testing is local-only | k6 smoke, load and stress suites exist (`perf/k6/`, `make perf`), but results come from one CI runner or laptop, not production-like hardware | Run against a deployed environment |
 
 ---
 
@@ -150,17 +152,17 @@ The project was built using six specialist agents coordinated by an explicit dep
 
 ```bash
 # Local development (H2 in-memory)
-./mvnw spring-boot:run
+mvn -f shortener-service/pom.xml spring-boot:run
 
 # Full verify (compile + test + static analysis + coverage)
-./mvnw verify
+mvn -f shortener-service/pom.xml verify
 
 # Docker
 docker build -t url-shortener .
 docker run -p 8080:8080 url-shortener
 
 # Smoke test
-curl -s -X POST http://localhost:8080/links \
+curl -s -X POST http://localhost:8080/api/v1/links \
   -H "Content-Type: application/json" \
   -d '{"url":"https://example.com/long/path"}' | jq .
 
@@ -174,14 +176,14 @@ curl -v http://localhost:8080/<code>
 
 | Criterion | Evidence |
 |-----------|---------|
-| Working prototype (end-to-end runnable) | `./mvnw spring-boot:run` + smoke test |
+| Working prototype (end-to-end runnable) | `mvn -f shortener-service/pom.xml spring-boot:run` + smoke test |
 | Architecture overview | `docs/design.md`, `README.md` |
-| Greenfield scenario | `docs/scenarios.md` — Scenario 1 |
-| Brownfield scenario | `docs/scenarios.md` — Scenario 2 |
-| Ambiguous scenario | `docs/scenarios.md` — Scenario 3 |
+| Greenfield scenario | `docs/scenarios/greenfield.md`, `docs/sample-runs/greenfield/report.md` |
+| Brownfield scenario | `docs/scenarios/brownfield.md`, `docs/sample-runs/brownfield/report.md` |
+| Ambiguous scenario | `docs/scenarios/ambiguous.md`, `docs/sample-runs/ambiguous/report.md` |
 | Requirements Agent output | `docs/requirements-agent.md` |
-| Design Agent output | `docs/design.md`, `openapi.yaml` |
-| Development Agent output | `src/main/java/`, `Dockerfile`, `V1__init.sql` |
+| Design Agent output | `docs/design.md`, `shortener-service/openapi.yaml` |
+| Development Agent output | `shortener-service/src/main/java/`, `V1__init.sql` |
 | Core Review Agent output | `docs/code-review-agent.md` |
 | QA Agent output | `docs/qa-agent.md` |
 | Agentic orchestration design | `docs/orchestration.md` |

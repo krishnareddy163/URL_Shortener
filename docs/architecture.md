@@ -180,7 +180,7 @@ The algorithm is in [NodeRunner.java](../orchestrator/src/main/java/com/example/
 | 5. Production-quality outputs | `shortener-service` and fixtures, compiled and tested by real gates | shortener suite (88 tests); `GreenfieldScenarioTest` proves the baseline equals the greenfield output |
 | 6. Validation and risk control | gates, risk rules, budgets | see the rows above |
 | 7. Controlled autonomy | `Autonomy`, `--by`, hash binding | `ApprovalServiceTest`, demo scripts |
-| 8. Final engineering summary | [engineering-summary.md](engineering-summary.md) | n/a |
+| 8. Final engineering summary | [system-engineering-summary.md](system-engineering-summary.md) (orchestrator), [engineering-summary.md](engineering-summary.md) (service) | n/a |
 | Requirements: user stories and acceptance criteria | requirements agent, `requirements-complete` | `QualityGatesTest`, `GreenfieldScenarioTest` |
 | Design: design document with diagrams | architect agent, `design-diagrams` | `EvidenceGatesTest`, all design fixtures |
 | Development: error handling, logging, auditing, git history | shortener `ApiExceptionHandler`, `LogSanitizer`, `AuditFilter`; engine `GitHistory` | `ApiExceptionHandlerTest`, `AuditTrailIntegrationTest`, `GitHistoryTest`, `GreenfieldScenarioTest` |

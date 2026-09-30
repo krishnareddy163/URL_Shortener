@@ -168,7 +168,7 @@ docker run --rm -it -e ANTHROPIC_API_KEY -e ANTHROPIC_MODEL -v "$PWD/runs:/app/r
 | `policies/policies.yaml` | Budgets, per-agent path scopes, dependency allowlist, scanner patterns, risk thresholds, build sandbox |
 | `Dockerfile`, `docker/entrypoint.sh` | The self-contained image and its task runner |
 | `scripts/` | `demo-*.sh`, `live-run.sh`, `bless-baseline.sh`, `quality-scan.sh` |
-| `docs/` | [architecture](docs/architecture.md), [decisions](docs/decisions.md), [testing](docs/testing.md), [engineering summary](docs/engineering-summary.md), [scenario walkthroughs](docs/scenarios/) |
+| `docs/` | [architecture](docs/architecture.md), [decisions](docs/decisions.md), [testing](docs/testing.md), [orchestrator engineering summary](docs/system-engineering-summary.md), [service summary](docs/engineering-summary.md), [orchestration model](docs/orchestration.md), [scenario walkthroughs](docs/scenarios/) |
 | `docs/sample-runs/*/report.md` | Committed reports from the demo runs |
 | `docs/ai-sdlc/` | The AI SDLC artifacts exported from the sample runs, with an index mapping each deliverable to its agent and gate |
 | `docs/ai-assisted-development.md` | How AI assistance was used to build the system, what it caught, what it got wrong, and where humans stayed in control |

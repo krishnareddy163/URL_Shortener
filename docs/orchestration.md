@@ -1,266 +1,118 @@
-# Agentic Orchestration — URL Shortener SDLC
+# Agentic Orchestration
 
-## Overview
+This document explains the orchestration model as implemented in `orchestrator/`. Component structure, the per-node sequence diagram, the event-sourcing schema and the requirement-to-test traceability table are in [architecture.md](architecture.md). The reasoning behind each choice is in [decisions.md](decisions.md) (ADR-01 to ADR-21).
 
-This document describes the agentic orchestration model used to execute the full Software Development Lifecycle (SDLC) for the URL Shortener service. The orchestrator coordinates six specialist agents across eight stages, enforces entry/exit gates between stages, supports parallel execution where dependencies allow, preserves cross-stage context, and enforces human approval checkpoints for high-impact actions.
+## Principle
 
----
+**Agents propose; the engine disposes; humans approve.** An agent never writes to the workspace. It returns a `Proposal` (files, rationale, lineage, data). The engine stages it, checks paths, runs gates, and only then promotes it. Every step is appended to an insert-only SQLite event log, and all run state is a fold over that log.
 
-## Orchestration Principles
+## What runs
 
-| Principle | Implementation |
-|-----------|---------------|
-| **Non-linear execution** | Stages with no mutual dependency run in parallel (see DAG below) |
-| **Stateful context** | Each agent receives the full outputs of its upstream dependencies as context |
-| **Entry/exit gates** | Each stage defines preconditions (entry) and quality checks (exit) before downstream stages unlock |
-| **Human approval checkpoints** | Schema changes, dependency upgrades, and release tagging require explicit human sign-off |
-| **Bounded retries** | Each agent task retries up to 3 times with exponential back-off; a persistent failure triggers the fallback path |
-| **Rollback** | Failed deployments trigger an automated rollback to the last known-good image tag |
-| **Safe-stop** | Any agent can emit a `HALT` signal that pauses the pipeline and alerts the human operator |
-| **Policy guardrails** | Security, compliance, and change-control rules are checked before and after every agent action |
+One generic engine executes any `workflow.yaml`. A workflow is a DAG of nodes; each node names an agent, its dependencies, entry and exit gates, an autonomy level and a retry bound. No scenario name appears in `core`.
 
----
-
-## Agent Roster
-
-| Agent | Role | Autonomy Level |
-|-------|------|---------------|
-| **Requirements Agent** | Interpret requirements, generate user stories and acceptance criteria | High — executes without approval |
-| **Design Agent** | Produce architecture, data model, sequence diagrams, key decisions | High — executes without approval |
-| **Development Agent** | Implement code, error handling, logging, audit trail | High — executes without approval |
-| **Review Agent** | Static analysis, security scan, code review | High — executes without approval |
-| **QA Agent** | Unit + integration tests, coverage enforcement, functional scenarios | High — executes without approval |
-| **Release Agent** | Changelog, Docker image, Git tag, deployment readiness | **Low — requires human approval gate** |
-
----
-
-## Dependency Graph (DAG)
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    REQUIREMENTS AGENT                           │
-│  Entry: raw requirement text                                    │
-│  Exit: user stories + acceptance criteria reviewed by human ✓   │
-└────────────────────────┬────────────────────────────────────────┘
-                         │
-            ┌────────────▼────────────┐
-            │      DESIGN AGENT       │
-            │  Entry: AC doc          │
-            │  Exit: design.md +      │
-            │  openapi.yaml approved  │
-            └──────┬──────────────────┘
-                   │
-        ┌──────────┴──────────┐
-        │                     │
-┌───────▼────────┐   ┌────────▼────────┐
-│ DEVELOPMENT    │   │   QA AGENT      │
-│ AGENT          │   │  (test design   │
-│ Entry: design  │   │   phase only)   │
-│ Exit: all      │   │ Entry: design   │
-│ compiler warns │   │ Exit: test plan │
-│ = 0, no TODOs  │   │ approved        │
-└───────┬────────┘   └────────┬────────┘
-        │                     │
-        └──────────┬──────────┘
-                   │ (synchronisation point — both must pass)
-        ┌──────────▼──────────┐
-        │    REVIEW AGENT     │
-        │  Entry: source +    │
-        │  test code          │
-        │  Exit: 0 blockers,  │
-        │  ≤3 warnings        │
-        └──────────┬──────────┘
-                   │
-        ┌──────────▼──────────┐
-        │     QA AGENT        │
-        │  (execution phase)  │
-        │  Entry: reviewed    │
-        │  source             │
-        │  Exit: 100% line    │
-        │  100% branch,       │
-        │  0 test failures    │
-        └──────────┬──────────┘
-                   │
-                   │  ⚠ HUMAN APPROVAL CHECKPOINT
-                   │  Operator reviews coverage report,
-                   │  release notes, and security scan
-                   │  before Release Agent unlocks
-                   ▼
-        ┌──────────────────────┐
-        │    RELEASE AGENT     │
-        │  Entry: human sign-  │
-        │  off + green CI      │
-        │  Exit: Docker image  │
-        │  tagged + changelog  │
-        │  published           │
-        └──────────────────────┘
-```
-
----
-
-## Stage Specifications
-
-### Stage 1 — Requirements Agent
-
-**Entry gate:** Raw requirements text provided  
-**Outputs:** `docs/requirements-agent.md` — epics, user stories, acceptance criteria, ambiguity log  
-**Exit gate:** Human reviews and approves the user stories before Design Agent starts  
-**Retry:** Up to 3 regenerations if the output is missing epics or acceptance criteria  
-**Policy guardrail:** Requirements must not include PII-handling, payment processing, or OAuth flows without explicit compliance review flag
-
----
-
-### Stage 2 — Design Agent
-
-**Entry gate:** Approved requirements doc  
-**Outputs:** `docs/design.md` (components, data model, key decisions, risks), `openapi.yaml`, Mermaid diagrams  
-**Exit gate:** OpenAPI spec is valid (run `spectral lint`); design doc covers all acceptance criteria  
-**Retry:** Up to 3 iterations if spec is invalid  
-**Human approval checkpoint:** Any database schema change or new external dependency requires human sign-off before development begins  
-**Policy guardrail:** Design must include a security risk section; SSRF mitigations must be documented
-
----
-
-### Stage 3a — Development Agent (parallel with 3b)
-
-**Entry gate:** Approved design doc and OpenAPI spec  
-**Outputs:** All production source files under `src/main/`; Flyway migration; Dockerfile  
-**Exit gate:**
-- `./mvnw compile` with `-Werror` produces zero warnings
-- No `TODO` / `FIXME` markers in committed code
-- SpotBugs + PMD pass with zero violations
-
-**Retry:** Individual file edits retry on compiler error; after 3 total failures the Development Agent emits `HALT`  
-**Policy guardrail:**
-- Raw IPs/PII must never appear in log statements (enforced by `LogSanitizer`)
-- All DB access through the repository interface (no ad-hoc SQL in controllers)
-- No hardcoded credentials
-
----
-
-### Stage 3b — QA Agent: Test Design (parallel with 3a)
-
-**Entry gate:** Approved design doc  
-**Outputs:** Test plan document, test class stubs  
-**Exit gate:** Test plan covers all acceptance criteria (traceability matrix)  
-**Policy guardrail:** Test plan must include at least one negative/failure scenario per user story
-
----
-
-### Stage 4 — Review Agent (synchronisation point)
-
-**Entry gate:** Both Stage 3a and 3b outputs complete and their exit gates passed  
-**Outputs:** `docs/code-review-agent.md` — findings list with severity, resolution, sign-off  
-**Exit gate:** Zero BLOCKER findings; CRITICAL findings resolved or formally accepted with justification  
-**Retry:** If new findings appear after a fix, the review re-runs (bounded at 3 full cycles)  
-**Policy guardrail:**
-- FindSecBugs must complete with zero HIGH-severity security findings
-- No Spring `@SuppressWarnings("unchecked")` without documented justification
-- Dependency versions must match the approved SBOM
-
----
-
-### Stage 5 — QA Agent: Execution
-
-**Entry gate:** Review Agent sign-off  
-**Outputs:** `docs/qa-agent.md` — test results, coverage report, functional scenario results  
-**Exit gate:**
-- Zero test failures
-- JaCoCo: ≥ 100% line coverage (functional classes), 100% branch coverage
-- All functional scenarios (in `docs/scenarios.md`) pass end-to-end
-
-**Retry:** A single test failure triggers a targeted fix loop in the Development Agent (up to 3 iterations) before the QA Agent re-runs  
-**Rollback trigger:** If coverage drops below the floor after a fix attempt, the change is reverted and the pipeline halts for human review
-
----
-
-### Stage 6 — Release Agent
-
-**Entry gate:** Human approval checkpoint + green CI on `main`  
-**Outputs:** `docs/release-notes.md`, Docker image tagged with version, `git tag vX.Y.Z`  
-**Exit gate:** Docker image runs locally and passes smoke test (`POST /links` + `GET /{code}`)  
-**Human approval checkpoint:** Release Agent proposes the version bump and changelog; human confirms before the tag is pushed  
-**Rollback:** If the smoke test fails, the image tag is removed and the previous release tag is restored  
-**Policy guardrail:** Release notes must reference all closed user stories; no release without a passing SBOM scan
-
----
-
-## Cross-Stage Context Preservation
-
-Each agent receives a **context bundle** consisting of:
-
-| Context item | Produced by | Consumed by |
+| Scenario | Workflow | What it demonstrates |
 |---|---|---|
-| Approved requirements doc | Requirements Agent | Design Agent, QA Agent (test design) |
-| OpenAPI spec + design doc | Design Agent | Development Agent, Review Agent, QA Agent |
-| Source code | Development Agent | Review Agent, QA Agent (execution) |
-| Test plan | QA Agent (design) | QA Agent (execution), Review Agent |
-| Review findings + resolutions | Review Agent | QA Agent (execution), Release Agent |
-| Coverage report | QA Agent (execution) | Release Agent |
-| Human approval record | Human | Release Agent entry gate |
+| Greenfield | [scenarios/greenfield/workflow.yaml](../scenarios/greenfield/workflow.yaml) | 10 nodes, 2 parallel waves, 2 joins, 3 human checkpoints |
+| Brownfield | [scenarios/brownfield/workflow.yaml](../scenarios/brownfield/workflow.yaml) | Codebase analysis; the analyst inserts a `db_migration` node at runtime (graph patch) |
+| Ambiguous | [scenarios/ambiguous/workflow.yaml](../scenarios/ambiguous/workflow.yaml) | Blocking clarification; changing the answer invalidates and re-runs downstream nodes |
+| Bugfix | [scenarios/bugfix/workflow.yaml](../scenarios/bugfix/workflow.yaml) | Reproduce-before-fix, behaviour-preserving refactor |
 
-Decision lineage is recorded in each agent output document with a `## Agent decisions` section listing what was chosen, what was rejected, and why.
+### Agent roles
 
----
+Seven roles are registered in `AgentRegistry`: `requirements`, `analyst`, `architect`, `developer`, `tester`, `reviewer`, `docs`. Each has its own write scope in [policies/policies.yaml](../policies/policies.yaml) (`pathScopes`); an agent with no entry cannot write at all. `analyst` performs a real JavaParser scan of the codebase; the others are fixture-driven `mock-*` agents by default and model-backed in LIVE mode, each with a fixture agent of identical scope as fallback.
 
-## Reliability Metrics
+## Greenfield dependency graph
 
-The orchestrator tracks the following metrics per pipeline run:
-
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Stage success rate | > 95% | Passed exit gates / total stage runs |
-| Retry frequency | < 1 retry per stage per run | Retry count logged per stage |
-| Rollback frequency | < 5% of releases | Rollback events / total release attempts |
-| MTTR (mean time to recover) | < 30 min from HALT to resume | Time between HALT signal and human approval |
-| End-to-end pipeline latency | < 4 hours | Timestamp delta: requirements received → release tagged |
-| Human checkpoint wait time | Tracked (not targeted) | Logged for process improvement |
-
----
-
-## Policy Guardrails Summary
-
-| Category | Guardrail | Enforcement point |
-|----------|-----------|-------------------|
-| Security | No raw IPs or URLs in logs | Development Agent exit gate + Review Agent |
-| Security | FindSecBugs zero HIGH findings | Review Agent exit gate |
-| Security | SSRF mitigations documented | Design Agent exit gate |
-| Compliance | Audit trail covers all mutations | QA Agent functional scenarios |
-| Change control | Schema changes need human approval | Design Agent → Development Agent gate |
-| Change control | Release tag needs human approval | QA Agent → Release Agent gate |
-| Dependency | All deps in approved SBOM | Release Agent exit gate |
-| Code quality | Zero compiler warnings | Development Agent exit gate |
-| Code quality | Zero PMD / SpotBugs violations | Review Agent exit gate |
-
----
-
-## Failure Handling
-
-```
-Agent task fails
-       │
-       ├─ attempt ≤ 3 → retry with exponential back-off (2s, 4s, 8s)
-       │
-       ├─ attempt > 3, fallback defined → run fallback path
-       │    (e.g. fall back to manual implementation hint)
-       │
-       └─ attempt > 3, no fallback → emit HALT signal
-              │
-              ├─ notify human operator with full context bundle
-              ├─ pipeline pauses (no downstream stages execute)
-              └─ human resolves and resumes, or triggers rollback
+```mermaid
+graph LR
+  requirements --> design
+  design --> implement
+  design --> docs
+  design --> security_review
+  implement --> unit_tests
+  implement --> integration_tests
+  unit_tests --> qa_report
+  integration_tests --> qa_report
+  qa_report --> review
+  docs --> review
+  security_review --> review
+  review --> release
 ```
 
----
+`unit_tests` and `integration_tests` run in parallel, as do `docs` and `security_review` alongside the `implement` branch. `qa_report` and `review` are join nodes: they become READY only when every dependency is DONE.
 
-## Dynamic Re-planning
+## Execution model
 
-If an upstream agent's output changes after a downstream stage has already started (e.g. a design revision during development), the orchestrator:
+- **Waves with a join barrier.** Each scheduler iteration finds every READY node (PENDING with all dependencies DONE), runs them concurrently on virtual threads, joins, then re-reads state from the log and re-checks budgets.
+- **Per-branch pausing.** A node waiting for a human does not block independent branches. The run pauses (exit 10) only when nothing else can run.
+- **Entry and exit gates.** Entry gates must pass before the agent is called; exit gates run against the staged result, in order, and the first failure stops the attempt.
+- **Cross-stage context.** An agent receives the requirement, its *upstream* artifacts only, clarification answers, and feedback from a failed prior attempt. Every artifact records `derivedFrom`, giving decision lineage back to the requirement (`orchestrator lineage`).
 
-1. Suspends in-progress downstream tasks
-2. Diffs the changed output against the prior version
-3. Identifies which downstream stages are affected by the diff
-4. Re-runs only the affected stages (partial re-plan)
-5. Records the re-plan event in the audit log with the change summary
+## Autonomy levels
 
-This prevents full pipeline restarts for minor upstream corrections while maintaining traceability.
+| Level | Behaviour |
+|---|---|
+| `AUTO` | Promoted once all exit gates pass |
+| `ESCALATE_ON_RISK` | Human approval only if a risk rule fires: migration path, any `pom.xml` change, diff over 200 changed lines, or any deletion |
+| `APPROVE_AFTER` | Always waits for a human |
+
+Approvals are hash-bound: they apply to the artifact hash in the latest `APPROVAL_REQUESTED`, the retained staged files are re-hashed, and a stale hash or tampered files are refused. `--by` is mandatory, so every decision has a named owner.
+
+## Failure handling: retry, fallback, rollback, safe-stop
+
+| Situation | Response |
+|---|---|
+| Gate fails or agent throws | Staging is discarded (workspace untouched, this is the rollback), `ATTEMPT_DISCARDED` records a normalized failure signature, and the failure text becomes feedback for the next attempt |
+| Bounded retries | `maxRetries` per node (`2` allows 3 attempts) |
+| Same signature twice in a row | Circuit breaker opens for that agent |
+| Breaker open or retries exhausted, fallback defined | The fallback agent gets exactly one round with its own retries |
+| Retries and fallback exhausted, entry gate fails, or a budget is exceeded | `NODE_FAILED` then `SAFE_STOP`: non-DONE nodes become SKIPPED, DONE nodes stay DONE, `incident.md` is written, exit code 20 |
+| Parallel branches fail together | First failure wins atomically under the `SafeStop` monitor; other branches discard staging and end SKIPPED |
+| A file changed underneath a promotion or revert | Hard failure and safe-stop; the engine never overwrites work it did not stage from |
+| Process crash | Events are durable; `resume` rebuilds from the log, resets RUNNING nodes to PENDING and never re-runs a DONE node |
+
+Budgets (`maxTotalAttempts`, `maxAgentCalls`, `maxWallClockSeconds` on active time, excluding human wait) come from `policies.yaml` and can be overridden per workflow.
+
+Exit codes: `0` completed, `10` paused awaiting a human, `20` safe-stopped, `2` usage or validation error.
+
+## Dynamic re-planning
+
+1. **Hash invalidation.** When a node's artifact hash differs from its previous DONE hash, every non-PENDING downstream node is `INVALIDATED` transitively. Promoted files are reverted from stored pre-images (newest first), pending work is discarded, and approvals are revoked. One `REPLAN` event summarizes the cascade. Clarification answers are folded into the requirements artifact, so changing an answer is just a hash change.
+2. **Graph patch.** An agent may return `data.graphPatch = {addNodes, removeEdges, addEdges, reason}`. It is validated before promotion (acyclic, known agents and gates, dependencies of settled nodes unchanged), recorded as `REPLAN`, and folded into the current graph. The brownfield analyst uses this to insert `db_migration`.
+
+## Policy guardrails
+
+| Category | Mechanism |
+|---|---|
+| Change control | `PathGuard` and `path-allowlist` gate: per-agent globs; `..`, absolute paths, symlinks and out-of-scope paths are rejected before anything is written |
+| Security | `secret-scan`, `forbidden-api` (process exec, deserialization, reflective loading, script engines), `dependency-allowlist` and `buildAllowlist` (dependencies, plugins and parent POMs; repositories and build extensions always refused) |
+| Compliance | `no-raw-ip-logging`, `artifact-metadata` (rationale and lineage on every artifact) |
+| Evidence | `requirements-complete`, `design-diagrams`, `review-complete`, `functional-coverage`, `test-coverage` (JaCoCo against a 100% target, every class below it named) |
+| Build sandbox | Gate builds run in a network-less container when Docker is available, with a 120 s timeout, bounded `MAVEN_OPTS` and a stripped environment |
+
+## Observability and reliability metrics
+
+Every fact is one of 20 `EventType`s in an insert-only table (SQLite triggers abort UPDATE and DELETE). `report.md` and the metrics are derived only from that log. `MetricsCalculator` reports:
+
+| Metric | Definition |
+|---|---|
+| Success rate | Nodes DONE with no failed gate or discarded attempt, over all nodes |
+| Retries and rollbacks | Discarded attempts, in total and per node (every discard is a staging rollback) |
+| Fallbacks | Fallback-agent rounds |
+| MTTR | Mean time from a node's first failure to its next DONE |
+| End-to-end latency | Gross (run start to last completion), human wait, and net (gross minus human wait) |
+| Governance counts | Approvals requested, granted, rejected; clarifications; invalidations; replans |
+| Gate failures | Count per gate id |
+| Model usage | Calls, tokens and model time (zero in MOCK runs) |
+
+Definitions and rationale: ADR-11.
+
+## Running it
+
+```bash
+make build            # verify the baseline, package the orchestrator
+make demo-all         # all four scenarios in MOCK mode with real gates
+scripts/live-run.sh scenarios/greenfield/workflow.yaml   # interactive LIVE run (needs ANTHROPIC_API_KEY, ANTHROPIC_MODEL)
+```
+
+`java -jar orchestrator/target/orchestrator.jar` exposes `run`, `status`, `pending`, `approve`, `reject`, `answer`, `resume`, `report` and `lineage`.
