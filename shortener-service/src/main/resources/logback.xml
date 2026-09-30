@@ -1,0 +1,15 @@
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{ISO8601} %-5level [%thread] %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Application code: INFO so P1/P2 log.error and log.warn surface, and normal flow is visible. -->
+  <logger name="com.example.shortener" level="INFO"/>
+
+  <!-- Suppress Spring Boot startup noise in production; keep errors visible. -->
+  <root level="WARN">
+    <appender-ref ref="STDOUT"/>
+  </root>
+</configuration>

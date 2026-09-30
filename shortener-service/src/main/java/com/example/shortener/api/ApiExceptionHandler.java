@@ -1,6 +1,7 @@
 package com.example.shortener.api;
 
 import com.example.shortener.service.ErrorCode;
+import com.example.shortener.service.IncidentSeverity;
 import com.example.shortener.service.ShortenerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,10 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(ShortenerException.class)
     ResponseEntity<ErrorResponse> business(ShortenerException exception) {
+        IncidentSeverity severity = IncidentSeverity.forErrorCode(exception.errorCode());
+        if (severity == IncidentSeverity.P1_CRITICAL) {
+            log.error("[{}] Business failure: {}", severity, exception.errorCode());
+        }
         return respond(statusFor(exception.errorCode()), exception.errorCode().name(), exception.getMessage());
     }
 
@@ -57,7 +62,8 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     ResponseEntity<ErrorResponse> unexpected(Exception exception) {
-        log.error("Unhandled request failure: {}", exception.getClass().getName());
+        IncidentSeverity severity = IncidentSeverity.forUnhandledException(exception);
+        log.error("[{}] Unhandled request failure: {}", severity, exception.getClass().getName());
         return respond(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_ERROR", "The request could not be completed");
     }
 

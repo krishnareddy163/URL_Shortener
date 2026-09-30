@@ -29,4 +29,13 @@
     <Class name="com.example.shortener.api.LinkController"/>
     <Bug pattern="SPRING_ENDPOINT"/>
   </Match>
+  <!--
+    CRLF_INJECTION_LOGS on ApiExceptionHandler: the logged arguments are enum constants (IncidentSeverity,
+    ErrorCode) and the JVM exception class name — all are compile-time-determined strings that cannot contain
+    CRLF. FindSecBugs cannot prove this statically; the risk is reviewed and accepted as a false positive.
+  -->
+  <Match>
+    <Class name="com.example.shortener.api.ApiExceptionHandler"/>
+    <Bug pattern="CRLF_INJECTION_LOGS"/>
+  </Match>
 </FindBugsFilter>

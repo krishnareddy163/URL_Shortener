@@ -32,6 +32,16 @@ class ApiExceptionHandlerTest {
     }
 
     @Test
+    void nonCriticalBusinessErrorsDoNotLogAtErrorLevel() {
+        // P4 errors (INVALID_URL) take the non-P1 branch in business() — no error log, just a response
+        ResponseEntity<ErrorResponse> response = handler.business(
+                new ShortenerException(ErrorCode.INVALID_URL, "Not a valid URL"));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).isEqualTo(ErrorResponse.of("INVALID_URL", "Not a valid URL"));
+    }
+
+    @Test
     void unexpectedFailuresHideTheirDetails() {
         ResponseEntity<ErrorResponse> response = handler.unexpected(new IllegalStateException("secret internal detail"));
 
