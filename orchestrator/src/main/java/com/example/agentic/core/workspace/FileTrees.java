@@ -4,9 +4,12 @@ import com.example.agentic.core.state.Hashing;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -36,18 +39,42 @@ public final class FileTrees {
         return false;
     }
 
+    /**
+     * Pre-order walk that never descends into ignored directories. Pruning matters: {@code .git} is rewritten by
+     * concurrent commits, and merely stat-ing its entries mid-walk can fail with NoSuchFileException.
+     */
+    private static List<Path> walkUnignored(Path root) throws IOException {
+        List<Path> paths = new ArrayList<>();
+        Files.walkFileTree(root, new SimpleFileVisitor<>() {
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attributes) {
+                if (!dir.equals(root) && ignored(root.relativize(dir))) {
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+                paths.add(dir);
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
+                if (!ignored(root.relativize(file))) {
+                    paths.add(file);
+                }
+                return FileVisitResult.CONTINUE;
+            }
+        });
+        return paths;
+    }
+
     /** Sorted workspace-relative file paths (forward slashes), excluding ignored segments. */
     public static List<String> listFiles(Path root) throws IOException {
         if (!Files.isDirectory(root)) {
             return List.of();
         }
         List<String> files = new ArrayList<>();
-        try (Stream<Path> walk = Files.walk(root)) {
-            for (Path path : walk.toList()) {
-                Path relative = root.relativize(path);
-                if (Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS) && !ignored(relative)) {
-                    files.add(relative.toString().replace('\\', '/'));
-                }
+        for (Path path : walkUnignored(root)) {
+            if (Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS)) {
+                files.add(root.relativize(path).toString().replace('\\', '/'));
             }
         }
         files.sort(Comparator.naturalOrder());
@@ -57,22 +84,20 @@ public final class FileTrees {
     /** Copies a tree, refusing symlinks and skipping ignored segments. */
     public static void copyTree(Path source, Path destination) throws IOException {
         Files.createDirectories(destination);
-        try (Stream<Path> walk = Files.walk(source)) {
-            for (Path path : walk.toList()) {
-                Path relative = source.relativize(path);
-                if (relative.toString().isEmpty() || ignored(relative)) {
-                    continue;
-                }
-                if (Files.isSymbolicLink(path)) {
-                    throw new IOException("refusing to copy symlink " + relative);
-                }
-                Path target = destination.resolve(relative.toString());
-                if (Files.isDirectory(path)) {
-                    Files.createDirectories(target);
-                } else {
-                    Files.createDirectories(parentOf(target));
-                    Files.copy(path, target);
-                }
+        for (Path path : walkUnignored(source)) {
+            Path relative = source.relativize(path);
+            if (relative.toString().isEmpty()) {
+                continue;
+            }
+            if (Files.isSymbolicLink(path)) {
+                throw new IOException("refusing to copy symlink " + relative);
+            }
+            Path target = destination.resolve(relative.toString());
+            if (Files.isDirectory(path)) {
+                Files.createDirectories(target);
+            } else {
+                Files.createDirectories(parentOf(target));
+                Files.copy(path, target);
             }
         }
     }
