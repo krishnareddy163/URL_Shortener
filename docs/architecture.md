@@ -95,8 +95,8 @@ sequenceDiagram
     R->>A: propose(context: requirement, upstream artifacts only, answers, feedback)
     A-->>R: Proposal (files, rationale, derivedFrom, data)
     R->>R: AGENT_CALLED(promptHash, responseHash)
-    R->>W: stage copy of workspace; PathGuard every path; apply
-    R->>G: exit gates in order (first failure stops)
+    R->>W: stage copy of workspace, PathGuard every path, apply
+    R->>G: exit gates in order, first failure stops
     alt all pass
       R->>R: artifact hash, risk rules on the diff
       alt blocking question unanswered
@@ -108,7 +108,7 @@ sequenceDiagram
       end
     else failure
       R->>W: discard staging (workspace untouched)
-      R->>R: ATTEMPT_DISCARDED(signature); feedback = failure text
+      R->>R: ATTEMPT_DISCARDED(signature), feedback = failure text
       R->>R: circuit breaker / retries / one fallback round / NODE_FAILED + SAFE_STOP
     end
   end
