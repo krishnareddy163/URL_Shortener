@@ -14,7 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 PROJECTS = [
     ("Shortener (the product the QA agent covers)", ROOT / "shortener-service/target/site/jacoco/jacoco.xml",
-     "98.5% line, 100% branch"),
+     "100% line, 100% branch, no exclusions"),
     ("Orchestrator", ROOT / "orchestrator/target/site/jacoco/jacoco.xml", "88% line, 75% branch"),
 ]
 
@@ -37,6 +37,25 @@ def exceptions():
     if not block:
         return {}
     return {name: reason for name, reason in re.findall(r'^    ([\w.$]+): "(.*)"$', block.group(1), re.MULTILINE)}
+
+
+GAP_CATEGORIES = [
+    ("com.example.agentic.cli.", "open gap: CLI option and I/O-error branches; the commands' main paths run in process "
+                                "(CliEndToEndTest) and out of process (make demo-all)"),
+    ("com.example.agentic.agents.live.", "open gap: network and malformed-model-reply handling; tested with a stubbed "
+                                         "transport, the real API is exercised only by LIVE runs"),
+    ("com.example.agentic.core.gate.", "open gap: defensive branches for malformed artifacts and failed tool runs"),
+    ("com.example.agentic.core.policy.", "open gap: defensive branches for malformed artifacts and failed tool runs"),
+    ("com.example.agentic.core.state.", "open gap: storage and I/O failure paths"),
+    ("com.example.agentic.core.workspace.", "open gap: file-system and git failure paths"),
+]
+
+
+def gap_reason(name):
+    for prefix, reason in GAP_CATEGORIES:
+        if name.startswith(prefix):
+            return reason
+    return "open gap: defensive or error-handling branches not yet covered by a test"
 
 
 def below_target(report):
@@ -72,7 +91,7 @@ def main():
         else:
             rows += ["| Class | Missed lines | Line | Branch | Why the target is not met |", "|---|---:|---:|---:|---|"]
             for name, (line_missed, line_covered), (branch_missed, branch_covered) in gaps:
-                reason = reasons.get(name.split("$")[0], "open gap: not yet covered by a test")
+                reason = reasons.get(name.split("$")[0], gap_reason(name))
                 rows.append(f"| `{name}` | {line_missed} | {percent(line_missed, line_covered):.1f}% | "
                             f"{percent(branch_missed, branch_covered):.1f}% | {reason} |")
         sections += rows + [""]
